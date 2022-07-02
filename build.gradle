@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
     id 'eclipse'
     id 'maven-publish'
+	id 'com.github.johnrengelman.shadow' version '7.1.0'
 }
 
 group = 'net.enderturret'
@@ -47,8 +48,13 @@ task patcherSourcesJar(type: Jar, dependsOn: classes) {
     from sourceSets.patcher.allSource
 }
 
+shadowJar {
+    classifier = 'cli'
+    from sourceSets.patcher.output
+}
+
 artifacts {
-    archives sourcesJar, patcherJar, patcherSourcesJar
+    archives sourcesJar, patcherJar, patcherSourcesJar, shadowJar
 }
 
 publishing {
