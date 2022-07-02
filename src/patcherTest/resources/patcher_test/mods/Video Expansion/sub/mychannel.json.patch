@@ -1,0 +1,15 @@
+[
+  {
+    "op": "add",
+    "path": "/Content/videos/-",
+    "value": {
+      "name": "Integer Unboxing",
+      "likes": 312
+    }
+  },
+  {
+    "op": "replace",
+    "path": "/Content/subscribers",
+    "value": 999531
+  }
+]

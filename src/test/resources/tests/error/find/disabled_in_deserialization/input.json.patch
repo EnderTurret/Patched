@@ -1,0 +1,14 @@
+[
+  {
+    "op": "find",
+    "path": "/array",
+    "test": {
+      "path": "",
+      "value": ""
+    },
+    "then": {
+      "op": "remove",
+      "path": ""
+    }
+  }
+]

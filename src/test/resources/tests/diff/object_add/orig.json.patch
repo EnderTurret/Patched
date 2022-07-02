@@ -1,0 +1,7 @@
+[
+  {
+    "op": "add",
+    "path": "/object/123",
+    "value": "abc"
+  }
+]

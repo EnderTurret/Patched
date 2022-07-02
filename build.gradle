@@ -1,0 +1,73 @@
+plugins {
+    id 'java-library'
+    id 'eclipse'
+    id 'maven-publish'
+}
+
+group = 'net.enderturret'
+version = '1.0.2'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    patcher {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+    patcherTest {
+        compileClasspath += sourceSets.patcher.output
+        runtimeClasspath += sourceSets.patcher.output
+    }
+}
+
+configurations {
+    patcherImplementation.extendsFrom implementation
+}
+
+dependencies {
+    api 'com.google.code.gson:gson:2.9.0'
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task patcherJar(type: Jar, dependsOn: compilePatcherJava) {
+    classifier = 'patcher'
+    from sourceSets.patcher.output
+}
+
+task patcherSourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'patcher-sources'
+    from sourceSets.patcher.allSource
+}
+
+artifacts {
+    archives sourcesJar, patcherJar, patcherSourcesJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            pom {
+                name = 'Patched'
+                description = 'Enables patching of Json files for mods or other uses.'
+            }
+            artifact sourcesJar {
+                classifier 'sources'
+            }
+            artifact patcherJar {
+                classifier 'patcher'
+            }
+            artifact patcherSourcesJar {
+                classifier 'patcher-sources'
+            }
+        }
+    }
+}

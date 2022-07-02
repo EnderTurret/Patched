@@ -1,0 +1,7 @@
+[
+  {
+    "op": "copy",
+    "path": "/nested/copied",
+    "from": "/obj/foo"
+  }
+]

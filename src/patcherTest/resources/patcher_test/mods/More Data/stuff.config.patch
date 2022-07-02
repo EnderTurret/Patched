@@ -1,0 +1,16 @@
+[
+  {
+    "op": "replace",
+    "path": "/changes/type",
+    "value": "ExtendedQuestionableDataManager"
+  },
+  {
+    "op": "add",
+    "path": "/extended",
+    "value": true
+  },
+  {
+    "op": "remove",
+    "path": "/changes/blobMode"
+  }
+]

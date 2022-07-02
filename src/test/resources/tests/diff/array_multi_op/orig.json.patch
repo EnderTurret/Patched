@@ -1,0 +1,12 @@
+[
+  {
+    "op": "replace",
+    "path": "/array/2",
+    "value": 4
+  },
+  {
+    "op": "add",
+    "path": "/array/-",
+    "value": 5
+  }
+]

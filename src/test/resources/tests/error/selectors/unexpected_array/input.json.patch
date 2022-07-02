@@ -1,0 +1,7 @@
+[
+  {
+    "op": "add",
+    "path": "/array/test",
+    "value": 4
+  }
+]

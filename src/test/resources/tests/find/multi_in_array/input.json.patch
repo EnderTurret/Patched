@@ -1,0 +1,16 @@
+[
+  {
+    "op": "find",
+    "path": "/array",
+    "multi": true,
+    "test": {
+      "path": "/a",
+      "value": 1
+    },
+    "then": {
+      "op": "add",
+      "path": "/z",
+      "value": "added"
+    }
+  }
+]

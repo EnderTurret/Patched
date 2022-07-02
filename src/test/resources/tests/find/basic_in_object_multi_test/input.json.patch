@@ -1,0 +1,21 @@
+[
+  {
+    "op": "find",
+    "path": "/object",
+    "test": [
+      {
+        "path": "/a",
+        "value": 7
+      },
+      {
+        "path": "/c",
+        "value": "c"
+      }
+    ],
+    "then": {
+      "op": "replace",
+      "path": "/b",
+      "value": 92
+    }
+  }
+]

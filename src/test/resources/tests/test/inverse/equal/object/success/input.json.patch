@@ -1,0 +1,15 @@
+[
+  {
+    "op": "test",
+    "path": "/obj/foo",
+    "value": {
+      "e": 2.71
+    },
+    "inverse": true
+  },
+  {
+    "op": "add",
+    "path": "/obj/added",
+    "value": 1
+  }
+]

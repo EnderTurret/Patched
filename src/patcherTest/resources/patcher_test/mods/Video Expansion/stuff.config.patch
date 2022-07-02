@@ -1,0 +1,11 @@
+[
+  {
+    "op": "test",
+    "path": "/extended"
+  },
+  {
+    "op": "add",
+    "path": "/changes/videos",
+    "value": true
+  }
+]

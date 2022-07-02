@@ -1,0 +1,7 @@
+[
+  {
+    "op": "copy",
+    "path": "/array/0",
+    "from": "/from"
+  }
+]
