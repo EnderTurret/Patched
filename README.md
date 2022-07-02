@@ -1,0 +1,238 @@
+# Patched
+
+A library for reading, writing, and applying [Json patches](https://jsonpatch.com/).
+
+It handles everything the [original RFC](https://datatracker.ietf.org/doc/html/rfc6902) describes, the [Starbound extensions](https://community.playstarbound.com/threads/april-21st-%E2%80%93-stable-update-notes.95106/page-5#post-2561028) to it, and even introduces [its own extensions](#the-find-operation).
+
+Specifically, the Starbound extensions add [existence tests](#existence-tests) and the ability to [invert tests](#inverse-testing), and the other extension adds a new ["find" operation](#the-find-operation).
+
+## Extensions
+
+### Existence tests
+
+Normally, `test` only lets you test if something is equal to a specific value.
+This extension lets you omit the `value` field, allowing you to test if an element exists.
+
+For example:
+
+```json
+[
+  {
+    "op": "test",
+    "path": "/foo"
+  },
+  {
+    "op": "add",
+    "path": "/bar",
+    "value": 1
+  }
+]
+```
+
+applied to this document:
+
+```json
+{
+  "foo": "yes"
+}
+```
+
+results in:
+
+```json
+{
+  "foo": "yes",
+  "bar": 1
+}
+```
+
+### Inverse testing
+
+Another extension is an `inverse` field to the `test` operation.
+This lets you negate the operation; instead of testing if something is equal to something, you are testing if something is *not* equal to something.
+
+For example:
+
+```json
+[
+  {
+    "op": "test",
+    "path": "/foo",
+    "inverse": true,
+    "value": 1
+  },
+  {
+    "op": "add",
+    "path": "/bar",
+    "value": 1
+  }
+]
+```
+
+applied to this document:
+
+```json
+{
+  "foo": "yes"
+}
+```
+
+results in:
+
+```json
+{
+  "foo": "yes",
+  "bar": 1
+}
+```
+
+This might not seem very useful as is, but when combined with existence tests, it can be very useful.
+
+### The "find" operation
+
+The find operation is a sort of fuzzy-matching operation.
+
+For example, applying the following patch:
+
+```json
+[
+  {
+    "op": "find",
+    "path": "/array",
+    "test": {
+      "path": "/a",
+      "value": 7
+    },
+    "then": {
+      "op": "add",
+      "path": "/c",
+      "value": 1
+    }
+  }
+]
+```
+
+to the following document:
+
+```json
+{
+  "array": [
+    {
+      "a": 1,
+      "b": 3
+    },
+    {
+      "a": 7,
+      "b": 0
+    }
+  ]
+}
+```
+
+yields the following:
+
+```json
+{
+  "array": [
+    {
+      "a": 1,
+      "b": 3
+    },
+    {
+      "a": 7,
+      "b": 0,
+      "c": 1
+    }
+  ]
+}
+```
+
+Only the `test` operation is valid in the `test` part of the patch.
+This means that the operation field is unnecessary and may be omitted from each `test` patch, as is seen here.
+
+The find operation by default only patches the first matching element.
+In order to have it patch all matching elements, `multi` must be set to `true`, like so:
+
+```json
+[
+  {
+    "op": "find",
+    "path": "/array",
+    "multi": true,
+    "test": {
+      "path": "/a",
+      "value": 7
+    },
+    "then": {
+      "op": "add",
+      "path": "/c",
+      "value": 1
+    }
+  }
+]
+```
+
+Additionally, you may have multiple tests by defining an array:
+
+```json
+[
+  {
+    "op": "find",
+    "path": "/array",
+    "test": [
+      {
+        "path": "/a",
+        "value": 7
+      },
+      {
+        "path": "/b",
+        "value": 0
+      }
+    ],
+    "then": {
+      "op": "add",
+      "path": "/c",
+      "value": 1
+    }
+  }
+]
+```
+
+You can also do the same with `then`.
+
+## Installing
+
+### For users
+
+This project is mainly intended to be an API for other projects to use.
+However, there are [built versions](https://github.com/EnderTurret/Patched/releases) of the library available that include a basic CLI for patching things.
+
+Not only that, but there is a [Minecraft mod](https://github.com/EnderTurret/PatchedMod) that implements patching functionality there.
+
+### For developers
+
+Unfortunately, there is no maven hosting this yet, so your only options are [JitPack](https://jitpack.io/) or building it locally.
+This will likely change in the future.
+
+Other than that, you just add it as a maven dependency like normal.
+
+## Usage (for developers)
+
+First make sure you have the library on the build path.
+See the prior section for details.
+
+### Reading patches
+
+You will need to have a `Gson` instance setup with the patch (de)serializer.
+This can be done using `Patches.patchGson(boolean, boolean)`.
+
+Next, you can use `Patches.readPatch(Gson, String)` or any of the other varieties to read a patch file.
+
+### Applying patches
+
+You will need a `JsonElement` representing the Json you will be patching.
+You will also need a patch read via the [previous step](#reading-patches).
+
+To apply a patch, you use `JsonPatch.patch(JsonElement, PatchContext)`.
+This method will modify the `JsonElement` you give it, so make a copy if you need one.
+You can obtain a `PatchContext` using `PatchContext.newContext()` and customize it using the provided methods.
