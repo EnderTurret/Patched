@@ -2,9 +2,24 @@
 
 A library for reading, writing, and applying [Json patches](https://jsonpatch.com/).
 
-It handles everything the [original RFC](https://datatracker.ietf.org/doc/html/rfc6902) describes, the [Starbound extensions](https://community.playstarbound.com/threads/april-21st-%E2%80%93-stable-update-notes.95106/page-5#post-2561028) to it, and even introduces [its own extensions](#the-find-operation).
+It handles everything the [original RFC](https://datatracker.ietf.org/doc/html/rfc6902) describes,
+the [Starbound extensions](https://community.playstarbound.com/threads/april-21st-%E2%80%93-stable-update-notes.95106/page-5#post-2561028) to it,
+and even introduces [its own extensions](#the-find-operation). These extensions are by default disabled.
 
-Specifically, the Starbound extensions add [existence tests](#existence-tests) and the ability to [invert tests](#inverse-testing), and the other extension adds a new ["find" operation](#the-find-operation).
+Specifically, the Starbound extensions add [existence tests](#existence-tests) and the ability to [invert tests](#inverse-testing),
+and the other extension adds a new ["find" operation](#the-find-operation).
+
+## Limitations and Differences
+
+Replacing the root document is not possible.
+This is because of the way the library was originally designed.
+I can't imagine that this is a common use-case, so I haven't done the required work to support this.
+
+Additionally, the `add` operation lets you add elements past the end of an array (they're treated like adding at `-`).
+This is for patch compatibility reasons (see: [the Minecraft mod](https://github.com/EnderTurret/PatchedMod)) and because it doesn't seem like a huge problem to allow this.
+If things explode, an option may be added to disable this functionality in the future.
+
+When all extensions are disabled, these are the only differences between this library and most other patching libraries.
 
 ## Extensions
 
