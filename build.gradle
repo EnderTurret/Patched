@@ -40,12 +40,17 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 task patcherJar(type: Jar, dependsOn: compilePatcherJava) {
     classifier = 'patcher'
-    from sourceSets.patcher.output
+    from (sourceSets.patcher.output) {
+        exclude 'net/enderturret/patched/Patched.class'
+        exclude 'net/enderturret/patched/Patched$Settings.class'
+    }
 }
 
 task patcherSourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'patcher-sources'
-    from sourceSets.patcher.allSource
+    from (sourceSets.patcher.allSource) {
+        exclude 'net/enderturret/patched/Patched.java'
+    }
 }
 
 shadowJar {
