@@ -226,10 +226,20 @@ Not only that, but there is a [Minecraft mod](https://github.com/EnderTurret/Pat
 
 ### For developers
 
-Unfortunately, there is no maven hosting this yet, so your only options are [JitPack](https://jitpack.io/) or building it locally.
-This will likely change in the future.
+There is no maven hosting this library (yet).
+Currently, your best option is using [JitPack](https://jitpack.io):
 
-Other than that, you just add it as a maven dependency like normal.
+```gradle
+repositories {
+    maven {
+        url = 'https://jitpack.io'
+    }
+}
+
+dependencies {
+    implementation 'com.github.EnderTurret:Patched:1.0.2'
+}
+```
 
 ## Usage (for developers)
 
