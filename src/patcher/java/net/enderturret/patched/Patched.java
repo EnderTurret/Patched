@@ -28,6 +28,7 @@ import net.enderturret.patched.patcher.path.PathSourceAdapter;
  * @author EnderTurret
  */
 // @VisibleForTesting
+// TODO: Improve the usability of this for single file patching.
 public class Patched {
 
 	public static void main(String... args) throws IOException {
@@ -56,79 +57,10 @@ public class Patched {
 		}
 	}
 
-	/*private static void oldMain(Settings settings) throws IOException {
-		try (Stream<Path> stream = Files.walk(settings.src)) {
-			final Path fnRoot = settings.src.toAbsolutePath();
-			stream.filter(p -> Files.isRegularFile(p)).forEach(p -> {
-				p = p.toAbsolutePath();
-				final String filename = p.getFileName().toString();
-				final Path relative = fnRoot.relativize(p);
-
-				try {
-					final Path out = settings.output.resolve(relative);
-					Files.createDirectories(out.getParent());
-					Files.copy(p, out, StandardCopyOption.REPLACE_EXISTING);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			});
-		}
-
-		final Map<String,JsonElement> patched = new HashMap<>();
-
-		for (Path root : settings.patchSources) {
-			root = root.toAbsolutePath();
-			try (Stream<Path> stream = Files.walk(root)) {
-				final Path fnRoot = root;
-				stream.filter(p -> Files.isRegularFile(p)).forEach(p -> {
-					p = p.toAbsolutePath();
-					final String filename = p.getFileName().toString();
-					final Path relative = fnRoot.relativize(p);
-					if (filename.endsWith(".patch")) {
-						String relStr = relative.toString();
-						relStr = relStr.substring(0, relStr.length() - ".patch".length());
-
-						final JsonElement elem = patched.computeIfAbsent(relStr, path -> {
-							try {
-								return JsonParser.parseString(Files.readString(settings.src.resolve(path)));
-							} catch (Exception e) {
-								throw new RuntimeException(e);
-							}
-						});
-
-						try {
-							Patches.patch(elem, settings.context, p);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					} else {
-						try {
-							final Path out = settings.output.resolve(relative);
-							Files.createDirectories(out.getParent());
-							Files.copy(p, out, StandardCopyOption.REPLACE_EXISTING);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				});
-			}
-		}
-
-		final Gson gson = new GsonBuilder()
-				.setPrettyPrinting()
-				.create();
-
-		for (Map.Entry<String,JsonElement> entry : patched.entrySet()) {
-			final String json = gson.toJson(entry.getValue());
-			final Path out = settings.output.resolve(entry.getKey());
-			Files.createDirectories(out.getParent());
-			Files.writeString(out, json, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
-		}
-	}*/
-
 	private static Settings readArgs(String[] args) {
-		Settings ret = new Settings(null, null, new ArrayList<>(0), PatchContext.newContext(), false);
+		Settings ret = new Settings(null, null, new ArrayList<>(0), PatchContext.newContext());
 		int skip = 0;
+
 		for (int i = 0; i < args.length; i++) {
 			if (skip > 0) {
 				skip--;
@@ -138,23 +70,38 @@ public class Patched {
 			final String arg = args[i];
 
 			if ("--help".equals(arg)) {
-				System.out.println("Usage: java -jar Patched-1.0.0.jar <args>");
+				System.out.println("Usage: java -jar Patched-cli.jar <args>");
+				System.out.println("Accepted Arguments:");
+				System.out.println("--src"
+						+ "\n        Set the source directory."
+						+ "\n--out"
+						+ "\n        Set the output directory."
+						+ "\n--patches"
+						+ "\n        Add a patch source directory"
+						+ "\n--patch-sources"
+						+ "\n        Add a directory of patch sources."
+						+ "\n--extended"
+						+ "\n        Enable all patch extensions.");
 				return null;
 			}
+
 			else if ("--src".equals(arg)) {
-				ret = new Settings(checkPath("src", args, i + 1, true), ret.output, ret.patchSources, ret.context, ret.recursive);
+				ret = new Settings(checkPath("src", args, i + 1, true), ret.output, ret.patchSources, ret.context);
 				skip++;
 			}
+
 			else if ("--out".equals(arg)) {
-				ret = new Settings(ret.src, checkPath("out", args, i + 1, false), ret.patchSources, ret.context, ret.recursive);
+				ret = new Settings(ret.src, checkPath("out", args, i + 1, false), ret.patchSources, ret.context);
 				skip++;
 			}
+
 			else if ("--patches".equals(arg)) {
 				final Path path = checkPath("patches", args, i + 1, true);
 				if (path != null)
 					ret.patchSources.add(path);
 				skip++;
 			}
+
 			else if ("--patch-sources".equals(arg)) {
 				final Path path = checkPath("patch-sources", args, i + 1, true);
 				if (path != null) {
@@ -170,10 +117,12 @@ public class Patched {
 				}
 				skip++;
 			}
-			else if ("--recursive".equals(arg))
-				ret = new Settings(ret.src, ret.output, ret.patchSources, ret.context, true);
+
 			else if ("--extended".equals(arg))
-				ret = new Settings(ret.src, ret.output, ret.patchSources, PatchContext.newContext().sbExtensions(true).patchedExtensions(true), true);
+				ret = new Settings(ret.src, ret.output, ret.patchSources, PatchContext.newContext().sbExtensions(true).patchedExtensions(true));
+
+			else
+				System.out.println("Unrecognized argument: " + arg);
 		}
 
 		return ret;
@@ -192,7 +141,7 @@ public class Patched {
 		return null;
 	}
 
-	private static record Settings(Path src, Path output, List<Path> patchSources, PatchContext context, boolean recursive) {
+	private static record Settings(Path src, Path output, List<Path> patchSources, PatchContext context) {
 		
 	}
 }
