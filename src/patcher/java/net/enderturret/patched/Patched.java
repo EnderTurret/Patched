@@ -1,6 +1,8 @@
 package net.enderturret.patched;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,6 +19,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+import net.enderturret.patched.exception.PatchingException;
+import net.enderturret.patched.patch.JsonPatch;
 import net.enderturret.patched.patch.PatchContext;
 import net.enderturret.patched.patcher.Patcher;
 import net.enderturret.patched.patcher.path.PathDumper;
@@ -28,15 +32,22 @@ import net.enderturret.patched.patcher.path.PathSourceAdapter;
  * @author EnderTurret
  */
 // @VisibleForTesting
-// TODO: Improve the usability of this for single file patching.
 public class Patched {
 
 	public static void main(String... args) throws IOException {
 		final Settings settings = readArgs(args);
-		if (settings == null || settings.src == null || settings.output == null || settings.patchSources.isEmpty()) return;
+		if (settings == null || settings.src == null || settings.output == null || settings.patchSources.isEmpty())
+			return;
 
-		System.out.println("Patching " + settings.src + " to " + settings.output + " with sources " + settings.patchSources + "...");
+		System.out.println("Patching " + settings.src + " to " + settings.output + " with patches " + settings.patchSources + "...");
 
+		if (settings.multi)
+			multiPatch(settings);
+		else
+			singlePatch(settings);
+	}
+
+	private static void multiPatch(Settings settings) throws IOException {
 		if (!Files.exists(settings.output))
 			Files.createDirectory(settings.output);
 
@@ -57,16 +68,66 @@ public class Patched {
 		}
 	}
 
+	private static void singlePatch(Settings settings) throws IOException {
+		final JsonElement source = JsonParser.parseString(Files.readString(settings.src()));
+
+		final Gson gson = Patches.patchGson(settings.context.sbExtensions(), settings.context.patchedExtensions())
+				.setPrettyPrinting()
+				.create();
+
+		record Patch(Path src, JsonPatch patch) {}
+
+		final List<Patch> patches = settings.patchSources.stream()
+				.map(path -> {
+					try {
+						return new Patch(path, Patches.readPatch(gson, Files.readString(path)));
+					} catch (IOException e) {
+						throw new UncheckedIOException(e);
+					}
+				})
+				.toList();
+
+		for (Patch patch : patches) {
+			try {
+				patch.patch.patch(source, settings.context);
+			} catch (PatchingException e) {
+				System.out.println("Patch '" + patch.src + "' could not be applied:");
+				e.printStackTrace(System.out);
+			}
+		}
+
+		final String out = gson.toJson(source);
+
+		try (BufferedWriter bw = Files.newBufferedWriter(settings.output, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+			bw.write(out);
+		}
+	}
+
 	private static final String HELP_TEXT = "Usage: java -jar Patched-cli.jar <args>"
+			+ "\nEx: java -jar Patched-cli.jar --source myFile.json --patch myFile.json.patch --output myFile-patched.json"
+			+ "\nEx 2: java -jar Patched-cli.jar --multi --source \"My Files\" --patches Patches --output \"Patched Files\""
 			+ "\nAccepted Arguments:"
-			+ "\n--src"
-			+ "\n        Set the source directory."
-			+ "\n--out"
-			+ "\n        Set the output directory."
+			+ "\n--help"
+			+ "\n        Display this text and exit."
+			+ "\n--multi"
+			+ "\n        Enable multi-source mode."
+			+ "\n        This mode lets you patch"
+			+ "\n        multiple files at once."
+			+ "\n--source"
+			+ "\n        Set the source file, or"
+			+ "\n        if --multi is set, the"
+			+ "\n        source directory tree."
+			+ "\n--output"
+			+ "\n        Set the output location."
+			+ "\n--patch"
+			+ "\n        Add a single patch."
+			+ "\n        Only valid if --multi is not set."
 			+ "\n--patches"
-			+ "\n        Add a patch source directory"
+			+ "\n        Add a patch directory."
 			+ "\n--patch-sources"
-			+ "\n        Add a directory of patch sources."
+			+ "\n        Add a directory containing"
+			+ "\n        patch directories."
+			+ "\n        Only valid if --multi is set."
 			+ "\n--extended"
 			+ "\n        Enable all patch extensions.";
 
@@ -76,7 +137,7 @@ public class Patched {
 			return null;
 		}
 
-		Settings ret = new Settings(null, null, new ArrayList<>(0), PatchContext.newContext());
+		Settings ret = new Settings(null, null, new ArrayList<>(0), false, PatchContext.newContext());
 		int skip = 0;
 
 		for (int i = 0; i < args.length; i++) {
@@ -92,24 +153,53 @@ public class Patched {
 				return null;
 			}
 
-			else if ("--src".equals(arg)) {
-				ret = new Settings(checkPath("src", args, i + 1, true), ret.output, ret.patchSources, ret.context);
+			else if ("--multi".equals(arg))
+				ret = new Settings(ret.src, ret.output, ret.patchSources, true, ret.context);
+
+			else if ("--source".equals(arg)) {
+				final Path src = checkPath("source", args, i + 1, true);
+
+				if (ret.multi && Files.isRegularFile(src))
+					System.out.println("source: File \"" + src + "\" is not a directory.");
+				else if (!ret.multi && Files.isDirectory(src))
+					System.out.println("source: Only a single file is supported. Pass --multi to enable multiple source files.");
+				else
+					ret = new Settings(src, ret.output, ret.patchSources, ret.multi, ret.context);
+
 				skip++;
 			}
 
-			else if ("--out".equals(arg)) {
-				ret = new Settings(ret.src, checkPath("out", args, i + 1, false), ret.patchSources, ret.context);
+			else if ("--output".equals(arg)) {
+				ret = new Settings(ret.src, checkPath("out", args, i + 1, false), ret.patchSources, ret.multi, ret.context);
 				skip++;
 			}
 
-			else if ("--patches".equals(arg)) {
-				final Path path = checkPath("patches", args, i + 1, true);
-				if (path != null)
-					ret.patchSources.add(path);
+			else if ("--patch".equals(arg) || "--patches".equals(arg)) {
+				final Path path = checkPath(arg.substring("--".length()), args, i + 1, true);
+				if (path != null) {
+					if (ret.multi || Files.isRegularFile(path))
+						ret.patchSources.add(path);
+					else if (Files.isDirectory(path)) {
+						try (Stream<Path> stream = Files.list(path)) {
+							final Settings settings = ret;
+							stream.forEach(p -> {
+								if (Files.isDirectory(p))
+									settings.patchSources.add(p);
+							});
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}
 				skip++;
 			}
 
 			else if ("--patch-sources".equals(arg)) {
+				if (!ret.multi) {
+					System.out.println("patch-sources: Multi-mode must be enabled to use this.");
+					continue;
+				}
+
 				final Path path = checkPath("patch-sources", args, i + 1, true);
 				if (path != null) {
 					final Settings settings = ret;
@@ -126,7 +216,7 @@ public class Patched {
 			}
 
 			else if ("--extended".equals(arg))
-				ret = new Settings(ret.src, ret.output, ret.patchSources, PatchContext.newContext().sbExtensions(true).patchedExtensions(true));
+				ret = new Settings(ret.src, ret.output, ret.patchSources, ret.multi, PatchContext.newContext().sbExtensions(true).patchedExtensions(true));
 
 			else
 				System.out.println("Unrecognized argument: " + arg);
@@ -137,18 +227,18 @@ public class Patched {
 
 	private static Path checkPath(String arg, String[] args, int index, boolean requireExists) {
 		if (index >= args.length)
-			System.out.println(arg + ": missing file path");
+			System.out.println(arg + ": Missing file path.");
 		else {
 			final Path path = Paths.get(args[index]);
 			if (requireExists && !Files.exists(path))
-				System.out.println(arg + ": " + path + " doesn't exist");
+				System.out.println(arg + ": \"" + path + "\" doesn't exist.");
 			else return path;
 		}
 
 		return null;
 	}
 
-	private static record Settings(Path src, Path output, List<Path> patchSources, PatchContext context) {
+	private static record Settings(Path src, Path output, List<Path> patchSources, boolean multi, PatchContext context) {
 		
 	}
 }
