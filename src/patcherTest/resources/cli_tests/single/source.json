@@ -1,0 +1,9 @@
+{
+  "enabled": true,
+  "changes": {
+    "blobMode": false,
+    "hours": 3,
+    "xpReward": 2.1,
+    "type": "QuestionableDataManager"
+  }
+}

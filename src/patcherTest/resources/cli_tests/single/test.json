@@ -1,0 +1,30 @@
+{
+  "args": [
+    "--extended",
+    "--source", "build/cli_test/single/source.json",
+    "--patch", "build/cli_test/single/source.json.patch",
+    "--output", "build/cli_test/single/output.json"
+  ],
+  "steps": [
+    {
+      "type": "delete",
+      "target": "build/cli_test/single"
+    },
+    {
+      "type": "create",
+      "target": "build/cli_test/single"
+    },
+    {
+      "type": "copy",
+      "source": "$single/source.json",
+      "target": "build/cli_test/single/source.json"
+    },
+    {
+      "type": "copy",
+      "source": "$single/source.json.patch",
+      "target": "build/cli_test/single/source.json.patch"
+    }
+  ],
+  "output": "build/cli_test/single/output.json",
+  "expected": "$single/expected.json"
+}

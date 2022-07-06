@@ -1,0 +1,27 @@
+Usage: java -jar Patched-cli.jar <args>
+Ex: java -jar Patched-cli.jar --source myFile.json --patch myFile.json.patch --output myFile-patched.json
+Ex 2: java -jar Patched-cli.jar --multi --source "My Files" --patches Patches --output "Patched Files"
+Accepted Arguments:
+--help
+        Display this text and exit.
+--multi
+        Enable multi-source mode.
+        This mode lets you patch
+        multiple files at once.
+--source <location>
+        Set the source file, or
+        if --multi is set, the
+        source directory tree.
+--output <location>
+        Set the output location.
+--patch <patch>
+        Add a single patch.
+        Only valid if --multi is not set.
+--patches <patches>
+        Add a patch directory.
+--patch-sources <patch sources>
+        Add a directory containing
+        patch directories.
+        Only valid if --multi is set.
+--extended
+        Enable all patch extensions.

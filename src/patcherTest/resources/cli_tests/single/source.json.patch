@@ -1,0 +1,26 @@
+[
+  {
+    "op": "replace",
+    "path": "/enabled",
+    "value": false
+  },
+  {
+    "op": "remove",
+    "path": "/changes/blobMode"
+  },
+  {
+    "op": "replace",
+    "path": "/changes/type",
+    "value": "ExtendedQuestionableDataManager"
+  },
+  {
+    "op": "add",
+    "path": "/changes/videos",
+    "value": true
+  },
+  {
+    "op": "add",
+    "path": "/extended",
+    "value": true
+  }
+]

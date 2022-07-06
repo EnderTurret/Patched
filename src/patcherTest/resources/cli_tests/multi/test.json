@@ -1,0 +1,31 @@
+{
+  "args": [
+    "--multi",
+    "--extended",
+    "--source", "build/cli_test/multi/source",
+    "--patch-sources", "build/cli_test/multi/patches",
+    "--output", "build/cli_test/multi/output"
+  ],
+  "steps": [
+    {
+      "type": "delete",
+      "target": "build/cli_test/multi"
+    },
+    {
+      "type": "create",
+      "target": "build/cli_test/multi"
+    },
+    {
+      "type": "copy",
+      "source": "$multi/source",
+      "target": "build/cli_test/multi/source"
+    },
+    {
+      "type": "copy",
+      "source": "$multi/patches",
+      "target": "build/cli_test/multi/patches"
+    }
+  ],
+  "output": "build/cli_test/multi/output",
+  "expected": "$multi/expected"
+}

@@ -35,14 +35,14 @@ public final class PatcherTest {
 			final Path expected = patcherTest.resolve("expected");
 
 			if (Files.exists(patcherTest))
-				deleteHierarchy(patcherTest);
+				PatcherTestUtil.deleteHierarchy(patcherTest);
 
 			Files.createDirectories(patcherTest);
 
 			final URL url = PatcherTest.class.getResource("/patcher_test");
 			final Path inputFiles = Paths.get(url.toURI());
 
-			copyHierarchy(inputFiles, patcherTest);
+			PatcherTestUtil.copyHierarchy(inputFiles, patcherTest);
 
 			final Patcher<Path> patcher = new Patcher<>(new PathPathHandler(Throwable::printStackTrace), new PathDumper(output), Patches.patchGson(true, true).setPrettyPrinting().create());
 
@@ -62,7 +62,7 @@ public final class PatcherTest {
 				});
 			}
 
-			hierarchyEquals(expected, output);
+			PatcherTestUtil.hierarchyEquals(expected, output);
 
 			try {
 				patcher.read(Paths.get("memes/pixel.png"));
@@ -77,88 +77,6 @@ public final class PatcherTest {
 			}
 		} catch (IOException | URISyntaxException e) {
 			e.printStackTrace();
-		}
-	}
-
-	private static void copyHierarchy(Path src, Path dest) throws IOException {
-		final Path absSrc = src.toAbsolutePath();
-		Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
-			@Override
-			public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-				dir = absSrc.relativize(dir.toAbsolutePath()); // I don't trust it.
-				Files.createDirectories(dest.resolve(dir));
-				return super.preVisitDirectory(dir, attrs);
-			}
-			@Override
-			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-				final Path orig = file;
-				file = absSrc.relativize(file.toAbsolutePath()); // I don't trust it.
-				Files.copy(orig, dest.resolve(file), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
-				return super.preVisitDirectory(file, attrs);
-			}
-		});
-	}
-
-	static void deleteHierarchy(Path src) throws IOException {
-		Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
-			@Override
-			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-				Files.delete(dir);
-				return super.postVisitDirectory(dir, exc);
-			}
-			@Override
-			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-				Files.delete(file);
-				return super.preVisitDirectory(file, attrs);
-			}
-		});
-	}
-
-	static boolean hierarchyEquals(Path dir1, Path dir2) throws IOException {
-		final Path absSrc = dir1.toAbsolutePath();
-
-		// It's what lambdas crave -- mutable final variables.
-		final AtomicBoolean ret = new AtomicBoolean(true);
-
-		Files.walkFileTree(dir1, new SimpleFileVisitor<Path>() {
-			@Override
-			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-				final Path orig = file;
-				file = absSrc.relativize(file.toAbsolutePath()); // I don't trust it.
-
-				if (!equal(orig, dir2.resolve(file))) {
-					System.out.println("File failed equality check: " + file);
-					ret.set(false);
-				}
-
-				return super.preVisitDirectory(file, attrs);
-			}
-		});
-
-		return ret.get();
-	}
-
-	private static boolean equal(Path path1, Path path2) {
-		try {
-			if (Files.size(path1) != Files.size(path2)) return false;
-
-			try (BufferedInputStream bis1 = new BufferedInputStream(Files.newInputStream(path1));
-					BufferedInputStream bis2 = new BufferedInputStream(Files.newInputStream(path2))) {
-				final byte[] buf1 = new byte[1024];
-				final byte[] buf2 = new byte[1024];
-
-				int read = 0;
-
-				while ((read = bis1.read(buf1)) != -1) {
-					if (bis2.read(buf2) != read) return false;
-					for (int i = 0; i < read; i++)
-						if (buf1[i] != buf2[i]) return false;
-				}
-			}
-
-			return true;
-		} catch (IOException e) {
-			return false;
 		}
 	}
 }
