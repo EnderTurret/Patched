@@ -57,7 +57,25 @@ public class Patched {
 		}
 	}
 
+	private static final String HELP_TEXT = "Usage: java -jar Patched-cli.jar <args>"
+			+ "\nAccepted Arguments:"
+			+ "\n--src"
+			+ "\n        Set the source directory."
+			+ "\n--out"
+			+ "\n        Set the output directory."
+			+ "\n--patches"
+			+ "\n        Add a patch source directory"
+			+ "\n--patch-sources"
+			+ "\n        Add a directory of patch sources."
+			+ "\n--extended"
+			+ "\n        Enable all patch extensions.";
+
 	private static Settings readArgs(String[] args) {
+		if (args.length == 0) {
+			System.out.println(HELP_TEXT);
+			return null;
+		}
+
 		Settings ret = new Settings(null, null, new ArrayList<>(0), PatchContext.newContext());
 		int skip = 0;
 
@@ -70,18 +88,7 @@ public class Patched {
 			final String arg = args[i];
 
 			if ("--help".equals(arg)) {
-				System.out.println("Usage: java -jar Patched-cli.jar <args>");
-				System.out.println("Accepted Arguments:");
-				System.out.println("--src"
-						+ "\n        Set the source directory."
-						+ "\n--out"
-						+ "\n        Set the output directory."
-						+ "\n--patches"
-						+ "\n        Add a patch source directory"
-						+ "\n--patch-sources"
-						+ "\n        Add a directory of patch sources."
-						+ "\n--extended"
-						+ "\n        Enable all patch extensions.");
+				System.out.println(HELP_TEXT);
 				return null;
 			}
 
