@@ -233,19 +233,23 @@ public abstract class JsonPatch {
 			if (enforceOp && !defaultOp.equals(op))
 				throw new PatchingException("Unexpected operation \"" + op + "\": only " + defaultOp + " is allowed here.");
 
-			final String path = getString(obj, "path");
-
 			return switch (op) {
-			case "test" -> new TestPatch(path, sbExtensions ? obj.get("value") : get(obj, "value"), sbExtensions && obj.has("inverse") && obj.get("inverse").getAsBoolean());
-			case "add" -> new AddPatch(path, get(obj, "value"));
-			case "remove" -> new RemovePatch(path);
-			case "copy" -> new CopyPatch(path, getString(obj, "from"));
-			case "move" -> new MovePatch(path, getString(obj, "from"));
-			case "replace" -> new ReplacePatch(path, get(obj, "value"));
+			case "test" -> {
+				final String type = patchedExtensions && obj.has("type") ? obj.get("type").getAsString() : null;
+				final String path = type != null && !obj.has("path") ? null : getString(obj, "path");
+				final JsonElement value = sbExtensions || type != null ? obj.get("value") : get(obj, "value");
+				final boolean inverse = sbExtensions && obj.has("inverse") && obj.get("inverse").getAsBoolean();
+				yield new TestPatch(type, path, value, inverse);
+			}
+			case "add" -> new AddPatch(getString(obj, "path"), get(obj, "value"));
+			case "remove" -> new RemovePatch(getString(obj, "path"));
+			case "copy" -> new CopyPatch(getString(obj, "path"), getString(obj, "from"));
+			case "move" -> new MovePatch(getString(obj, "path"), getString(obj, "from"));
+			case "replace" -> new ReplacePatch(getString(obj, "path"), get(obj, "value"));
 			case "find" -> {
 				if (!patchedExtensions)
 					throw new PatchingException("Unsupported operation 'find': Patched extensions are not enabled.");
-				yield new FindPatch(path,
+				yield new FindPatch(getString(obj, "path"),
 					obj.get("test").isJsonArray() ?
 							ENFORCING_GSON.fromJson(obj.get("test"), TESTPATCH_LIST)
 							: List.of(ENFORCING_GSON.fromJson(obj.get("test"), TestPatch.class)),

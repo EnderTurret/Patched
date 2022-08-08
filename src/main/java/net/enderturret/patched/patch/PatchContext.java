@@ -1,13 +1,16 @@
 package net.enderturret.patched.patch;
 
+import net.enderturret.patched.ITestEvaluator;
+
 /**
  * Passed to patches to customize their behavior.
  * @param sbExtensions Whether extensions from the game Starbound should be enabled. These extensions add an "inverse" mode to the test operation and also allow it to test for the existence of values.
  * @param patchedExtensions Whether extensions from this library should be enabled. This enables the "find" operation, which is a sort of fuzzy search operation for arrays or objects.
  * @param throwOnFailedTest Whether the test operation should throw an exception if it fails.
+ * @param testEvaluator An evaluator for custom tests in the {@code test} operation. May be {@code null}.
  * @author EnderTurret
  */
-public record PatchContext(boolean sbExtensions, boolean patchedExtensions, boolean throwOnFailedTest) {
+public record PatchContext(boolean sbExtensions, boolean patchedExtensions, boolean throwOnFailedTest, ITestEvaluator testEvaluator) {
 
 	/**
 	 * @deprecated Use {@link #newContext()} where possible to avoid new fields causing binary and source compatibility breaks.
@@ -22,7 +25,7 @@ public record PatchContext(boolean sbExtensions, boolean patchedExtensions, bool
 	 * @return A new {@link PatchContext} with default values for all fields.
 	 */
 	public static PatchContext newContext() {
-		return new PatchContext(false, false, false);
+		return new PatchContext(false, false, false, null);
 	}
 
 	/**
@@ -31,7 +34,7 @@ public record PatchContext(boolean sbExtensions, boolean patchedExtensions, bool
 	 * @return The new {@link PatchContext}.
 	 */
 	public PatchContext sbExtensions(boolean value) {
-		return new PatchContext(value, patchedExtensions, throwOnFailedTest);
+		return new PatchContext(value, patchedExtensions, throwOnFailedTest, testEvaluator);
 	}
 
 	/**
@@ -40,7 +43,7 @@ public record PatchContext(boolean sbExtensions, boolean patchedExtensions, bool
 	 * @return The new {@link PatchContext}.
 	 */
 	public PatchContext patchedExtensions(boolean value) {
-		return new PatchContext(sbExtensions, value, throwOnFailedTest);
+		return new PatchContext(sbExtensions, value, throwOnFailedTest, testEvaluator);
 	}
 
 	/**
@@ -49,6 +52,15 @@ public record PatchContext(boolean sbExtensions, boolean patchedExtensions, bool
 	 * @return The new {@link PatchContext}.
 	 */
 	public PatchContext throwOnFailedTest(boolean value) {
-		return new PatchContext(sbExtensions, patchedExtensions, value);
+		return new PatchContext(sbExtensions, patchedExtensions, value, testEvaluator);
+	}
+
+	/**
+	 * Returns a new {@link PatchContext} based on this one but with {@link #testEvaluator} set to the given value.
+	 * @param value An evaluator for custom tests in the {@code test} operation. May be {@code null}.
+	 * @return The new {@link PatchContext}.
+	 */
+	public PatchContext testEvaluator(ITestEvaluator value) {
+		return new PatchContext(sbExtensions, patchedExtensions, throwOnFailedTest, value);
 	}
 }

@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.enderturret.patched.ElementContext;
+import net.enderturret.patched.ITestEvaluator;
 
 /**
  * Various utilities used in the patching backend.
@@ -82,13 +83,24 @@ public class PatchUtil {
 	}
 
 	/**
+	 * @param type A custom type for {@link ITestEvaluator}.
+	 * @param path The path to the element to test. May be {@code null}.
+	 * @param test The test element. May be {@code null}.
+	 * @param inverse Whether the check is inverted, i.e checking to see if something doesn't exist.
+	 * @return A new {@link TestPatch}.
+	 */
+	public static TestPatch test(String type, String path, JsonElement test, boolean inverse) {
+		return new TestPatch(type, path, test, inverse);
+	}
+
+	/**
 	 * @param path The path to the element to test.
 	 * @param test The test element. May be {@code null}.
 	 * @param inverse Whether the check is inverted, i.e checking to see if something doesn't exist.
 	 * @return A new {@link TestPatch}.
 	 */
 	public static TestPatch test(String path, JsonElement test, boolean inverse) {
-		return new TestPatch(path, test, inverse);
+		return new TestPatch(null, path, test, inverse);
 	}
 
 	/**

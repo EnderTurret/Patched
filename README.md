@@ -6,8 +6,8 @@ It handles everything the [original RFC](https://datatracker.ietf.org/doc/html/r
 the [Starbound extensions](https://community.playstarbound.com/threads/april-21st-%E2%80%93-stable-update-notes.95106/page-5#post-2561028) to it,
 and even introduces [its own extensions](#the-find-operation). These extensions are by default disabled.
 
-Specifically, the Starbound extensions add [existence tests](#existence-tests) and the ability to [invert tests](#inverse-testing),
-and the other extension adds a new ["find" operation](#the-find-operation).
+Specifically, the Starbound extensions add [existence tests](#existence-tests) and the ability to [invert tests](#inverse-tests),
+and the other extension adds [custom test conditions](#custom-tests) and a new ["find" operation](#the-find-operation).
 
 ## Limitations and Differences
 
@@ -61,7 +61,7 @@ results in:
 }
 ```
 
-### Inverse testing
+### Inverse tests
 
 Another extension is an `inverse` field to the `test` operation.
 This lets you negate the operation; instead of testing if something is equal to something, you are testing if something is *not* equal to something.
@@ -101,7 +101,32 @@ results in:
 }
 ```
 
-This might not seem very useful as is, but when combined with existence tests, it can be very useful.
+This might not seem very useful as is, but when combined with existence tests, it can be very helpful.
+
+### Custom tests
+
+Sometimes, you'll find that you want the `test` operation to support testing against other things.
+
+The best example for this is in [the mod](https://github.com/EnderTurret/PatchedMod) where you might want a patch to apply only when a certain mod is loaded.
+This might be achieved like so:
+
+```json
+[
+  {
+    "op": "test",
+    "type": "patched:mod_loaded", // a custom condition that checks if a mod is loaded
+    "value": "patched" // the mod in question
+  },
+  { // this is only applied when the mod "patched" is loaded
+    "op": "add",
+    "path": "/added",
+    "value": "Patched is loaded"
+  }
+]
+```
+
+When the `type` field is specified, the `path` field may be omitted (same with `value`).
+It is up to the `ITestEvaluator` to decide if this is legal for the condition used.
 
 ### The "find" operation
 

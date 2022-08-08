@@ -51,6 +51,8 @@ public final class PatchingTests {
 		test("test/presence/success");
 		test("test/presence/fail");
 
+		test("test/custom");
+
 		test("test/equal/string/success");
 		test("test/equal/string/fail");
 		test("test/equal/number/success");
@@ -158,7 +160,8 @@ public final class PatchingTests {
 				final JsonObject o = obj.get("runtime").getAsJsonObject();
 				runtime = PatchContext.newContext()
 						.sbExtensions(!o.has("sbExtensions") || o.get("sbExtensions").getAsBoolean())
-						.patchedExtensions(!o.has("patchedExtensions") || o.get("patchedExtensions").getAsBoolean());
+						.patchedExtensions(!o.has("patchedExtensions") || o.get("patchedExtensions").getAsBoolean())
+						.testEvaluator(o.has("customTests") ? new SimpleTestEvaluator(o.get("customTests")) : null);
 			} else runtime = PatchContext.newContext().sbExtensions(true).patchedExtensions(true);
 
 			return new PatchContext[] { input, runtime };
