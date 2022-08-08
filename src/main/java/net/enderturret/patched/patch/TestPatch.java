@@ -67,21 +67,20 @@ public class TestPatch extends JsonPatch {
 	}
 
 	private boolean _test(JsonElement root, ElementContext ctx, boolean inverse, PatchContext context) {
-		if (ctx != null)
-			if (_test(root, ctx.elem(), context))
-				return !inverse;
+		if (_test(root, ctx == null ? null : ctx.elem(), context, ctx))
+			return !inverse;
 
 		return inverse;
 	}
 
-	private boolean _test(JsonElement root, JsonElement target, PatchContext context) {
+	private boolean _test(JsonElement root, JsonElement target, PatchContext context, ElementContext elemContext) {
 		if (type != null) {
 			if (context.testEvaluator() == null)
 				throw new PatchingException("Cannot handle custom test type '" + type + "' as no evaluator is installed!");
 			return context.testEvaluator().test(root, type, target, test, context);
 		}
 
-		return test == null || test.equals(target);
+		return elemContext != null && (test == null || test.equals(target));
 	}
 
 	@Override

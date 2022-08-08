@@ -51,7 +51,8 @@ public final class PatchingTests {
 		test("test/presence/success");
 		test("test/presence/fail");
 
-		test("test/custom");
+		test("test/custom/basic");
+		test("test/custom/no_path");
 
 		test("test/equal/string/success");
 		test("test/equal/string/fail");

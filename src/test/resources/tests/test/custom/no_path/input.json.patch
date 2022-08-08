@@ -1,0 +1,12 @@
+[
+  {
+    "op": "test",
+    "type": "custom",
+    "value": 8
+  },
+  {
+    "op": "add",
+    "path": "/obj/added",
+    "value": 1
+  }
+]
