@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'net.enderturret'
-version = '1.0.3'
+version = '1.1.0'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 

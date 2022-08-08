@@ -262,7 +262,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.EnderTurret:Patched:1.0.3'
+    implementation 'com.github.EnderTurret:Patched:1.1.0'
 }
 ```
 
