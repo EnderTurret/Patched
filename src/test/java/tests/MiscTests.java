@@ -20,6 +20,7 @@ public final class MiscTests {
 		exceptions();
 		patchBuilding();
 		testCompoundSelector();
+		testPatchSerializer();
 	}
 
 	private static void patchBuilding() {
@@ -57,6 +58,15 @@ public final class MiscTests {
 		new TraversalException();
 		new TraversalException(e);
 		new TraversalException("this is also a message", e);
+	}
+
+	private static void testPatchSerializer() {
+		new JsonPatch.Serializer();
+
+		try {
+			new JsonPatch.Serializer(null, true, false, false);
+			System.out.println("Null-enforcing op test failed: no exception occured.");
+		} catch (IllegalArgumentException ignored) {}
 	}
 
 	// Maybe one day I will convert all this to JUnit like a modern Java developer.
