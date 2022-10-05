@@ -1,0 +1,50 @@
+[
+  {
+    "op": "add",
+    "path": "/add",
+    "value": true
+  },
+  {
+    "op": "copy",
+    "path": "/copied",
+    "from": "/from"
+  },
+  {
+    "op": "move",
+    "path": "/moved",
+    "from": "/from"
+  },
+  {
+    "op": "remove",
+    "path": "/remove"
+  },
+  {
+    "op": "replace",
+    "path": "/replace",
+    "value": 3
+  },
+  [
+    {
+      "op": "test",
+      "path": "/test",
+      "value": false,
+      "inverse": true
+    },
+    {
+      "op": "test",
+      "type": "custom",
+      "path": "/test",
+      "value": "is this really a primitive? the answer may surprise you"
+    }
+  ],
+  {
+    "op": "find",
+    "path": "/find",
+    "multi": true,
+    "test": [],
+    "then": {
+      "op": "remove",
+      "path": ""
+    }
+  }
+]

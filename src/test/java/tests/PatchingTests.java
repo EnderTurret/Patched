@@ -35,7 +35,7 @@ public final class PatchingTests {
 
 	private static final Map<PatchContext, Gson> GSONS = new HashMap<>(4);
 
-	private static final Gson GSON = Patches.patchGson(true, true).disableHtmlEscaping().setPrettyPrinting().create();
+	static final Gson GSON = Patches.patchGson(true, true).disableHtmlEscaping().setPrettyPrinting().create();
 
 	static {
 		GSONS.put(PatchContext.newContext().sbExtensions(true).patchedExtensions(true), GSON);
@@ -155,6 +155,8 @@ public final class PatchingTests {
 		System.out.printf("%d / %d tests passed.\n", passed, testCount);
 
 		JsonPatchTests.main();
+
+		MiscTests.main();
 	}
 
 	private static PatchContext[] readConfig(String root) {
