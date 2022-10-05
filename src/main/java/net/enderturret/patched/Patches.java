@@ -17,7 +17,9 @@ import net.enderturret.patched.patch.PatchContext;
  * Various utilities for reading and writing patches.
  * @author EnderTurret
  */
-public class Patches {
+public final class Patches {
+
+	private Patches() {}
 
 	/**
 	 * Creates a {@link GsonBuilder} configured to serialize and deserialize patches with the given extensions enabled or disabled.

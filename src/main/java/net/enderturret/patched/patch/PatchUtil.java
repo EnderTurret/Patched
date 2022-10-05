@@ -13,7 +13,9 @@ import net.enderturret.patched.ITestEvaluator;
  * Various utilities used in the patching backend.
  * @author EnderTurret
  */
-public class PatchUtil {
+public final class PatchUtil {
+
+	private PatchUtil() {}
 
 	/**
 	 * <p>Adds the given value to the specified array at the given index.</p>
