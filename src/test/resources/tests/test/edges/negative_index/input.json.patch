@@ -1,0 +1,11 @@
+[
+  {
+    "op": "test",
+    "path": "/array/-1"
+  },
+  {
+    "op": "add",
+    "path": "/array/-",
+    "value": 10
+  }
+]

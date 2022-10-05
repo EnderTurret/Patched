@@ -113,8 +113,6 @@ public final class PatchAudit {
 		while (!queue.isEmpty()) {
 			final Element elem = queue.remove(0);
 
-			//System.out.println("Process " + elem);
-
 			if (elem.elem() == null) {
 				depth--;
 				lastIndent = "  ".repeat(depth);

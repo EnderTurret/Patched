@@ -1,0 +1,11 @@
+[
+  {
+    "op": "test",
+    "path": "/obj/number/foo"
+  },
+  {
+    "op": "add",
+    "path": "/obj/added",
+    "value": 10
+  }
+]

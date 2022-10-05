@@ -47,6 +47,7 @@ public final class PatchingTests {
 		test("add/to_array_oob");
 		test("add/to_object");
 		test("add/to_object_dash");
+		test("add/to_object_number");
 		test("add/to_object_overwrite");
 
 		test("test/presence/success");
@@ -76,9 +77,18 @@ public final class PatchingTests {
 		test("test/inverse/equal/object/success");
 		test("test/inverse/equal/object/fail");
 
+		test("test/edges/negative_index");
+		test("test/edges/no_child_in_array");
+		test("test/edges/no_numeric_child_in_object");
+		test("test/edges/no_numeric_subchild");
+		test("test/edges/no_subchild");
+		test("test/edges/traverse_number");
+		test("test/edges/traverse_number_numeric");
+
 		test("replace/in_array");
 		test("replace/in_object");
 		test("replace/in_object_dash");
+		test("replace/in_object_number");
 
 		test("remove/in_array");
 		test("remove/in_object");
@@ -116,6 +126,7 @@ public final class PatchingTests {
 
 		testThrows("error/replace/in_array_oob", TraversalException.class, "/array/23: No such child 23!");
 		testThrows("error/replace/nonexistent", TraversalException.class, "/obj/foo: No such child foo!");
+		testThrows("error/replace/nonexistent_number_in_object", TraversalException.class, "/obj/3: No such child 3!");
 		testThrows("error/replace/end_of_array", TraversalException.class, "/array/-: Expected object to find '-' in, found [1,2]!");
 		testThrows("error/remove/in_array_oob", TraversalException.class, "/array/23: No such child 23!");
 		testThrows("error/remove/nonexistent", TraversalException.class, "/obj/foo: No such child foo!");
@@ -132,6 +143,7 @@ public final class PatchingTests {
 
 		testThrows("error/find/other_op_in_test", PatchingException.class, "Unexpected operation \"add\": only test is allowed here.");
 
+		testThrows("error/selectors/negative_array_index", TraversalException.class, "/array/-3: Attempted to traverse negative index in array (-3)!");
 		testThrows("error/selectors/unexpected_array", TraversalException.class, "/array/test: Expected object to find 'test' in, found [1,2,3]!");
 		testThrows("error/selectors/unexpected_primitive", TraversalException.class, "/array/1/2: Expected array or object to find '2' in, found 2!");
 

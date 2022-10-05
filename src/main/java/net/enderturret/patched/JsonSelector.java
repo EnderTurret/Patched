@@ -242,6 +242,9 @@ public interface JsonSelector {
 	public static record NameSelector(String name) implements JsonSelector {
 		@Override
 		public ElementContext select(ElementContext context, boolean throwOnError, PatchUtil.Operation op) throws TraversalException {
+			if (context == null)
+				return error(throwOnError, "Attempted to traverse null context!");
+
 			if ("-".equals(name) && context.elem() instanceof JsonArray arr && op.allowsEndOfArrayRef())
 				return op.apply(arr, arr.size());
 
@@ -269,6 +272,9 @@ public interface JsonSelector {
 	public static record NumericSelector(int index, String strIndex) implements JsonSelector {
 		@Override
 		public ElementContext select(ElementContext context, boolean throwOnError, PatchUtil.Operation op) throws TraversalException {
+			if (context == null)
+				return error(throwOnError, "Attempted to traverse null context!");
+
 			if (context.elem() instanceof JsonArray arr) {
 				if (index < 0)
 					return error(throwOnError, "Attempted to traverse negative index in array (" + index + ")!");
