@@ -1,0 +1,11 @@
+[
+  {
+    "op": "test",
+    "type": "custom",
+    "path": "/array"
+  },
+  {
+    "op": "remove",
+    "path": "/array/0"
+  }
+]

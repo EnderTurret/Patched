@@ -147,7 +147,10 @@ public final class PatchingTests {
 		testThrows("error/selectors/unexpected_array", TraversalException.class, "/array/test: Expected object to find 'test' in, found [1,2,3]!");
 		testThrows("error/selectors/unexpected_primitive", TraversalException.class, "/array/1/2: Expected array or object to find '2' in, found 2!");
 
+		testThrows("error/misc/no_op", PatchingException.class, "Missing operation!");
 		testThrows("error/misc/invalid_op", PatchingException.class, "Unknown operation 'discombobulate'");
+
+		testThrows("error/test/no_custom_evaluator", PatchingException.class, "Cannot handle custom test type 'custom' as no evaluator is installed!");
 
 		System.out.printf("%d / %d tests passed.\n", passed, testCount);
 

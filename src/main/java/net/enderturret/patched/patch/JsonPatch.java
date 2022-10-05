@@ -225,7 +225,10 @@ public abstract class JsonPatch {
 
 			final JsonObject obj = json.getAsJsonObject();
 
-			final String op = obj.has("op") || defaultOp == null ? obj.get("op").getAsString() : defaultOp;
+			String op = !obj.has("op") ? null : obj.get("op").getAsString();
+
+			if (op == null && defaultOp != null)
+				op = defaultOp;
 
 			if (op == null)
 				throw new PatchingException("Missing operation!");
