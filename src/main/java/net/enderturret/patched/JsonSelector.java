@@ -380,7 +380,6 @@ public interface JsonSelector {
 		@Override
 		public String toString() {
 			if (path.length == 0) return "";
-			if (path[0] instanceof EmptySelector) return "";
 			return toString(0, path.length);
 		}
 	}
