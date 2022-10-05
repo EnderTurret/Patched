@@ -3,14 +3,19 @@ package tests;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
+import net.enderturret.patched.ElementContext;
 import net.enderturret.patched.JsonSelector;
 import net.enderturret.patched.JsonSelector.CompoundSelector;
+import net.enderturret.patched.audit.PatchAudit;
 import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.exception.TraversalException;
 import net.enderturret.patched.patch.JsonPatch;
+import net.enderturret.patched.patch.PatchContext;
 import net.enderturret.patched.patch.PatchUtil;
+import net.enderturret.patched.patch.TestPatch;
 
 import tests.util.TestUtil;
 
@@ -21,6 +26,8 @@ public final class MiscTests {
 		patchBuilding();
 		testCompoundSelector();
 		testPatchSerializer();
+		testBadPatch();
+		testAuditMethods();
 	}
 
 	private static void patchBuilding() {
@@ -67,6 +74,47 @@ public final class MiscTests {
 			new JsonPatch.Serializer(null, true, false, false);
 			System.out.println("Null-enforcing op test failed: no exception occured.");
 		} catch (IllegalArgumentException ignored) {}
+	}
+
+	private static void testBadPatch() {
+		final JsonPatch bad = new JsonPatch(null) {
+			@Override
+			protected String operation() {
+				return "bad";
+			}
+			@Override
+			protected void patchJson(ElementContext elem, PatchContext context) throws PatchingException, TraversalException {}
+		};
+
+		try {
+			bad.patch(new JsonObject(), PatchContext.newContext());
+			System.out.println("Bad patch implementation test failed: no exception occured.");
+		} catch (UnsupportedOperationException ignored) {}
+
+		try {
+			new TestPatch(null, null, null, false) {};
+			System.out.println("Ambiguous test patch construction test failed: no exception occured.");
+		} catch (IllegalArgumentException ignored) {}
+	}
+
+	private static void testAuditMethods() {
+		PatchAudit audit = new PatchAudit("what");
+		audit.setPatchPath("something else");
+
+		if (audit.hasRecords())
+			System.out.println("hasRecords() test one failed: audit should not have records yet.");
+
+		audit.recordReplace("/fake", "2");
+
+		if (!audit.hasRecords())
+			System.out.println("hasRecords() test two failed: audit should have one record.");
+
+		audit = new PatchAudit("what");
+
+		audit.recordRemove("/fake", "2", new JsonPrimitive(true));
+
+		if (!audit.hasRecords())
+			System.out.println("hasRecords() test three failed: audit should have one removal record.");
 	}
 
 	// Maybe one day I will convert all this to JUnit like a modern Java developer.
