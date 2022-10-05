@@ -28,7 +28,8 @@ public final class RemovePatch extends JsonPatch {
 	@Override
 	protected void patchJson(ElementContext elem, PatchContext context) {
 		try {
-			last.remove(elem, true);
+			final ElementContext after = last.remove(elem, true);
+			if (context.audit() != null) context.audit().recordRemove(path.toString(), last.toString(), after.elem());
 		} catch (TraversalException e) {
 			throw e.withPath(path + "/" + last);
 		}

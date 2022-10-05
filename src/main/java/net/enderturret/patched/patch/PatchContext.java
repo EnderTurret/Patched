@@ -1,6 +1,7 @@
 package net.enderturret.patched.patch;
 
 import net.enderturret.patched.ITestEvaluator;
+import net.enderturret.patched.audit.PatchAudit;
 
 /**
  * Passed to patches to customize their behavior.
@@ -10,7 +11,7 @@ import net.enderturret.patched.ITestEvaluator;
  * @param testEvaluator An evaluator for custom tests in the {@code test} operation. May be {@code null}.
  * @author EnderTurret
  */
-public record PatchContext(boolean sbExtensions, boolean patchedExtensions, boolean throwOnFailedTest, ITestEvaluator testEvaluator) {
+public record PatchContext(boolean sbExtensions, boolean patchedExtensions, boolean throwOnFailedTest, ITestEvaluator testEvaluator, PatchAudit audit) {
 
 	/**
 	 * @deprecated Use {@link #newContext()} where possible to avoid new fields causing binary and source compatibility breaks.
@@ -25,7 +26,7 @@ public record PatchContext(boolean sbExtensions, boolean patchedExtensions, bool
 	 * @return A new {@link PatchContext} with default values for all fields.
 	 */
 	public static PatchContext newContext() {
-		return new PatchContext(false, false, false, null);
+		return new PatchContext(false, false, false, null, null);
 	}
 
 	/**
@@ -34,7 +35,7 @@ public record PatchContext(boolean sbExtensions, boolean patchedExtensions, bool
 	 * @return The new {@link PatchContext}.
 	 */
 	public PatchContext sbExtensions(boolean value) {
-		return new PatchContext(value, patchedExtensions, throwOnFailedTest, testEvaluator);
+		return new PatchContext(value, patchedExtensions, throwOnFailedTest, testEvaluator, audit);
 	}
 
 	/**
@@ -43,7 +44,7 @@ public record PatchContext(boolean sbExtensions, boolean patchedExtensions, bool
 	 * @return The new {@link PatchContext}.
 	 */
 	public PatchContext patchedExtensions(boolean value) {
-		return new PatchContext(sbExtensions, value, throwOnFailedTest, testEvaluator);
+		return new PatchContext(sbExtensions, value, throwOnFailedTest, testEvaluator, audit);
 	}
 
 	/**
@@ -52,7 +53,7 @@ public record PatchContext(boolean sbExtensions, boolean patchedExtensions, bool
 	 * @return The new {@link PatchContext}.
 	 */
 	public PatchContext throwOnFailedTest(boolean value) {
-		return new PatchContext(sbExtensions, patchedExtensions, value, testEvaluator);
+		return new PatchContext(sbExtensions, patchedExtensions, value, testEvaluator, audit);
 	}
 
 	/**
@@ -61,6 +62,15 @@ public record PatchContext(boolean sbExtensions, boolean patchedExtensions, bool
 	 * @return The new {@link PatchContext}.
 	 */
 	public PatchContext testEvaluator(ITestEvaluator value) {
-		return new PatchContext(sbExtensions, patchedExtensions, throwOnFailedTest, value);
+		return new PatchContext(sbExtensions, patchedExtensions, throwOnFailedTest, value, audit);
+	}
+
+	/**
+	 * Returns a new {@link PatchContext} based on this one but with {@link #audit} set to the given value.
+	 * @param value An audit to record changes made by patches. May be {@code null}.
+	 * @return The new {@link PatchContext}.
+	 */
+	public PatchContext audit(PatchAudit value) {
+		return new PatchContext(sbExtensions, patchedExtensions, throwOnFailedTest, testEvaluator, value);
 	}
 }

@@ -1,0 +1,7 @@
+{
+  "object": {
+//  "b": 2 // removed by find/remove_value
+    "a": 1,
+    "c": 3
+  }
+}

@@ -16,6 +16,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
 import net.enderturret.patched.Patches;
+import net.enderturret.patched.audit.PatchAudit;
 import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.exception.TraversalException;
 import net.enderturret.patched.patch.JsonPatch;
@@ -177,6 +178,15 @@ public final class PatchingTests {
 		final String root = "/tests/" + name;
 		final String input = TestUtil.read(root + "/input.json");
 		final String patchSrc = TestUtil.read(root + "/input.json.patch");
+		String expectedAudit;
+		try {
+			expectedAudit = TestUtil.read(root + "/audit.json");
+			//if (!expectedAudit.contains("//"))
+			//System.err.println("Note: " + name + "'s audit has no notes.");
+		} catch (Exception e) {
+			//System.err.println("Note: " + name + " is missing an audit.json.");
+			expectedAudit = null;
+		}
 
 		final JsonElement inputElem;
 
@@ -213,7 +223,7 @@ public final class PatchingTests {
 			}
 		}
 
-		return new Test(root, inputElem, patch, contexts[1]);
+		return new Test(root, inputElem, patch, expectedAudit, contexts[1]);
 	}
 
 	private static void testThrows(String name, Class<? extends Exception> clazz, String message, boolean doOutputTest) {
@@ -249,7 +259,22 @@ public final class PatchingTests {
 			String expected = TestUtil.read(input.path() + "/result.json");
 			final JsonElement expectedElem = JsonParser.parseString(expected);
 
-			input.patch().patch(input.input(), input.context());
+			// -----
+
+			final String auditBaseTest = new PatchAudit(name).toString(expectedElem);
+
+			if (!auditBaseTest.equals(expected)) {
+				System.out.println("Test " + name + " unchanged audit failed!\n");
+				System.out.println(expected);
+				System.out.println("\n(expected) vs (output)\n");
+				System.out.println(auditBaseTest);
+			}
+
+			// -----
+
+			final PatchAudit audit = new PatchAudit(name);
+
+			input.patch().patch(input.input(), input.context().audit(audit));
 
 			TestUtil.sortHierarchy(expectedElem);
 			TestUtil.sortHierarchy(input.input());
@@ -262,12 +287,24 @@ public final class PatchingTests {
 				System.out.println(expected);
 				System.out.println("\n(expected) vs (output)\n");
 				System.out.println(output);
+				return;
 			}
-			else {
-				if (printSuccess)
-					System.out.println("Test " + name + " passed!");
-				passed++;
+
+			if (input.expectedAudit() != null) {
+				final String auditOut = audit.toString(input.input());
+
+				if (!input.expectedAudit().equals(auditOut)) {
+					System.out.println("Test " + name + " audit failed!\n");
+					System.out.println(input.expectedAudit());
+					System.out.println("\n(expected) vs (output)\n");
+					System.out.println(auditOut);
+					return;
+				}
 			}
+
+			if (printSuccess)
+				System.out.println("Test " + name + " passed!");
+			passed++;
 		} catch (Exception e) {
 			System.err.println("Exception processing test " + name + ":");
 			e.printStackTrace();
@@ -278,5 +315,5 @@ public final class PatchingTests {
 		test(name, true);
 	}
 
-	private static record Test(String path, JsonElement input, JsonPatch patch, PatchContext context) {}
+	private static record Test(String path, JsonElement input, JsonPatch patch, String expectedAudit, PatchContext context) {}
 }

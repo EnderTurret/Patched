@@ -1,0 +1,5 @@
+{
+  "obj": {
+    "foo": 1 // replaced by replace/in_object
+  }
+}

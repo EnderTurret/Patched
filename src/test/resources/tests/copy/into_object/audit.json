@@ -1,0 +1,6 @@
+{
+  "from": 3,
+  "obj": {
+    "foo": 3 // copied from /from by copy/into_object
+  }
+}

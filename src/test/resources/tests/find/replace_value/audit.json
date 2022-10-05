@@ -1,0 +1,7 @@
+{
+  "object": {
+    "a": 1,
+    "b": "replaced", // replaced by find/replace_value
+    "c": 3
+  }
+}

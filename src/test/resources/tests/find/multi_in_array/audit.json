@@ -1,0 +1,18 @@
+{
+  "array": [
+    {
+      "a": 1,
+      "b": 3,
+      "z": "added" // added by find/multi_in_array
+    },
+    {
+      "a": 7,
+      "b": 0
+    },
+    {
+      "a": 1,
+      "b": 81,
+      "z": "added" // added by find/multi_in_array
+    }
+  ]
+}

@@ -39,7 +39,8 @@ public final class AddPatch extends JsonPatch {
 	@Override
 	protected void patchJson(ElementContext elem, PatchContext context) {
 		try {
-			last.add(elem, true, value);
+			final ElementContext e = last.add(elem, true, value);
+			if (context.audit() != null) context.audit().recordAdd(path.toString(), last.toString(), e);
 		} catch (TraversalException e) {
 			throw e.withPath(path + "/" + last);
 		}

@@ -1,0 +1,7 @@
+{
+  "array": [
+    1,
+    3, // added by add/to_array_absolute
+    2
+  ]
+}

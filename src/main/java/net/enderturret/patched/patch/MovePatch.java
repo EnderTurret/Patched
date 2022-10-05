@@ -42,7 +42,8 @@ public final class MovePatch extends JsonPatch {
 		final JsonElement removed = from.remove(root, true).elem();
 
 		try {
-			last.add(path.select(root, true), true, removed);
+			final ElementContext e = last.add(path.select(root, true), true, removed);
+			if (context.audit() != null) context.audit().recordMove(path.toString(), last.toString(), from.toString(), e);
 		} catch (TraversalException e) {
 			throw e.withPath(path + "/" + last);
 		}

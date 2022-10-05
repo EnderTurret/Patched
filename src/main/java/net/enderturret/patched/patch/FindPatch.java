@@ -66,6 +66,8 @@ public final class FindPatch extends JsonPatch {
 
 		parent = last.select(parent, true);
 
+		String strPath = null;
+
 		if (parent.elem() instanceof JsonObject o) {
 			// Copy the set first, so we don't encounter CMEs.
 			// We're using LinkedHashSet instead of Set.of to avoid element re-shuffling.
@@ -79,7 +81,9 @@ public final class FindPatch extends JsonPatch {
 
 				// Tests succeeded, apply patch.
 
+				if (context.audit() != null) context.audit().beginPrefix((strPath == null ? strPath = path.toString() + "/" + last.toString() : strPath), key);
 				then.patch(parent.child(key, elem), context);
+				if (context.audit() != null) context.audit().endPrefix();
 
 				if (!multi)
 					return;
@@ -95,7 +99,9 @@ public final class FindPatch extends JsonPatch {
 
 				// Tests succeeded, apply patch.
 
+				if (context.audit() != null) context.audit().beginPrefix((strPath == null ? strPath = path.toString() + "/" + last.toString() : strPath), Integer.toString(i));
 				then.patch(parent.child(i, elem), context);
+				if (context.audit() != null) context.audit().endPrefix();
 
 				if (!multi)
 					return;

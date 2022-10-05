@@ -1,0 +1,7 @@
+{
+  "array": [
+    3, // moved from /from by move/into_array
+    8,
+    1
+  ]
+}

@@ -40,6 +40,7 @@ public final class ReplacePatch extends JsonPatch {
 	protected void patchJson(ElementContext elem, PatchContext context) {
 		try {
 			last.replace(elem, true, value);
+			if (context.audit() != null) context.audit().recordReplace(path.toString(), last.toString());
 		} catch (TraversalException e) {
 			throw e.withPath(path + "/" + last);
 		}

@@ -1,0 +1,8 @@
+{
+  "object": {
+//  "b": null // removed by find/remove_unspecific
+    "a": 1,
+    "c": null,
+    "d": 9
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "object": {
+    "a": {
+      "a": 1,
+      "b": 3,
+      "z": "added" // added by find/multi_in_object
+    },
+    "b": {
+      "a": 7,
+      "b": 0
+    },
+    "c": {
+      "a": 1,
+      "b": 81,
+      "z": "added" // added by find/multi_in_object
+    }
+  }
+}

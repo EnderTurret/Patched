@@ -1,0 +1,4 @@
+{
+  "moved": 3, // moved from /obj/foo by move/in_object
+  "obj": {}
+}
