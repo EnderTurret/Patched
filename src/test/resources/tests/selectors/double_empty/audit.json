@@ -1,0 +1,7 @@
+{
+  "": {
+    "here": "it materialized!" // added by selectors/double_empty
+  },
+  "2": 3,
+  "3": 4
+}

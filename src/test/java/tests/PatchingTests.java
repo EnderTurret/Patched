@@ -124,7 +124,9 @@ public final class PatchingTests {
 		test("find/replace_value");
 		test("find/remove_unspecific", false);
 
+		test("selectors/double_empty");
 		test("selectors/empty");
+		test("selectors/empty2");
 		test("selectors/numeric_in_object");
 
 		testThrows("error/replace/in_array_oob", TraversalException.class, "/array/23: No such child 23!");

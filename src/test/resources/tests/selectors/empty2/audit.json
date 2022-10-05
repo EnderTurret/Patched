@@ -1,0 +1,8 @@
+{
+  "": "added", // added by selectors/empty2
+  "obj": {
+    "1": 2,
+    "2": 3,
+    "3": 4
+  }
+}
