@@ -22,6 +22,9 @@ import net.enderturret.patched.exception.TraversalException;
 import net.enderturret.patched.patch.JsonPatch;
 import net.enderturret.patched.patch.PatchContext;
 
+import tests.util.SimpleTestEvaluator;
+import tests.util.TestUtil;
+
 /**
  * <p>Tests all of the patching-related functionality. This is where most of the testing occurs.</p>
  * <p>See {@link JsonPatchTests} for similar testing.</p>

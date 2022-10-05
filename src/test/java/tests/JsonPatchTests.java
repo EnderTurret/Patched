@@ -24,11 +24,13 @@ import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.patch.JsonPatch;
 import net.enderturret.patched.patch.PatchContext;
 
+import tests.util.TestUtil;
+
 /**
  * Implements the testing framework for the tests at <a href="https://github.com/json-patch/json-patch-tests">json-patch-tests</a>.
  * @author EnderTurret
  */
-public class JsonPatchTests {
+public final class JsonPatchTests {
 
 	private static final boolean PRINT_TEST_SUCCESS = false;
 

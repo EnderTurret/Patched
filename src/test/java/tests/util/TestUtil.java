@@ -1,4 +1,4 @@
-package tests;
+package tests.util;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -16,6 +16,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import tests.PatchingTests;
+
 /**
  * Various utilities used across test classes.
  * @author EnderTurret
@@ -30,7 +32,7 @@ public final class TestUtil {
 	 * @param path The path that the file would be located at in the jar.
 	 * @return The contents of the resource.
 	 */
-	static String read(String path) {
+	public static String read(String path) {
 		try (InputStream is = PatchingTests.class.getResourceAsStream(path);
 				InputStreamReader isr = (is == null ? null : new InputStreamReader(is));
 				BufferedReader br = (isr == null ? null : new BufferedReader(isr))) {
@@ -52,7 +54,7 @@ public final class TestUtil {
 		}
 	}
 
-	static void sortHierarchy(JsonElement root) {
+	public static void sortHierarchy(JsonElement root) {
 		if (root == null) return;
 
 		final Deque<JsonElement> stack = new ArrayDeque<>();

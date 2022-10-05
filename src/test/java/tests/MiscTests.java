@@ -10,6 +10,8 @@ import net.enderturret.patched.exception.TraversalException;
 import net.enderturret.patched.patch.JsonPatch;
 import net.enderturret.patched.patch.PatchUtil;
 
+import tests.util.TestUtil;
+
 public final class MiscTests {
 
 	public static void main(String... args) {
