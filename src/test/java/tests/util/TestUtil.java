@@ -54,6 +54,11 @@ public final class TestUtil {
 		}
 	}
 
+	/**
+	 * Sorts all the elements in the given root document.
+	 * This is useful to ensure tests don't fail because of rehashing shenanigans.
+	 * @param root The root document.
+	 */
 	public static void sortHierarchy(JsonElement root) {
 		if (root == null) return;
 

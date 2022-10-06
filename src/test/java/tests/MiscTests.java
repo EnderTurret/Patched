@@ -19,6 +19,10 @@ import net.enderturret.patched.patch.TestPatch;
 
 import tests.util.TestUtil;
 
+/**
+ * Miscellaneous tests for miscellaneous things.
+ * @author EnderTurret
+ */
 public final class MiscTests {
 
 	public static void main(String... args) {

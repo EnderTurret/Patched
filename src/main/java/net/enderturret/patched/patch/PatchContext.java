@@ -9,6 +9,7 @@ import net.enderturret.patched.audit.PatchAudit;
  * @param patchedExtensions Whether extensions from this library should be enabled. This enables the "find" operation, which is a sort of fuzzy search operation for arrays or objects.
  * @param throwOnFailedTest Whether the test operation should throw an exception if it fails.
  * @param testEvaluator An evaluator for custom tests in the {@code test} operation. May be {@code null}.
+ * @param audit An audit to record changes made by patches. May be {@code null}.
  * @author EnderTurret
  */
 public record PatchContext(boolean sbExtensions, boolean patchedExtensions, boolean throwOnFailedTest, ITestEvaluator testEvaluator, PatchAudit audit) {
@@ -18,6 +19,8 @@ public record PatchContext(boolean sbExtensions, boolean patchedExtensions, bool
 	 * @param sbExtensions Whether extensions from the game Starbound should be enabled.
 	 * @param patchedExtensions Whether extensions from this library should be enabled.
 	 * @param throwOnFailedTest Whether the test operation should throw an exception if it fails.
+	 * @param testEvaluator An evaluator for custom tests in the {@code test} operation. May be {@code null}.
+	 * @param audit An audit to record changes made by patches. May be {@code null}.
 	 */
 	@Deprecated
 	public PatchContext {}

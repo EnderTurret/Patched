@@ -14,16 +14,42 @@ import net.enderturret.patched.patch.PatchUtil.Operation;
  */
 public interface ElementContext {
 
+	/**
+	 * @return The parent element.
+	 */
 	public JsonElement parent();
+
+	/**
+	 * @return The element.
+	 */
 	public JsonElement elem();
+
+	/**
+	 * Applies the given operation to this element.
+	 * @param op The operation to apply.
+	 */
 	public void apply(Operation op);
 
+	/**
+	 * Creates a new {@link ElementContext} with this set as its parent and the given values as its name and element.
+	 * @param name The name of {@code elem}.
+	 * @param elem The element wrapped by the {@link ElementContext}.
+	 * @return The new {@link ElementContext}.
+	 * @throws TraversalException If this element is not a {@link JsonObject}.
+	 */
 	public default ElementContext child(String name, JsonElement elem) {
 		if (!(elem() instanceof JsonObject o))
 			throw new TraversalException("Not an object!");
 		return new Object(o, name, elem);
 	}
 
+	/**
+	 * Creates a new {@link ElementContext} with this set as its parent and the given values as its index and element.
+	 * @param index The index of {@code elem}.
+	 * @param elem The element wrapped by the {@link ElementContext}.
+	 * @return The new {@link ElementContext}.
+	 * @throws TraversalException If this element is not a {@link JsonArray}.
+	 */
 	public default ElementContext child(int index, JsonElement elem) {
 		if (!(elem() instanceof JsonArray a))
 			throw new TraversalException("Not an array!");

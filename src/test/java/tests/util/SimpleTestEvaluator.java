@@ -9,6 +9,12 @@ import com.google.gson.JsonElement;
 import net.enderturret.patched.ITestEvaluator;
 import net.enderturret.patched.patch.PatchContext;
 
+import tests.PatchingTests;
+
+/**
+ * A custom {@link ITestEvaluator} for {@linkplain PatchingTests tests}.
+ * @author EnderTurret
+ */
 public class SimpleTestEvaluator implements ITestEvaluator {
 
 	private final Set<String> values;

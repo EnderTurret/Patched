@@ -13,7 +13,15 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.enderturret.patched.ElementContext;
+import net.enderturret.patched.JsonSelector;
+import net.enderturret.patched.patch.FindPatch;
+import net.enderturret.patched.patch.PatchContext;
 
+/**
+ * Tracks changes that patches make to a file, which can be later used for debugging or other uses.
+ * @author EnderTurret
+ * @see PatchContext#audit(PatchAudit)
+ */
 public final class PatchAudit {
 
 	private final Map<String, String> records = new HashMap<>();
@@ -24,6 +32,9 @@ public final class PatchAudit {
 	private String pathPrefix;
 	private String pathKey;
 
+	/**
+	 * @param patchPath A string representing the path to the patch being applied. This is used for informational purposes.
+	 */
 	public PatchAudit(String patchPath) {
 		this.patchPath = patchPath;
 	}
@@ -60,16 +71,32 @@ public final class PatchAudit {
 		record(path, "replaced by " + patchPath);
 	}
 
+	/**
+	 * Begins a path prefix -- something to prefix every following record with.
+	 * This is useful in situations where you're delegating patches, such as in the {@linkplain FindPatch find patch}.
+	 * @param pathPrefix The path prefix. This is prepended to each following path.
+	 * @param pathKey The key prefix. This is prepended to each following key (the last path element). This mainly matters in {@link #recordRemove(String, String, JsonElement)}.
+	 */
 	public void beginPrefix(String pathPrefix, String pathKey) {
 		this.pathPrefix = pathPrefix;
 		this.pathKey = pathKey;
 	}
 
+	/**
+	 * Marks the end of a {@linkplain #beginPrefix(String, String) path prefix}.
+	 * Following this point, new records will not be prefixed with anything.
+	 */
 	public void endPrefix() {
 		pathPrefix = null;
 		pathKey = null;
 	}
 
+	/**
+	 * Correctly resolves paths that reference nonexistent parts of an array, such as out-of-bounds indices and end references ({@code -}).
+	 * @param name The path to fix.
+	 * @param context The element.
+	 * @return The fixed path.
+	 */
 	private static String fixPath(String name, ElementContext context) {
 		if (context.parent() instanceof JsonArray a) {
 			if ("-".equals(name))
@@ -84,18 +111,44 @@ public final class PatchAudit {
 		return name;
 	}
 
+	/**
+	 * Sets the patch path. See {@link #PatchAudit(String)}.
+	 * @param value The new value.
+	 */
 	public void setPatchPath(String value) {
 		patchPath = value;
 	}
 
+	/**
+	 * Returns the record corresponding to the given path, or {@code null} if one doesn't exist.
+	 * @param path The path, in {@link JsonSelector}-like form.
+	 * @return The record, or {@code null}.
+	 */
 	public String getRecord(String path) {
 		return records.get(path);
 	}
 
+	/**
+	 * @return {@code true} if this audit has any records.
+	 */
 	public boolean hasRecords() {
 		return !records.isEmpty() || !removals.isEmpty();
 	}
 
+	/**
+	 * <p>Converts the given root document element to a "pretty-printed" string and decorates it with comments indicating the changes patches have made to it.</p>
+	 * 
+	 * <p>For example:
+	 * <pre><code>{
+	 *   "object": {
+	 *     "value": 3 // replaced by patches/a_patch
+	 * //  "gone": false // removed by patches/a_patch
+	 *   }
+	 * }</code></pre>
+	 * </p>
+	 * @param root The root document.
+	 * @return The string.
+	 */
 	public String toString(JsonElement root) {
 		final StringBuilder sb = new StringBuilder();
 
@@ -194,6 +247,13 @@ public final class PatchAudit {
 		return sb.toString();
 	}
 
+	/**
+	 * Turns the given {@link Deque} into a path, appending {@code last} to it if not {@code null}.
+	 * Also handles escaping slashes and tildes.
+	 * @param path The path of elements up to {@code last}.
+	 * @param last The last element. May be {@code null}.
+	 * @return The string path.
+	 */
 	private static String path(Deque<Element> path, Element last) {
 		String ret = path.stream()
 				.map(Element::name)
@@ -220,10 +280,23 @@ public final class PatchAudit {
 		return false;
 	}
 
-	private static record Element(String name, boolean inArray, int index, JsonElement elem) {
-		private Element {}
-	}
+	/**
+	 * Contains some extra metadata useful for formatting elements in {@link PatchAudit#toString(JsonElement)}.
+	 * @param name The name of the element. In an array, this will be the string representation of its index.
+	 * @param inArray Whether the element is inside an array.
+	 * @param index The index of the element. Determines its ordering, as well as whether to add commas.
+	 * @param elem The wrapped element.
+	 * @author EnderTurret
+	 */
+	private static record Element(String name, boolean inArray, int index, JsonElement elem) {}
 
+	/**
+	 * Represents a record of removal. It contains more metadata than other records because it needs to recreate the element.
+	 * @param name The name of the removed element.
+	 * @param value The removed element.
+	 * @param patchPath The path to the patch that removed the element.
+	 * @author EnderTurret
+	 */
 	private static record RemovalRecord(String name, JsonElement value, String patchPath) {
 		public void into(StringBuilder sb, String indent, boolean array) {
 			sb.append("\n").append(indent);
