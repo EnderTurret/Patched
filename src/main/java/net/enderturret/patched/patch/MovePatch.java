@@ -38,7 +38,7 @@ public final class MovePatch extends JsonPatch {
 	}
 
 	@Override
-	public void patch(JsonElement root, PatchContext context) {
+	public void patch(ElementContext root, PatchContext context) {
 		final JsonElement removed = from.remove(root, true).elem();
 
 		try {

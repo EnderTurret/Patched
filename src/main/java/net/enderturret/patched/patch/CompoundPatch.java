@@ -25,9 +25,9 @@ public class CompoundPatch extends JsonPatch {
 	}
 
 	@Override
-	public void patch(JsonElement root, PatchContext context) {
+	public void patch(ElementContext root, PatchContext context) {
 		for (JsonPatch patch : patches) {
-			if (patch instanceof TestPatch tp && !tp.test(root, context))
+			if (patch instanceof TestPatch tp && !tp.test(root.elem(), context))
 				return;
 			patch.patch(root, context);
 		}

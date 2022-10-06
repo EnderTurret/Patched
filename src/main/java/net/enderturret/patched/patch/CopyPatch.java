@@ -38,7 +38,7 @@ public final class CopyPatch extends JsonPatch {
 	}
 
 	@Override
-	public void patch(JsonElement root, PatchContext context) {
+	public void patch(ElementContext root, PatchContext context) {
 		final JsonElement copied = from.select(root, true).elem();
 
 		try {
