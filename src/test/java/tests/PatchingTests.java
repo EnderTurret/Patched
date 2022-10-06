@@ -96,6 +96,8 @@ public final class PatchingTests {
 		test("remove/in_array");
 		test("remove/in_object");
 		test("remove/in_object_dash");
+		test("remove/array");
+		test("remove/object");
 
 		test("copy/in_array");
 		test("copy/in_object");
@@ -128,6 +130,7 @@ public final class PatchingTests {
 		test("selectors/empty");
 		test("selectors/empty2");
 		test("selectors/numeric_in_object");
+		test("selectors/escapes");
 
 		testThrows("error/replace/in_array_oob", TraversalException.class, "/array/23: No such child 23!");
 		testThrows("error/replace/nonexistent", TraversalException.class, "/obj/foo: No such child foo!");

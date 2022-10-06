@@ -1,0 +1,12 @@
+[
+  {
+    "op": "replace",
+    "path": "/~0",
+    "value": 0
+  },
+  {
+    "op": "replace",
+    "path": "/~1/~0",
+    "value": 33
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "op": "remove",
+    "path": "/empty"
+  },
+  {
+    "op": "remove",
+    "path": "/array"
+  }
+]

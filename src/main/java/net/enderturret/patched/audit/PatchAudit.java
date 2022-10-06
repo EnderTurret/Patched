@@ -97,12 +97,10 @@ public final class PatchAudit {
 	}
 
 	public String toString(JsonElement root) {
-		record Element(String name, boolean inArray, int index, JsonElement elem, boolean removal) {}
-
 		final StringBuilder sb = new StringBuilder();
 
 		final List<Element> queue = new ArrayList<>();
-		queue.add(new Element("", false, 0, root, false));
+		queue.add(new Element("", false, 0, root));
 
 		final Deque<Element> path = new ArrayDeque<>();
 
@@ -113,7 +111,7 @@ public final class PatchAudit {
 		while (!queue.isEmpty()) {
 			final Element elem = queue.remove(0);
 
-			if (elem.elem() == null) {
+			if (elem.elem() == null) { // Ending element.
 				depth--;
 				lastIndent = "  ".repeat(depth);
 				path.pollLast();
@@ -155,24 +153,16 @@ public final class PatchAudit {
 				sb.append("{");
 
 				for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {
-					queue.add(idx, new Element(entry.getKey(), false, idx, entry.getValue(), false));
+					queue.add(idx, new Element(entry.getKey(), false, idx, entry.getValue()));
 					idx++;
 				}
 
 				int fakeIdx = idx;
 
-				if (!removals.isEmpty()) {
-					final String fullPath = path.stream().map(Element::name).collect(Collectors.joining("/"));
-					final List<RemovalRecord> records = removals.get(fullPath);
-					if (records != null) {
-						fakeIdx++; // Force end to new line if it was not already.
-						final String indent = "//" + "  ".repeat(depth - 1);
-						for (RemovalRecord rec : records)
-							rec.into(sb, indent, false);
-					}
-				}
+				if (processRemovals(sb, depth, path, false))
+					fakeIdx++; // Force end to new line if it was not already.
 
-				queue.add(idx, new Element("end", false, fakeIdx, null, false));
+				queue.add(idx, new Element("end", false, fakeIdx, null));
 			} else if (elem.elem() instanceof JsonArray arr) {
 				depth++;
 				lastIndent = "  ".repeat(depth);
@@ -183,34 +173,55 @@ public final class PatchAudit {
 				sb.append("[");
 
 				for (; i < arr.size(); i++)
-					queue.add(i, new Element(Integer.toString(i), true, i, arr.get(i), false));
+					queue.add(i, new Element(Integer.toString(i), true, i, arr.get(i)));
 
 				int fakeI = i;
 
-				if (!removals.isEmpty()) {
-					final String fullPath = path.stream().map(Element::name).collect(Collectors.joining("/"));
-					final List<RemovalRecord> records = removals.get(fullPath);
-					if (records != null) {
-						fakeI++; // Force end to new line if it was not already.
-						final String indent = "//" + "  ".repeat(depth - 1);
-						for (RemovalRecord rec : records)
-							rec.into(sb, indent, true);
-					}
-				}
+				if (processRemovals(sb, depth, path, true))
+					fakeI++; // Force end to new line if it was not already.
 
-				queue.add(i, new Element("end", true, fakeI, null, false));
+				queue.add(i, new Element("end", true, fakeI, null));
 			} else {
 				sb.append(elem.elem().toString());
 
 				if (!records.isEmpty()) {
-					final String fullPath = path.stream().map(Element::name).collect(Collectors.joining("/"));
-					final String realPath = fullPath + "/" + elem.name();
+					final String realPath = path(path, elem);
 					comment = getRecord(realPath);
 				}
 			}
 		}
 
 		return sb.toString();
+	}
+
+	private static String path(Deque<Element> path, Element last) {
+		String ret = path.stream()
+				.map(Element::name)
+				.map(str -> str.replace("~", "~0").replace("/", "~1"))
+				.collect(Collectors.joining("/"));
+
+		if (last != null)
+			ret += "/" + last.name().replace("~", "~0").replace("/", "~1");
+
+		return ret;
+	}
+
+	private boolean processRemovals(StringBuilder sb, int depth, Deque<Element> path, boolean array) {
+		if (!removals.isEmpty()) {
+			final List<RemovalRecord> records = removals.get(path(path, null));
+			if (records != null) {
+				final String indent = "//" + "  ".repeat(depth - 1);
+				for (RemovalRecord rec : records)
+					rec.into(sb, indent, array);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private static record Element(String name, boolean inArray, int index, JsonElement elem) {
+		private Element {}
 	}
 
 	private static record RemovalRecord(String name, JsonElement value, String patchPath) {
@@ -220,7 +231,16 @@ public final class PatchAudit {
 			if (!array)
 				sb.append("\"").append(name()).append("\": ");
 
-			sb.append(value()).append(" // removed by ").append(patchPath());
+			final String value;
+
+			if (value() instanceof JsonObject obj)
+				value = obj.size() == 0 ? "{}" : "{ ... }";
+			else if (value() instanceof JsonArray arr)
+				value = arr.size() == 0 ? "[]" : "[ ... ]";
+			else
+				value = value().toString();
+
+			sb.append(value).append(" // removed by ").append(patchPath());
 		}
 	}
 }
