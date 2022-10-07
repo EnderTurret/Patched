@@ -83,12 +83,12 @@ public final class JsonPatchTests {
 
 		case "missing from location to copy" -> "net.enderturret.patched.exception.TraversalException: /bar: No such child bar!";
 		case "missing from location to move" -> "net.enderturret.patched.exception.TraversalException: /bar: No such child bar!";
-		case "missing from parameter to copy" -> "net.enderturret.patched.exception.PatchingException: 'from' must not be missing!";
-		case "missing from parameter to move" -> "net.enderturret.patched.exception.PatchingException: 'from' must not be missing!";
-		case "missing 'value' parameter to add" -> "net.enderturret.patched.exception.PatchingException: 'value' must not be missing!";
-		case "missing 'value' parameter to replace" -> "net.enderturret.patched.exception.PatchingException: 'value' must not be missing!";
-		case "missing 'value' parameter to test" -> "net.enderturret.patched.exception.PatchingException: 'value' must not be missing!";
-		case "missing 'path' parameter" -> "net.enderturret.patched.exception.PatchingException: 'path' must not be missing!";
+		case "missing from parameter to copy" -> "net.enderturret.patched.exception.PatchingException: 'from' is missing!";
+		case "missing from parameter to move" -> "net.enderturret.patched.exception.PatchingException: 'from' is missing!";
+		case "missing 'value' parameter to add" -> "net.enderturret.patched.exception.PatchingException: 'value' is missing!";
+		case "missing 'value' parameter to replace" -> "net.enderturret.patched.exception.PatchingException: 'value' is missing!";
+		case "missing 'value' parameter to test" -> "net.enderturret.patched.exception.PatchingException: 'value' is missing!";
+		case "missing 'path' parameter" -> "net.enderturret.patched.exception.PatchingException: 'path' is missing!";
 		case "'path' parameter with null value" -> "net.enderturret.patched.exception.PatchingException: 'path' must be a string (was: null)!";
 
 		// These all error, but for a different reason -- "1e0" is not interpreted as a number, as it isn't an integer, so it's treated like a string.
@@ -102,7 +102,7 @@ public final class JsonPatchTests {
 		case "test with bad number should fail" -> "net.enderturret.patched.exception.PatchingException: Test failed: /1e0: Expected object to find '1e0' in, found [\"foo\",\"bar\"]!";
 
 		// Imagine using JavaScript. Couldn't be me.
-		case "missing value parameter to test - where undef is falsy" -> "net.enderturret.patched.exception.PatchingException: 'value' must not be missing!";
+		case "missing value parameter to test - where undef is falsy" -> "net.enderturret.patched.exception.PatchingException: 'value' is missing!";
 
 		case "invalid JSON Pointer token" -> "net.enderturret.patched.exception.TraversalException: Path must begin with a slash!";
 		case "unrecognized op should fail" -> "net.enderturret.patched.exception.PatchingException: Unknown operation 'spam'";

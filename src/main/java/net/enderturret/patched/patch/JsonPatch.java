@@ -190,7 +190,7 @@ public abstract class JsonPatch {
 			final JsonElement elem = obj.get(path);
 
 			if (elem == null)
-				throw new PatchingException("'" + path + "' must not be missing!");
+				throw new PatchingException("'" + path + "' is missing!");
 
 			return elem;
 		}

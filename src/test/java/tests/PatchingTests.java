@@ -159,8 +159,13 @@ public final class PatchingTests {
 		testThrows("error/selectors/unexpected_array", TraversalException.class, "/array/test: Expected object to find 'test' in, found [1,2,3]!");
 		testThrows("error/selectors/unexpected_primitive", TraversalException.class, "/array/1/2: Expected array or object to find '2' in, found 2!");
 
-		testThrows("error/misc/no_op", PatchingException.class, "Missing operation!");
-		testThrows("error/misc/invalid_op", PatchingException.class, "Unknown operation 'discombobulate'");
+		testThrows("error/parsing/invalid_op", PatchingException.class, "Unknown operation 'discombobulate'");
+		testThrows("error/parsing/missing_op", PatchingException.class, "Missing operation!");
+		testThrows("error/parsing/missing_path", PatchingException.class, "'path' is missing!");
+		testThrows("error/parsing/missing_value", PatchingException.class, "'value' is missing!");
+		testThrows("error/parsing/missing_value_test", PatchingException.class, "'value' is missing!");
+		testThrows("error/parsing/op_not_string", PatchingException.class, "Unknown operation '3'");
+		testThrows("error/parsing/path_not_string", PatchingException.class, "'path' must be a string (was: true)!");
 
 		testThrows("error/test/no_custom_evaluator", PatchingException.class, "Cannot handle custom test type 'custom' as no evaluator is installed!");
 
