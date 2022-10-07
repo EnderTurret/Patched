@@ -205,6 +205,12 @@ public final class PatchAudit {
 
 				sb.append("{");
 
+				if (!records.isEmpty()) {
+					final String comment2 = getRecord(path(path, null));
+					if (comment2 != null)
+						sb.append(" // ").append(comment2);
+				}
+
 				for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {
 					queue.add(idx, new Element(entry.getKey(), false, idx, entry.getValue()));
 					idx++;
@@ -217,6 +223,7 @@ public final class PatchAudit {
 
 				queue.add(idx, new Element("end", false, fakeIdx, null));
 			} else if (elem.elem() instanceof JsonArray arr) {
+				// TODO: Fix removed elements losing their ordering -- see audit/remove_array_element.
 				depth++;
 				lastIndent = "  ".repeat(depth);
 				path.add(elem);
@@ -224,6 +231,12 @@ public final class PatchAudit {
 				int i = 0;
 
 				sb.append("[");
+
+				if (!records.isEmpty()) {
+					final String comment2 = getRecord(path(path, null));
+					if (comment2 != null)
+						sb.append(" // ").append(comment2);
+				}
 
 				for (; i < arr.size(); i++)
 					queue.add(i, new Element(Integer.toString(i), true, i, arr.get(i)));

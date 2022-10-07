@@ -132,6 +132,10 @@ public final class PatchingTests {
 		test("selectors/numeric_in_object");
 		test("selectors/escapes");
 
+		test("audit/add_array");
+		test("audit/add_object");
+		test("audit/remove_array_element");
+
 		testThrows("error/replace/in_array_oob", TraversalException.class, "/array/23: No such child 23!");
 		testThrows("error/replace/nonexistent", TraversalException.class, "/obj/foo: No such child foo!");
 		testThrows("error/replace/nonexistent_number_in_object", TraversalException.class, "/obj/3: No such child 3!");
