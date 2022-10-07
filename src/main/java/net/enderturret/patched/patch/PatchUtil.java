@@ -244,33 +244,33 @@ public final class PatchUtil {
 
 		@Override
 		public ElementContext apply(JsonObject obj, String name) {
-			obj.add(name, elem);
-			return new ElementContext.Object(obj, name, elem);
+			obj.add(name, elem());
+			return new ElementContext.Object(obj, name, elem());
 		}
 
 		@Override
 		public ElementContext apply(JsonArray arr, int idx) {
-			if (replace)
-				arr.set(idx, elem);
+			if (replace())
+				arr.set(idx, elem());
 			else
-				add(arr, idx, elem);
+				add(arr, idx, elem());
 
-			return new ElementContext.Array(arr, idx, elem);
+			return new ElementContext.Array(arr, idx, elem());
 		}
 
 		@Override
 		public boolean allowsEndOfArrayRef() {
-			return !replace;
+			return !replace();
 		}
 
 		@Override
 		public boolean allowsOutOfBounds() {
-			return !replace;
+			return !replace();
 		}
 
 		@Override
 		public boolean strictHas() {
-			return replace;
+			return replace();
 		}
 	}
 }
