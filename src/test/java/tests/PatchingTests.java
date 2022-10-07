@@ -58,6 +58,7 @@ public final class PatchingTests {
 
 		test("test/custom/basic");
 		test("test/custom/no_path");
+		test("test/custom/no_value");
 
 		test("test/equal/string/success");
 		test("test/equal/string/fail");
@@ -70,6 +71,7 @@ public final class PatchingTests {
 
 		test("test/inverse/presence/success");
 		test("test/inverse/presence/fail");
+		test("test/inverse/presence/false_inverse", false); // Patch output omits the redundant inverse field.
 
 		test("test/inverse/equal/string/success");
 		test("test/inverse/equal/string/fail");
@@ -125,6 +127,7 @@ public final class PatchingTests {
 		test("find/remove_value");
 		test("find/replace_value");
 		test("find/remove_unspecific", false);
+		test("find/redundant_multi", false);
 
 		test("selectors/double_empty");
 		test("selectors/empty");

@@ -1,0 +1,12 @@
+[
+  {
+    "op": "test",
+    "path": "/obj/foo",
+    "inverse": false
+  },
+  {
+    "op": "replace",
+    "path": "/obj/foo",
+    "value": 3
+  }
+]

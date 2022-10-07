@@ -1,0 +1,11 @@
+{
+  "input": {
+    "sbExtensions": false
+  },
+  "runtime": {
+    "sbExtensions": false,
+    "customTests": {
+      "custom": true
+    }
+  }
+}
