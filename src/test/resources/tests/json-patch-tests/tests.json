@@ -52,8 +52,7 @@
     { "comment": "Toplevel scalar values OK?",
       "doc": "foo",
       "patch": [{"op": "replace", "path": "", "value": "bar"}],
-      "expected": "bar",
-      "disabled": true },
+      "expected": "bar" },
 
     { "comment": "replace object document with array document?",
       "doc": {},
