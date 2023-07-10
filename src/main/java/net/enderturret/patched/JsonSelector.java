@@ -37,7 +37,7 @@ public interface JsonSelector {
 	 * @param op The operation to apply on the found element.
 	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
 	 * @throws TraversalException If an error occurs traversing the path.
-	 * @see ElementContext#apply(Operation)
+	 * @see Operation#apply(ElementContext)
 	 */
 	public ElementContext select(ElementContext context, boolean throwOnError, PatchUtil.Operation op) throws TraversalException;
 
@@ -226,7 +226,7 @@ public interface JsonSelector {
 	public static record EmptySelector() implements JsonSelector {
 		@Override
 		public ElementContext select(ElementContext context, boolean throwOnError, Operation op) throws TraversalException {
-			context.apply(op);
+			op.apply(context);
 
 			return context;
 		}

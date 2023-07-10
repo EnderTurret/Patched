@@ -38,10 +38,14 @@ public interface ElementContext {
 	public JsonElement elem();
 
 	/**
+	 * @deprecated Use {@link Operation#apply(ElementContext)} instead.
 	 * Applies the given operation to this element.
 	 * @param op The operation to apply.
 	 */
-	public void apply(Operation op);
+	@Deprecated(forRemoval = true)
+	public default void apply(Operation op) {
+		op.apply(this);
+	}
 
 	/**
 	 * Creates a new {@link ElementContext} with this set as its parent and the given values as its name and element.
@@ -86,11 +90,6 @@ public interface ElementContext {
 		public JsonElement parent() {
 			return null;
 		}
-
-		@Override
-		public void apply(Operation op) {
-			// Just don't do anything. It'll be fine, probably.
-		}
 	}
 
 	/**
@@ -114,11 +113,6 @@ public interface ElementContext {
 		public JsonElement elem() {
 			return doc.getRoot();
 		}
-
-		@Override
-		public void apply(Operation op) {
-			op.apply(this);
-		}
 	}
 
 	/**
@@ -139,11 +133,6 @@ public interface ElementContext {
 		public JsonObject parent() {
 			return parent;
 		}
-
-		@Override
-		public void apply(Operation op) {
-			op.apply(this);
-		}
 	}
 
 	/**
@@ -163,11 +152,6 @@ public interface ElementContext {
 		@Override
 		public JsonArray parent() {
 			return parent;
-		}
-
-		@Override
-		public void apply(Operation op) {
-			op.apply(this);
 		}
 	}
 }
