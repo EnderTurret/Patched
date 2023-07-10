@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 import net.enderturret.patched.ElementContext;
 import net.enderturret.patched.ITestEvaluator;
 import net.enderturret.patched.JsonDocument;
+import net.enderturret.patched.exception.PatchingException;
 
 /**
  * Various utilities used in the patching backend.
@@ -259,6 +260,9 @@ public final class PatchUtil {
 				return new ElementContext.Array(arr.context(), arr.parent(), arr.index(),
 						this == REMOVE ? arr.parent().remove(arr.index()) : arr.parent().get(arr.index()));
 			}
+
+			if (context instanceof ElementContext.Document && this == REMOVE)
+				throw new PatchingException("Attempted to remove root element!");
 
 			return context;
 		}

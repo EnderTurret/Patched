@@ -143,6 +143,7 @@ public final class PatchingTests {
 		testThrows("error/remove/in_array_oob", TraversalException.class, "/array/23: No such child 23!");
 		testThrows("error/remove/nonexistent", TraversalException.class, "/obj/foo: No such child foo!");
 		testThrows("error/remove/end_of_array", TraversalException.class, "/array/-: Expected object to find '-' in, found [1,2,3]!");
+		testThrows("error/remove/document", PatchingException.class, "Attempted to remove root element!");
 		testThrows("error/copy/in_array_oob", TraversalException.class, "/array/23: No such child 23!");
 		testThrows("error/copy/into_array_oob", TraversalException.class, "/array/23: No such child 23!");
 		testThrows("error/copy/from_nonexistent", TraversalException.class, "/obj/foo: No such child foo!");
