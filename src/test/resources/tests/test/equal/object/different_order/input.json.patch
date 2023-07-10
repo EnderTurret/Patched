@@ -1,0 +1,16 @@
+[
+  {
+    "op": "test",
+    "path": "/obj/foo",
+    "value": {
+      "e": 2.71,
+      "tau": 6.28,
+      "pi": 3.14
+    }
+  },
+  {
+    "op": "add",
+    "path": "/obj/added",
+    "value": "if you're reading this, the test worked"
+  }
+]

@@ -37,7 +37,7 @@ public final class JsonPatchTests {
 	private static final Gson GSON = Patches.patchGson(false, false).setPrettyPrinting().create();
 
 	public static void main(String... args) {
-		test("/tests/json-patch-tests/spec_tests.json", JsonPatchTests::mapSpecErrors, (comment, test) -> true);
+		test("/tests/json-patch-tests/spec_tests.json", "RFC", JsonPatchTests::mapSpecErrors, (comment, test) -> true);
 
 		// --------------------------------------------------------------------------------------------
 
@@ -56,7 +56,7 @@ public final class JsonPatchTests {
 				// we don't error in this case but instead add to the end of the array, like if - was used.
 				"add item to array at index > length should fail");
 
-		test("/tests/json-patch-tests/tests.json", JsonPatchTests::mapPatchErrors,
+		test("/tests/json-patch-tests/tests.json", "json-patch", JsonPatchTests::mapPatchErrors,
 				(comment, test) -> !disabled1.contains(comment)
 				&& (!"no comment".equals(comment) || (
 						// See disabled1: out-of-bounds addition.
@@ -116,7 +116,7 @@ public final class JsonPatchTests {
 		};
 	}
 
-	private static void test(String path, BinaryOperator<String> errorMapper, BiPredicate<String, Test> filter) {
+	private static void test(String path, String name, BinaryOperator<String> errorMapper, BiPredicate<String, Test> filter) {
 		final List<Test> tests;
 
 		{
@@ -141,7 +141,8 @@ public final class JsonPatchTests {
 				passed++;
 		}
 
-		System.out.printf("%d / %d tests passed %s.\n", passed, tests.size() - skipped,
+		System.out.printf("%d / %d %s tests passed %s.\n", passed, tests.size() - skipped,
+				name,
 				skipped > 0 ? "(" + skipped + " skipped)" : "");
 	}
 

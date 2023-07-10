@@ -68,6 +68,7 @@ public final class PatchingTests {
 		test("test/equal/array/fail");
 		test("test/equal/object/success");
 		test("test/equal/object/fail");
+		test("test/equal/object/different_order");
 
 		test("test/inverse/presence/success");
 		test("test/inverse/presence/fail");
@@ -172,7 +173,7 @@ public final class PatchingTests {
 
 		testThrows("error/test/no_custom_evaluator", PatchingException.class, "Cannot handle custom test type 'custom' as no evaluator is installed!");
 
-		System.out.printf("%d / %d tests passed.\n", passed, testCount);
+		System.out.printf("%d / %d Patched tests passed.\n", passed, testCount);
 
 		JsonPatchTests.main();
 
