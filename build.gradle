@@ -2,13 +2,14 @@ plugins {
     id 'java-library'
     id 'eclipse'
     id 'maven-publish'
-	id 'com.github.johnrengelman.shadow' version '7.1.0'
+	id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'net.enderturret'
 version = '1.2.1'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.withSourcesJar()
 
 repositories {
     mavenCentral()
@@ -27,6 +28,8 @@ sourceSets {
 
 configurations {
     patcherImplementation.extendsFrom implementation
+    patcherCompileOnly.extendsFrom compileOnly
+    testCompileOnly.extendsFrom compileOnly
 }
 
 dependencies {
@@ -34,13 +37,8 @@ dependencies {
     compileOnly 'org.jetbrains:annotations:24.0.1'
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
 task patcherJar(type: Jar, dependsOn: compilePatcherJava) {
-    classifier = 'patcher'
+    archiveClassifier = 'patcher'
     from (sourceSets.patcher.output) {
         exclude 'net/enderturret/patched/Patched.class'
         exclude 'net/enderturret/patched/Patched$Settings.class'
@@ -48,19 +46,28 @@ task patcherJar(type: Jar, dependsOn: compilePatcherJava) {
 }
 
 task patcherSourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'patcher-sources'
+    archiveClassifier = 'patcher-sources'
     from (sourceSets.patcher.allSource) {
         exclude 'net/enderturret/patched/Patched.java'
     }
 }
 
 shadowJar {
-    classifier = 'cli'
+    archiveClassifier = 'cli'
     from sourceSets.patcher.output
 }
 
 artifacts {
-    archives sourcesJar, patcherJar, patcherSourcesJar, shadowJar
+    archives patcherJar, patcherSourcesJar, shadowJar
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(AbstractArchiveTask).configureEach {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
 }
 
 publishing {
@@ -71,15 +78,8 @@ publishing {
                 name = 'Patched'
                 description = 'Enables patching of Json files for mods or other uses.'
             }
-            artifact sourcesJar {
-                classifier 'sources'
-            }
-            artifact patcherJar {
-                classifier 'patcher'
-            }
-            artifact patcherSourcesJar {
-                classifier 'patcher-sources'
-            }
+            artifact patcherJar
+            artifact patcherSourcesJar
         }
     }
 }
