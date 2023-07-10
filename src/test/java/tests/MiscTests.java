@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 import net.enderturret.patched.ElementContext;
+import net.enderturret.patched.JsonDocument;
 import net.enderturret.patched.JsonSelector;
 import net.enderturret.patched.JsonSelector.CompoundSelector;
 import net.enderturret.patched.audit.PatchAudit;
@@ -91,7 +92,7 @@ public final class MiscTests {
 		};
 
 		try {
-			bad.patch(new JsonObject(), PatchContext.newContext());
+			bad.patch(new JsonDocument(new JsonObject()), PatchContext.newContext());
 			System.out.println("Bad patch implementation test failed: no exception occured.");
 		} catch (UnsupportedOperationException ignored) {}
 

@@ -74,6 +74,29 @@ public interface ElementContext {
 	}
 
 	/**
+	 * An element whose parent is the json document -- allows swapping out this element without needing to change 300 {@code void}s to {@code JsonElement}s.
+	 * @param doc The document.
+	 * @author EnderTurret
+	 */
+	public static record Document(JsonDocument doc) implements ElementContext {
+
+		@Override
+		public JsonElement parent() {
+			return null;
+		}
+
+		@Override
+		public JsonElement elem() {
+			return doc.getRoot();
+		}
+
+		@Override
+		public void apply(Operation op) {
+			op.apply(doc);
+		}
+	}
+
+	/**
 	 * An element whose parent is a {@link JsonObject}.
 	 * @param parent The parent.
 	 * @param name The name of the child element.

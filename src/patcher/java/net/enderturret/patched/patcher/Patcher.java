@@ -15,6 +15,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 
+import net.enderturret.patched.JsonDocument;
 import net.enderturret.patched.Patches;
 import net.enderturret.patched.patch.JsonPatch;
 import net.enderturret.patched.patch.PatchContext;
@@ -97,17 +98,15 @@ public class Patcher<P> {
 			throw new IllegalArgumentException("File not found: " + path.toString());
 
 		final byte[] bytes = found.get(0);
-		JsonElement ret;
+		JsonDocument ret;
 
 		try {
-			ret = JsonParser.parseString(new String(bytes, StandardCharsets.UTF_8));
+			ret = new JsonDocument(JsonParser.parseString(new String(bytes, StandardCharsets.UTF_8)));
 		} catch (JsonParseException e) {
 			// Immediately nope out. Either this isn't a Json file, in which case it will be read properly after;
 			// or it's a malformed json file, in which case we can't patch it anyway.
 			return bytes;
 		}
-
-		if (ret == null) return null;
 
 		final P patchPath = pathHandler.resolvePatch(path);
 		final List<byte[]> patches = findBytes(patchPath, true);
@@ -126,7 +125,7 @@ public class Patcher<P> {
 			}
 		}
 
-		final String retStr = patchGson.toJson(ret);
+		final String retStr = patchGson.toJson(ret.getRoot());
 
 		return retStr.getBytes(StandardCharsets.UTF_8);
 	}

@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 
 import net.enderturret.patched.ElementContext;
 import net.enderturret.patched.ITestEvaluator;
+import net.enderturret.patched.JsonDocument;
 
 /**
  * Various utilities used in the patching backend.
@@ -147,6 +148,15 @@ public final class PatchUtil {
 		public ElementContext apply(JsonArray arr, int idx);
 
 		/**
+		 * Applies this operation to the root element.
+		 * @param doc The json document.
+		 * @return The new {@link ElementContext}.
+		 */
+		public default ElementContext apply(JsonDocument doc) {
+			return new ElementContext.Document(doc);
+		}
+
+		/**
 		 * <p>Whether a path may include an out-of-bounds index.</p>
 		 * <p>
 		 * Consider the following:
@@ -232,6 +242,12 @@ public final class PatchUtil {
 				return new ElementContext.Array(arr, idx, arr.remove(idx));
 			return new ElementContext.Array(arr, idx, arr.get(idx));
 		}
+
+		// We don't do anything here.
+		@Override
+		public ElementContext apply(JsonDocument doc) {
+			return Operation.super.apply(doc);
+		}
 	}
 
 	/**
@@ -256,6 +272,12 @@ public final class PatchUtil {
 				add(arr, idx, elem());
 
 			return new ElementContext.Array(arr, idx, elem());
+		}
+
+		@Override
+		public ElementContext apply(JsonDocument doc) {
+			doc.setRoot(elem());
+			return new ElementContext.Document(doc);
 		}
 
 		@Override

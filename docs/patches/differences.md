@@ -16,13 +16,7 @@ All of these extensions are off by default, which brings Patched more in line wi
 
 ## Differences
 
-There are two differences (one of which is a limitation) that prevent Patched from being a 1:1 implementation of the specification.
+There is currently only one difference that prevents Patched from being a 1:1 implementation of the specification.
 
-The first difference is that Patched does not throw an error when trying to add an element at an index past the end of an array.
+The difference is that Patched does not throw an error when trying to add an element at an index past the end of an array.
 This was a choice made to make the library "friendlier" for its intended purpose -- patching game assets.
-
-## Limitations
-
-There is only one limitation of Patched: changing the type of the root document is not possible.
-This is a fundamental problem with how the library is structured, as none of the patching methods return a `JsonElement`; they modify the passed in element in-place.
-Fixing this would require breaking changes everywhere, for a rather niche use-case.

@@ -70,6 +70,7 @@ public class Patched {
 
 	private static void singlePatch(Settings settings) throws IOException {
 		final JsonElement source = JsonParser.parseString(Files.readString(settings.src()));
+		final JsonDocument doc = new JsonDocument(source);
 
 		final Gson gson = Patches.patchGson(settings.context)
 				.setPrettyPrinting()
@@ -89,14 +90,14 @@ public class Patched {
 
 		for (Patch patch : patches) {
 			try {
-				patch.patch.patch(source, settings.context);
+				patch.patch.patch(doc, settings.context);
 			} catch (PatchingException e) {
 				System.out.println("Patch '" + patch.src + "' could not be applied:");
 				e.printStackTrace(System.out);
 			}
 		}
 
-		final String out = gson.toJson(source);
+		final String out = gson.toJson(doc.getRoot());
 
 		try (BufferedWriter bw = Files.newBufferedWriter(settings.output, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			bw.write(out);

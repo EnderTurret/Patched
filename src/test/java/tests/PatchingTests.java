@@ -15,6 +15,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
+import net.enderturret.patched.JsonDocument;
 import net.enderturret.patched.Patches;
 import net.enderturret.patched.audit.PatchAudit;
 import net.enderturret.patched.exception.PatchingException;
@@ -267,12 +268,13 @@ public final class PatchingTests {
 	private static void testThrows(String name, Class<? extends Exception> clazz, String message, boolean doOutputTest) {
 		try {
 			final Test input = readTest(name, doOutputTest);
+			final JsonDocument doc = new JsonDocument(input.input());
 
-			input.patch().patch(input.input(), input.context());
+			input.patch().patch(doc, input.context());
 
 			System.out.println("Test " + name + " failed!");
 			System.out.println("Output:\n");
-			System.out.println(GSON.toJson(input.input()));
+			System.out.println(GSON.toJson(doc.getRoot()));
 		} catch (Exception e) {
 			if (e.getClass() == clazz && e.getMessage().equals(message)) {
 				if (printSuccess)
@@ -311,14 +313,15 @@ public final class PatchingTests {
 			// -----
 
 			final PatchAudit audit = new PatchAudit(name);
+			final JsonDocument doc = new JsonDocument(input.input());
 
-			input.patch().patch(input.input(), input.context().audit(audit));
+			input.patch().patch(doc, input.context().audit(audit));
 
 			TestUtil.sortHierarchy(expectedElem);
-			TestUtil.sortHierarchy(input.input());
+			TestUtil.sortHierarchy(doc.getRoot());
 
 			expected = GSON.toJson(expectedElem);
-			final String output = GSON.toJson(input.input());
+			final String output = GSON.toJson(doc.getRoot());
 
 			if (!expected.equals(output)) {
 				System.out.println("Test " + name + " failed!\n");
@@ -329,7 +332,7 @@ public final class PatchingTests {
 			}
 
 			if (input.expectedAudit() != null) {
-				final String auditOut = audit.toString(input.input());
+				final String auditOut = audit.toString(doc.getRoot());
 
 				if (!input.expectedAudit().equals(auditOut)) {
 					System.out.println("Test " + name + " audit failed!\n");

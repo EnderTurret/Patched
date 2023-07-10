@@ -15,6 +15,7 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 
 import net.enderturret.patched.ElementContext;
+import net.enderturret.patched.JsonDocument;
 import net.enderturret.patched.JsonSelector;
 import net.enderturret.patched.JsonSelector.CompoundSelector;
 import net.enderturret.patched.Patches;
@@ -67,14 +68,27 @@ public abstract class JsonPatch {
 	}
 
 	/**
+	 * @deprecated Use {@link #patch(JsonDocument, PatchContext)}, as that allows patches to change the root element.
 	 * {@link JsonElement} version of {@link #patch(ElementContext, PatchContext)}.
 	 * @param root The root element to apply the patch to.
 	 * @param context The {@link PatchContext}. This customizes what features are available, among other things.
 	 * @throws PatchingException If the patch could not be applied for some reason.
 	 * @throws TraversalException If a path in the patch could not be traversed.
 	 */
+	@Deprecated(forRemoval = true)
 	public final void patch(JsonElement root, PatchContext context) throws PatchingException, TraversalException {
 		patch(new ElementContext.NoParent(root), context);
+	}
+
+	/**
+	 * {@link JsonDocument} version of {@link #patch(ElementContext, PatchContext)}.
+	 * @param root The document to apply the patch to.
+	 * @param context The {@link PatchContext}. This customizes what features are available, among other things.
+	 * @throws PatchingException If the patch could not be applied for some reason.
+	 * @throws TraversalException If a path in the patch could not be traversed.
+	 */
+	public final void patch(JsonDocument root, PatchContext context) throws PatchingException, TraversalException {
+		patch(new ElementContext.Document(root), context);
 	}
 
 	/**

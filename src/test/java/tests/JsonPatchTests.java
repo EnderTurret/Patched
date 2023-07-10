@@ -19,6 +19,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
+import net.enderturret.patched.JsonDocument;
 import net.enderturret.patched.Patches;
 import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.patch.JsonPatch;
@@ -42,11 +43,6 @@ public final class JsonPatchTests {
 		// --------------------------------------------------------------------------------------------
 
 		final Set<String> disabled1 = Set.of(
-				// Replacing the root element is currently unsupported, and it would need a rewrite to work anyway.
-				"replace object document with array document?",
-				"replace array document with object document?",
-				"replacing the root of the document is possible with add",
-				"replace whole document",
 				// This is actually up to the Json parser -- not the patch applier.
 				// Gson parses these numbers into 0 and 1, respectively.
 				// There is nothing we can do about this.
@@ -148,27 +144,28 @@ public final class JsonPatchTests {
 
 	private static boolean testSingle(Test test, BinaryOperator<String> errorMapper) {
 		try {
-			final JsonElement patched = test.doc.deepCopy();
+			final JsonElement _patched = test.doc.deepCopy();
+			final JsonDocument doc = new JsonDocument(_patched);
 			final JsonPatch patch = Patches.readPatch(GSON, test.patch);
-			patch.patch(patched, PatchContext.newContext().throwOnFailedTest(true));
+			patch.patch(doc, PatchContext.newContext().throwOnFailedTest(true));
 
-			TestUtil.sortHierarchy(patched);
+			TestUtil.sortHierarchy(doc.getRoot());
 			TestUtil.sortHierarchy(test.expected);
 
 			if (test.expected == null) {
 				System.err.printf("Test '%s': Expected errors but patch applied successfully?"
 						+ "\nExpected: %s\nOutput:\n%s\n",
-						test.comment, test.error, GSON.toJson(patched));
+						test.comment, test.error, GSON.toJson(doc.getRoot()));
 			}
 
-			else if (patched.equals(test.expected)) {
+			else if (doc.getRoot().equals(test.expected)) {
 				if (PRINT_TEST_SUCCESS)
 					System.out.println("Test '" + test.comment + "' passed.");
 				return true;
 			} else {
 				System.err.printf("Test '%s' failed!\n\n"
 						+ "%s\n(expected) vs (output)\n%s\n",
-						test.comment, GSON.toJson(test.expected), GSON.toJson(patched));
+						test.comment, GSON.toJson(test.expected), GSON.toJson(doc.getRoot()));
 			}
 		} catch (Exception e) {
 			if (test.error != null) {
