@@ -2,7 +2,7 @@
 
 A library for reading, writing, and applying [Json patches](https://jsonpatch.com/).
 
-It is a mostly specification-compliant implementation, although it does add its own extensions.
+It is a completely specification-compliant implementation, although it does add its own extensions.
 See [the differences document](docs/patching/differences.md) for details.
 
 There is documentation [here](docs/index.md) on how the library works, how patching works, and how patches are structured.
