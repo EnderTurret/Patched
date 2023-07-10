@@ -71,7 +71,7 @@ public class Patched {
 	private static void singlePatch(Settings settings) throws IOException {
 		final JsonElement source = JsonParser.parseString(Files.readString(settings.src()));
 
-		final Gson gson = Patches.patchGson(settings.context.sbExtensions(), settings.context.patchedExtensions())
+		final Gson gson = Patches.patchGson(settings.context)
 				.setPrettyPrinting()
 				.create();
 
@@ -216,7 +216,7 @@ public class Patched {
 			}
 
 			else if ("--extended".equals(arg))
-				ret = new Settings(ret.src, ret.output, ret.patchSources, ret.multi, PatchContext.newContext().sbExtensions(true).patchedExtensions(true));
+				ret = new Settings(ret.src, ret.output, ret.patchSources, ret.multi, PatchContext.newContext().testExtensions(true).patchedExtensions(true));
 
 			else
 				System.out.println("Unrecognized argument: " + arg);

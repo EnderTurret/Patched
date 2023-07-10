@@ -37,7 +37,7 @@ You can obtain a `PatchContext` using `PatchContext.newContext()` and customize 
 
 `PatchContext` comes with a number of settings:
 
-* `sbExtensions`
+* `testExtensions`
 	This specifies whether existence tests and inverse tests are allowed in patches.
 * `patchedExtensions`
 	This specifies whether the `find` operation and "custom" test types are allowed in patches.

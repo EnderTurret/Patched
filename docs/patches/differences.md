@@ -5,7 +5,7 @@
 Patched adds quite a few "extensions" to [the original specification](https://datatracker.ietf.org/doc/html/rfc6902).
 
 These extensions are the following:
-* [Starbound-like Extensions](https://community.playstarbound.com/threads/april-21st-%E2%80%93-stable-update-notes.95106/page-5#post-2561028) (`sbExtensions`)
+* [Test Extensions](https://community.playstarbound.com/threads/april-21st-%E2%80%93-stable-update-notes.95106/page-5#post-2561028) (`testExtensions`)
 	* [Existence test patch type](ops/test.md#existence)
 	* [Inverse test patches](ops/test.md#inverse-tests)
 * Patched Extensions (`patchedExtensions`)

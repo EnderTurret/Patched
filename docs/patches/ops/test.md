@@ -60,7 +60,7 @@ If `my value` was anything other than `true`, `added` would not have been added 
 
 Existence `test` patches check to see if a particular element exists.
 
-These patches can only be used if `sbExtensions` is enabled.
+These patches can only be used if `testExtensions` is enabled.
 
 ### Format
 
@@ -139,7 +139,7 @@ A custom `test` patch looks like this:
 Allows checking to see if a condition fails.
 This is most useful when checking the existence of something; instead of checking if something exists, you can check if something *doesn't* exist.
 
-This feature is only available if `sbExtensions` is enabled.
+This feature is only available if `testExtensions` is enabled.
 
 ### Format
 

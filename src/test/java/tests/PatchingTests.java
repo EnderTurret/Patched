@@ -41,7 +41,7 @@ public final class PatchingTests {
 	static final Gson GSON = Patches.patchGson(true, true).disableHtmlEscaping().setPrettyPrinting().create();
 
 	static {
-		GSONS.put(PatchContext.newContext().sbExtensions(true).patchedExtensions(true), GSON);
+		GSONS.put(PatchContext.newContext().testExtensions(true).patchedExtensions(true), GSON);
 	}
 
 	public static void main(String[] args) {
@@ -191,23 +191,23 @@ public final class PatchingTests {
 			if (obj.has("input")) {
 				final JsonObject o = obj.get("input").getAsJsonObject();
 				input = PatchContext.newContext()
-						.sbExtensions(!o.has("sbExtensions") || o.get("sbExtensions").getAsBoolean())
+						.testExtensions(!o.has("testExtensions") || o.get("testExtensions").getAsBoolean())
 						.patchedExtensions(!o.has("patchedExtensions") || o.get("patchedExtensions").getAsBoolean());
-			} else input = PatchContext.newContext().sbExtensions(true).patchedExtensions(true);
+			} else input = PatchContext.newContext().testExtensions(true).patchedExtensions(true);
 
 			final PatchContext runtime;
 			if (obj.has("runtime")) {
 				final JsonObject o = obj.get("runtime").getAsJsonObject();
 				runtime = PatchContext.newContext()
-						.sbExtensions(!o.has("sbExtensions") || o.get("sbExtensions").getAsBoolean())
+						.testExtensions(!o.has("testExtensions") || o.get("testExtensions").getAsBoolean())
 						.patchedExtensions(!o.has("patchedExtensions") || o.get("patchedExtensions").getAsBoolean())
 						.testEvaluator(o.has("customTests") ? new SimpleTestEvaluator(o.get("customTests")) : null);
-			} else runtime = PatchContext.newContext().sbExtensions(true).patchedExtensions(true);
+			} else runtime = PatchContext.newContext().testExtensions(true).patchedExtensions(true);
 
 			return new PatchContext[] { input, runtime };
 		}
 
-		return new PatchContext[] { PatchContext.newContext().sbExtensions(true).patchedExtensions(true), PatchContext.newContext().sbExtensions(true).patchedExtensions(true) };
+		return new PatchContext[] { PatchContext.newContext().testExtensions(true).patchedExtensions(true), PatchContext.newContext().testExtensions(true).patchedExtensions(true) };
 	}
 
 	private static Test readTest(String name, boolean doOutputTest) {
@@ -238,7 +238,7 @@ public final class PatchingTests {
 		final PatchContext[] contexts = readConfig(root);
 
 		final Gson gson = GSONS.computeIfAbsent(contexts[0],
-				c -> Patches.patchGson(c.sbExtensions(), c.patchedExtensions()).setPrettyPrinting().create());
+				c -> Patches.patchGson(c).setPrettyPrinting().create());
 
 		final JsonPatch patch;
 

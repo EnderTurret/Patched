@@ -23,14 +23,18 @@ public final class Patches {
 
 	/**
 	 * Creates a {@link GsonBuilder} configured to serialize and deserialize patches with the given extensions enabled or disabled.
-	 * @param sbExtensions Whether Starbound-related extensions are enabled. See {@link PatchContext}.
+	 * @param testExtensions Whether extensions to the {@code test} operation are enabled. See {@link PatchContext}.
 	 * @param patchedExtensions Whether extensions from this library are enabled. See {@link PatchContext}.
 	 * @return The created {@link GsonBuilder}.
 	 */
-	public static GsonBuilder patchGson(boolean sbExtensions, boolean patchedExtensions) {
+	public static GsonBuilder patchGson(boolean testExtensions, boolean patchedExtensions) {
 		return new GsonBuilder()
-				.registerTypeHierarchyAdapter(JsonPatch.class, new JsonPatch.Serializer(sbExtensions, patchedExtensions))
+				.registerTypeHierarchyAdapter(JsonPatch.class, new JsonPatch.Serializer(testExtensions, patchedExtensions))
 				.serializeNulls();
+	}
+
+	public static GsonBuilder patchGson(PatchContext context) {
+		return patchGson(context.testExtensions(), context.patchedExtensions());
 	}
 
 	/**

@@ -5,18 +5,18 @@ import net.enderturret.patched.audit.PatchAudit;
 
 /**
  * Passed to patches to customize their behavior.
- * @param sbExtensions Whether extensions from the game Starbound should be enabled. These extensions add an "inverse" mode to the test operation and also allow it to test for the existence of values.
+ * @param testExtensions Whether extensions to the {@code test} operation should be enabled. These extensions add an "inverse" mode and also allows testing for the existence of values.
  * @param patchedExtensions Whether extensions from this library should be enabled. This enables the "find" operation, which is a sort of fuzzy search operation for arrays or objects.
  * @param throwOnFailedTest Whether the test operation should throw an exception if it fails.
  * @param testEvaluator An evaluator for custom tests in the {@code test} operation. May be {@code null}.
  * @param audit An audit to record changes made by patches. May be {@code null}.
  * @author EnderTurret
  */
-public record PatchContext(boolean sbExtensions, boolean patchedExtensions, boolean throwOnFailedTest, ITestEvaluator testEvaluator, PatchAudit audit) {
+public record PatchContext(boolean testExtensions, boolean patchedExtensions, boolean throwOnFailedTest, ITestEvaluator testEvaluator, PatchAudit audit) {
 
 	/**
 	 * @deprecated Use {@link #newContext()} where possible to avoid new fields causing binary and source compatibility breaks.
-	 * @param sbExtensions Whether extensions from the game Starbound should be enabled.
+	 * @param testExtensions Whether extensions to the {@code test} operation should be enabled.
 	 * @param patchedExtensions Whether extensions from this library should be enabled.
 	 * @param throwOnFailedTest Whether the test operation should throw an exception if it fails.
 	 * @param testEvaluator An evaluator for custom tests in the {@code test} operation. May be {@code null}.
@@ -26,6 +26,15 @@ public record PatchContext(boolean sbExtensions, boolean patchedExtensions, bool
 	public PatchContext {}
 
 	/**
+	 * @deprecated Use {@link #testExtensions()} instead.
+	 * @return {@code true} if {@code testExtensions} is enabled.
+	 */
+	@Deprecated(forRemoval = true)
+	public boolean sbExtensions() {
+		return testExtensions;
+	}
+
+	/**
 	 * @return A new {@link PatchContext} with default values for all fields.
 	 */
 	public static PatchContext newContext() {
@@ -33,11 +42,22 @@ public record PatchContext(boolean sbExtensions, boolean patchedExtensions, bool
 	}
 
 	/**
-	 * Returns a new {@link PatchContext} based on this one but with {@link #sbExtensions} set to the given value.
-	 * @param value Whether Starbound's patching extensions are enabled.
+	 * @deprecated Use {@link #testExtensions(boolean)} instead.
+	 * Returns a new {@link PatchContext} based on this one but with {@link #testExtensions} set to the given value.
+	 * @param value Whether extensions to the {@code test} operation should be enabled.
 	 * @return The new {@link PatchContext}.
 	 */
+	@Deprecated(forRemoval = true)
 	public PatchContext sbExtensions(boolean value) {
+		return new PatchContext(value, patchedExtensions, throwOnFailedTest, testEvaluator, audit);
+	}
+
+	/**
+	 * Returns a new {@link PatchContext} based on this one but with {@link #testExtensions} set to the given value.
+	 * @param value Whether extensions to the {@code test} operation should be enabled.
+	 * @return The new {@link PatchContext}.
+	 */
+	public PatchContext testExtensions(boolean value) {
 		return new PatchContext(value, patchedExtensions, throwOnFailedTest, testEvaluator, audit);
 	}
 
@@ -47,7 +67,7 @@ public record PatchContext(boolean sbExtensions, boolean patchedExtensions, bool
 	 * @return The new {@link PatchContext}.
 	 */
 	public PatchContext patchedExtensions(boolean value) {
-		return new PatchContext(sbExtensions, value, throwOnFailedTest, testEvaluator, audit);
+		return new PatchContext(testExtensions, value, throwOnFailedTest, testEvaluator, audit);
 	}
 
 	/**
@@ -56,7 +76,7 @@ public record PatchContext(boolean sbExtensions, boolean patchedExtensions, bool
 	 * @return The new {@link PatchContext}.
 	 */
 	public PatchContext throwOnFailedTest(boolean value) {
-		return new PatchContext(sbExtensions, patchedExtensions, value, testEvaluator, audit);
+		return new PatchContext(testExtensions, patchedExtensions, value, testEvaluator, audit);
 	}
 
 	/**
@@ -65,7 +85,7 @@ public record PatchContext(boolean sbExtensions, boolean patchedExtensions, bool
 	 * @return The new {@link PatchContext}.
 	 */
 	public PatchContext testEvaluator(ITestEvaluator value) {
-		return new PatchContext(sbExtensions, patchedExtensions, throwOnFailedTest, value, audit);
+		return new PatchContext(testExtensions, patchedExtensions, throwOnFailedTest, value, audit);
 	}
 
 	/**
@@ -74,6 +94,6 @@ public record PatchContext(boolean sbExtensions, boolean patchedExtensions, bool
 	 * @return The new {@link PatchContext}.
 	 */
 	public PatchContext audit(PatchAudit value) {
-		return new PatchContext(sbExtensions, patchedExtensions, throwOnFailedTest, testEvaluator, value);
+		return new PatchContext(testExtensions, patchedExtensions, throwOnFailedTest, testEvaluator, value);
 	}
 }

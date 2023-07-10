@@ -130,7 +130,7 @@ public abstract class JsonPatch {
 
 		private static final Type TESTPATCH_LIST = new TypeToken<List<TestPatch>>() {}.getType();
 
-		// TODO: This will make find assume both extensions are on, even if the SB ones aren't.
+		// TODO: This will make find assume both extensions are on, even if the test ones aren't.
 		static final Gson ENFORCING_GSON = new GsonBuilder()
 				.registerTypeAdapter(TestPatch.class, new Serializer("test", true, true, true))
 				.registerTypeAdapter(AddPatch.class, new Serializer("add", true, true, true))
@@ -144,19 +144,19 @@ public abstract class JsonPatch {
 		private final String defaultOp;
 		private final boolean enforceOp;
 
-		private final boolean sbExtensions;
+		private final boolean testExtensions;
 		private final boolean patchedExtensions;
 
 		/**
 		 * @param defaultOp The default operation. This is the operation used if one isn't provided in the patch.
 		 * @param enforceOp Whether to enforce the default operation. This can be used to force all read patches to be a specific kind.
-		 * @param sbExtensions Whether to enable deserializing patches using the test extensions -- see {@link PatchContext}.
+		 * @param testExtensions Whether to enable deserializing patches using the test extensions -- see {@link PatchContext}.
 		 * @param patchedExtensions Whether to enable deserializing patches using the "find" operation -- see {@link PatchContext}.
 		 */
-		public Serializer(String defaultOp, boolean enforceOp, boolean sbExtensions, boolean patchedExtensions) {
+		public Serializer(String defaultOp, boolean enforceOp, boolean testExtensions, boolean patchedExtensions) {
 			this.defaultOp = defaultOp;
 			this.enforceOp = enforceOp;
-			this.sbExtensions = sbExtensions;
+			this.testExtensions = testExtensions;
 			this.patchedExtensions = patchedExtensions;
 			if (enforceOp && defaultOp == null)
 				// What does a null operation even mean?
@@ -165,11 +165,11 @@ public abstract class JsonPatch {
 
 		/**
 		 * Equivalent to {@link #Serializer(String, boolean, boolean, boolean)} with no default operation.
-		 * @param sbExtensions Whether to enable deserializing patches using the test extensions -- see {@link PatchContext}.
+		 * @param testExtensions Whether to enable deserializing patches using the test extensions -- see {@link PatchContext}.
 		 * @param patchedExtensions Whether to enable deserializing patches using the "find" operation -- see {@link PatchContext}.
 		 */
-		public Serializer(boolean sbExtensions, boolean patchedExtensions) {
-			this(null, false, sbExtensions, patchedExtensions);
+		public Serializer(boolean testExtensions, boolean patchedExtensions) {
+			this(null, false, testExtensions, patchedExtensions);
 		}
 
 		/**
@@ -240,8 +240,8 @@ public abstract class JsonPatch {
 			case "test" -> {
 				final String type = patchedExtensions && obj.has("type") ? obj.get("type").getAsString() : null;
 				final String path = type != null && !obj.has("path") ? null : getString(obj, "path");
-				final JsonElement value = sbExtensions || type != null ? obj.get("value") : get(obj, "value");
-				final boolean inverse = sbExtensions && obj.has("inverse") && obj.get("inverse").getAsBoolean();
+				final JsonElement value = testExtensions || type != null ? obj.get("value") : get(obj, "value");
+				final boolean inverse = testExtensions && obj.has("inverse") && obj.get("inverse").getAsBoolean();
 				yield new TestPatch(type, path, value, inverse);
 			}
 			case "add" -> new AddPatch(getString(obj, "path"), get(obj, "value"));

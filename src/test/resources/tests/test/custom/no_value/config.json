@@ -1,9 +1,9 @@
 {
   "input": {
-    "sbExtensions": false
+    "testExtensions": false
   },
   "runtime": {
-    "sbExtensions": false,
+    "testExtensions": false,
     "customTests": {
       "custom": true
     }

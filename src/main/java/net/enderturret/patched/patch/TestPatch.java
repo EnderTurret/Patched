@@ -56,7 +56,7 @@ public class TestPatch extends JsonPatch {
 				throw new PatchingException("Test failed: " + e.getMessage());
 			}
 
-		final boolean inverse = context.sbExtensions() && this.inverse;
+		final boolean inverse = context.testExtensions() && this.inverse;
 
 		final boolean result = _test(root, ctx, inverse, context);
 

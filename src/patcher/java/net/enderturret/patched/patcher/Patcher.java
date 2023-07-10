@@ -112,7 +112,7 @@ public class Patcher<P> {
 		final P patchPath = pathHandler.resolvePatch(path);
 		final List<byte[]> patches = findBytes(patchPath, true);
 
-		final PatchContext context = PatchContext.newContext().sbExtensions(true).patchedExtensions(true);
+		final PatchContext context = PatchContext.newContext().testExtensions(true).patchedExtensions(true);
 
 		for (byte[] patchBytes : patches) {
 			final String json = new String(patchBytes, StandardCharsets.UTF_8);
