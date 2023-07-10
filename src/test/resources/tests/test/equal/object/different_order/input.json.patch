@@ -1,16 +1,30 @@
 [
-  {
-    "op": "test",
-    "path": "/obj/foo",
-    "value": {
-      "e": 2.71,
-      "tau": 6.28,
-      "pi": 3.14
+  [
+    {
+      "op": "add",
+      "path": "/foo/tau",
+      "value": 6.28
+    },
+    {
+      "op": "add",
+      "path": "/foo/e",
+      "value": 2.71
     }
-  },
-  {
-    "op": "add",
-    "path": "/obj/added",
-    "value": "if you're reading this, the test worked"
-  }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/foo",
+      "value": {
+        "e": 2.71,
+        "pi": 3.14,
+        "tau": 6.28
+      }
+    },
+    {
+      "op": "add",
+      "path": "/added",
+      "value": "if you're reading this, the test worked"
+    }
+  ]
 ]

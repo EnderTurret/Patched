@@ -1,6 +1,6 @@
 {
-  "copied": 3, // copied from /obj/foo by copy/in_object
   "obj": {
     "foo": 3
-  }
+  },
+  "copied": 3 // copied from /obj/foo by copy/in_object
 }

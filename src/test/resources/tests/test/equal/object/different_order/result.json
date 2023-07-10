@@ -1,10 +1,8 @@
 {
-  "obj": {
-    "foo": {
-      "pi": 3.14,
-      "e": 2.71,
-      "tau": 6.28
-    },
-    "added": "if you're reading this, the test worked"
-  }
+  "foo": {
+    "pi": 3.14,
+    "e": 2.71,
+    "tau": 6.28
+  },
+  "added": "if you're reading this, the test worked"
 }

@@ -149,16 +149,13 @@ public final class JsonPatchTests {
 			final JsonPatch patch = Patches.readPatch(GSON, test.patch);
 			patch.patch(doc, PatchContext.newContext().throwOnFailedTest(true));
 
-			TestUtil.sortHierarchy(doc.getRoot());
-			TestUtil.sortHierarchy(test.expected);
-
 			if (test.expected == null) {
 				System.err.printf("Test '%s': Expected errors but patch applied successfully?"
 						+ "\nExpected: %s\nOutput:\n%s\n",
 						test.comment, test.error, GSON.toJson(doc.getRoot()));
 			}
 
-			else if (doc.getRoot().equals(test.expected)) {
+			else if (test.expected.equals(doc.getRoot())) {
 				if (PRINT_TEST_SUCCESS)
 					System.out.println("Test '" + test.comment + "' passed.");
 				return true;

@@ -317,13 +317,10 @@ public final class PatchingTests {
 
 			input.patch().patch(doc, input.context().audit(audit));
 
-			TestUtil.sortHierarchy(expectedElem);
-			TestUtil.sortHierarchy(doc.getRoot());
+			if (!expectedElem.equals(doc.getRoot())) {
+				expected = GSON.toJson(expectedElem);
+				final String output = GSON.toJson(doc.getRoot());
 
-			expected = GSON.toJson(expectedElem);
-			final String output = GSON.toJson(doc.getRoot());
-
-			if (!expected.equals(output)) {
 				System.out.println("Test " + name + " failed!\n");
 				System.out.println(expected);
 				System.out.println("\n(expected) vs (output)\n");

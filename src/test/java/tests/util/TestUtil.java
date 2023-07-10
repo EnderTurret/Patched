@@ -53,43 +53,4 @@ public final class TestUtil {
 			throw new UncheckedIOException("Exception reading " + path + ":", e);
 		}
 	}
-
-	/**
-	 * Sorts all the elements in the given root document.
-	 * This is useful to ensure tests don't fail because of rehashing shenanigans.
-	 * @param root The root document.
-	 */
-	public static void sortHierarchy(JsonElement root) {
-		if (root == null) return;
-
-		final Deque<JsonElement> stack = new ArrayDeque<>();
-		stack.add(root);
-
-		while (!stack.isEmpty()) {
-			final JsonElement elem = stack.pop();
-
-			if (elem instanceof JsonArray arr)
-				for (JsonElement e : arr)
-					stack.add(e);
-
-			else if (elem instanceof JsonObject obj) {
-				sort(obj);
-
-				for (Map.Entry<String, JsonElement> entry : obj.entrySet())
-					stack.add(entry.getValue());
-			}
-		}
-	}
-
-	private static void sort(JsonObject obj) {
-		final TreeMap<String, JsonElement> map = new TreeMap<>();
-
-		for (Map.Entry<String, JsonElement> entry : Set.copyOf(obj.entrySet())) {
-			map.put(entry.getKey(), entry.getValue());
-			obj.remove(entry.getKey());
-		}
-
-		for (Map.Entry<String, JsonElement> entry : map.entrySet())
-			obj.add(entry.getKey(), entry.getValue());
-	}
 }

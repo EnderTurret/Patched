@@ -1,8 +1,8 @@
 {
+  "from": 3,
   "array": [
     3, // copied from /from by copy/into_array
     8,
     1
-  ],
-  "from": 3
+  ]
 }

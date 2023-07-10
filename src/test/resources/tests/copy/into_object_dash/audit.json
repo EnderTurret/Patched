@@ -1,4 +1,4 @@
 {
-  "-": 3, // copied from /from by copy/into_object_dash
-  "from": 3
+  "from": 3,
+  "-": 3 // copied from /from by copy/into_object_dash
 }
