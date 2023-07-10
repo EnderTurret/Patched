@@ -1,5 +1,7 @@
 package net.enderturret.patched.patch;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
@@ -40,7 +42,7 @@ public class CompoundPatch extends JsonPatch {
 	protected String operation() { return null; }
 
 	@Override
-	protected JsonArray write(JsonSerializationContext context, String omitOperation) {
+	protected JsonArray write(JsonSerializationContext context, @Nullable String omitOperation) {
 		final JsonArray arr = new JsonArray(patches.length);
 
 		for (JsonPatch patch : patches)

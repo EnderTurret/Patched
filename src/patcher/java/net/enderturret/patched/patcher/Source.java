@@ -3,6 +3,8 @@ package net.enderturret.patched.patcher;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Represents a query-able source folder that can contain both Json files and patches.
  * @author EnderTurret
@@ -27,10 +29,12 @@ public class Source<P> implements Comparable<Source<P>> {
 		return priority;
 	}
 
+	@Nullable
 	public Boolean exists(P path) {
 		return existence.get(path.toString());
 	}
 
+	@Nullable
 	public byte[] read(P path) {
 		final String str = path.toString();
 		final Boolean exists = existence.get(str);

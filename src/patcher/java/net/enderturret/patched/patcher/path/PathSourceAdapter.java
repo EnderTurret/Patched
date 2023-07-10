@@ -5,6 +5,8 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.enderturret.patched.patcher.SourceAdapter;
 
 /**
@@ -23,6 +25,7 @@ public record PathSourceAdapter(Path root, String namespace) implements SourceAd
 	}
 
 	@Override
+	@Nullable
 	public byte[] read(Path path) {
 		final Path realPath = root.resolve(path);
 

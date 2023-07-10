@@ -1,5 +1,7 @@
 package net.enderturret.patched.patch;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.enderturret.patched.ITestEvaluator;
 import net.enderturret.patched.audit.PatchAudit;
 
@@ -12,7 +14,7 @@ import net.enderturret.patched.audit.PatchAudit;
  * @param audit An audit to record changes made by patches. May be {@code null}.
  * @author EnderTurret
  */
-public record PatchContext(boolean testExtensions, boolean patchedExtensions, boolean throwOnFailedTest, ITestEvaluator testEvaluator, PatchAudit audit) {
+public record PatchContext(boolean testExtensions, boolean patchedExtensions, boolean throwOnFailedTest, @Nullable ITestEvaluator testEvaluator, @Nullable PatchAudit audit) {
 
 	/**
 	 * @deprecated Use {@link #newContext()} where possible to avoid new fields causing binary and source compatibility breaks.
@@ -84,7 +86,7 @@ public record PatchContext(boolean testExtensions, boolean patchedExtensions, bo
 	 * @param value An evaluator for custom tests in the {@code test} operation. May be {@code null}.
 	 * @return The new {@link PatchContext}.
 	 */
-	public PatchContext testEvaluator(ITestEvaluator value) {
+	public PatchContext testEvaluator(@Nullable ITestEvaluator value) {
 		return new PatchContext(testExtensions, patchedExtensions, throwOnFailedTest, value, audit);
 	}
 
@@ -93,7 +95,7 @@ public record PatchContext(boolean testExtensions, boolean patchedExtensions, bo
 	 * @param value An audit to record changes made by patches. May be {@code null}.
 	 * @return The new {@link PatchContext}.
 	 */
-	public PatchContext audit(PatchAudit value) {
+	public PatchContext audit(@Nullable PatchAudit value) {
 		return new PatchContext(testExtensions, patchedExtensions, throwOnFailedTest, testEvaluator, value);
 	}
 }

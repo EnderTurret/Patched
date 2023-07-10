@@ -1,5 +1,7 @@
 package net.enderturret.patched;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -17,6 +19,7 @@ public interface ElementContext {
 	/**
 	 * @return The parent element.
 	 */
+	@Nullable
 	public JsonElement parent();
 
 	/**

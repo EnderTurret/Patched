@@ -1,5 +1,7 @@
 package net.enderturret.patched.patch;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -17,8 +19,11 @@ import net.enderturret.patched.exception.TraversalException;
  */
 public class TestPatch extends JsonPatch {
 
+	@Nullable
 	protected final String type;
+	@Nullable
 	protected final JsonSelector path;
+	@Nullable
 	protected final JsonElement test;
 	protected final boolean inverse;
 
@@ -29,7 +34,7 @@ public class TestPatch extends JsonPatch {
 	 * @param test The test element. May be {@code null}.
 	 * @param inverse Whether the check is inverted, i.e checking to see if something doesn't exist.
 	 */
-	protected TestPatch(String type, String path, JsonElement test, boolean inverse) {
+	protected TestPatch(@Nullable String type, @Nullable String path, @Nullable JsonElement test, boolean inverse) {
 		super(null);
 		if (type == null && path == null) throw new IllegalArgumentException("path may only be null when type is not null");
 		this.type = type;
@@ -98,7 +103,7 @@ public class TestPatch extends JsonPatch {
 	}
 
 	@Override
-	protected JsonElement write(JsonSerializationContext context, String omitOperation) {
+	protected JsonElement write(JsonSerializationContext context, @Nullable String omitOperation) {
 		final JsonObject obj = new JsonObject();
 
 		if (!operation().equals(omitOperation))

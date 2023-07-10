@@ -3,6 +3,8 @@ package net.enderturret.patched.patch;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -30,13 +32,15 @@ import net.enderturret.patched.exception.TraversalException;
  */
 public abstract class JsonPatch {
 
+	@Nullable
 	protected final JsonSelector path;
+	@Nullable
 	protected JsonSelector last;
 
 	/**
 	 * @param path The path that will be followed to find the element passed to {@link #patchJson(ElementContext, PatchContext)}, or {@code null} to handle this yourself.
 	 */
-	protected JsonPatch(String path) {
+	protected JsonPatch(@Nullable String path) {
 		if (path != null) {
 			final CompoundSelector selector = JsonSelector.of(path);
 			if (selector.isEmpty()) {
@@ -114,7 +118,7 @@ public abstract class JsonPatch {
 	 * @param omitOperation If non-{@code null}, specifies an operation that can be omitted from the output. This is useful for nicer output in places where the operation is limited or defaulted.
 	 * @return The {@link JsonElement}.
 	 */
-	protected JsonElement write(JsonSerializationContext context, String omitOperation) {
+	protected JsonElement write(JsonSerializationContext context, @Nullable String omitOperation) {
 		final JsonObject obj = new JsonObject();
 
 		if (!operation().equals(omitOperation))
@@ -167,7 +171,7 @@ public abstract class JsonPatch {
 		 * @param testExtensions Whether to enable deserializing patches using the test extensions -- see {@link PatchContext}.
 		 * @param patchedExtensions Whether to enable deserializing patches using the "find" operation -- see {@link PatchContext}.
 		 */
-		public Serializer(String defaultOp, boolean enforceOp, boolean testExtensions, boolean patchedExtensions) {
+		public Serializer(@Nullable String defaultOp, boolean enforceOp, boolean testExtensions, boolean patchedExtensions) {
 			this.defaultOp = defaultOp;
 			this.enforceOp = enforceOp;
 			this.testExtensions = testExtensions;

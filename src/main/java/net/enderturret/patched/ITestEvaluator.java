@@ -1,5 +1,7 @@
 package net.enderturret.patched;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.gson.JsonElement;
 
 import net.enderturret.patched.patch.PatchContext;
@@ -21,5 +23,5 @@ public interface ITestEvaluator {
 	 * @param context The patch context.
 	 * @return {@code true} if the test succeeds.
 	 */
-	public boolean test(JsonElement root, String type, JsonElement target, JsonElement value, PatchContext context);
+	public boolean test(JsonElement root, String type, @Nullable JsonElement target, @Nullable JsonElement value, PatchContext context);
 }

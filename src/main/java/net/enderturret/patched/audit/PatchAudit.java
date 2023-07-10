@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -29,6 +31,7 @@ public final class PatchAudit {
 	private final Map<String, List<RemovalRecord>> removals = new HashMap<>();
 
 	private String patchPath;
+	@Nullable
 	private String pathPrefix;
 	private String pathKey;
 

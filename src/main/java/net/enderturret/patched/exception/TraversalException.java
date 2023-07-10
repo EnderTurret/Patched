@@ -1,24 +1,27 @@
 package net.enderturret.patched.exception;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * An exception thrown if a path could not be resolved during patching.
  * @author EnderTurret
  */
 public class TraversalException extends PatchingException {
 
+	@Nullable
 	private String path;
 
 	public TraversalException() {}
 
-	public TraversalException(String message) {
+	public TraversalException(@Nullable String message) {
 		super(message);
 	}
 
-	public TraversalException(String message, Throwable cause) {
+	public TraversalException(@Nullable String message, @Nullable Throwable cause) {
 		super(message, cause);
 	}
 
-	public TraversalException(Throwable cause) {
+	public TraversalException(@Nullable Throwable cause) {
 		super(cause);
 	}
 
@@ -27,7 +30,7 @@ public class TraversalException extends PatchingException {
 	 * @param path The path that caused this {@link TraversalException}.
 	 * @return {@code this}.
 	 */
-	public TraversalException withPath(String path) {
+	public TraversalException withPath(@Nullable String path) {
 		this.path = path;
 		return this;
 	}
