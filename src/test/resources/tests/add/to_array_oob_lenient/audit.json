@@ -1,0 +1,7 @@
+{
+  "array": [
+    1,
+    2,
+    3 // added by add/to_array_oob_lenient
+  ]
+}

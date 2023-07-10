@@ -36,13 +36,13 @@ public final class PatchingTests {
 	static final Gson GSON = Patches.patchGson(true, true).disableHtmlEscaping().setPrettyPrinting().create();
 
 	static {
-		GSONS.put(PatchContext.newContext().testExtensions(true).patchedExtensions(true), GSON);
+		GSONS.put(PatchContext.newContext().testExtensions(true).patchedExtensions(true).throwOnOobAdd(true), GSON);
 	}
 
 	public static void main(String[] args) {
 		test("add/to_array");
 		test("add/to_array_absolute");
-		test("add/to_array_oob");
+		test("add/to_array_oob_lenient");
 		test("add/to_object");
 		test("add/to_object_dash");
 		test("add/to_object_number");
@@ -101,7 +101,7 @@ public final class PatchingTests {
 		test("copy/in_object");
 		test("copy/in_object_dash");
 		test("copy/into_array");
-		test("copy/into_array_oob");
+		test("copy/into_array_oob_lenient");
 		test("copy/into_object");
 		test("copy/into_object_dash");
 		test("copy/into_nonexistent");
@@ -110,7 +110,7 @@ public final class PatchingTests {
 		test("move/in_object");
 		test("move/in_object_dash");
 		test("move/into_array");
-		test("move/into_array_oob");
+		test("move/into_array_oob_lenient");
 		test("move/into_object");
 		test("move/into_object_dash");
 		test("move/into_nonexistent");
@@ -135,6 +135,7 @@ public final class PatchingTests {
 		test("audit/add_object");
 		test("audit/remove_array_element");
 
+		testThrows("error/add/to_array_oob", TraversalException.class, "/array/91: No such child 91!");
 		testThrows("error/replace/in_array_oob", TraversalException.class, "/array/23: No such child 23!");
 		testThrows("error/replace/nonexistent", TraversalException.class, "/obj/foo: No such child foo!");
 		testThrows("error/replace/nonexistent_number_in_object", TraversalException.class, "/obj/3: No such child 3!");
@@ -143,9 +144,11 @@ public final class PatchingTests {
 		testThrows("error/remove/nonexistent", TraversalException.class, "/obj/foo: No such child foo!");
 		testThrows("error/remove/end_of_array", TraversalException.class, "/array/-: Expected object to find '-' in, found [1,2,3]!");
 		testThrows("error/copy/in_array_oob", TraversalException.class, "/array/23: No such child 23!");
+		testThrows("error/copy/into_array_oob", TraversalException.class, "/array/23: No such child 23!");
 		testThrows("error/copy/from_nonexistent", TraversalException.class, "/obj/foo: No such child foo!");
 		testThrows("error/copy/to_nonexistent", TraversalException.class, "/nested/copied: No such child nested!");
 		testThrows("error/move/in_array_oob", TraversalException.class, "/array/23: No such child 23!");
+		testThrows("error/move/into_array_oob", TraversalException.class, "/array/23: No such child 23!");
 		testThrows("error/move/from_nonexistent", TraversalException.class, "/obj/foo: No such child foo!");
 		testThrows("error/move/to_nonexistent", TraversalException.class, "/nested/moved: No such child nested!");
 
@@ -187,8 +190,9 @@ public final class PatchingTests {
 				final JsonObject o = obj.get("input").getAsJsonObject();
 				input = PatchContext.newContext()
 						.testExtensions(!o.has("testExtensions") || o.get("testExtensions").getAsBoolean())
-						.patchedExtensions(!o.has("patchedExtensions") || o.get("patchedExtensions").getAsBoolean());
-			} else input = PatchContext.newContext().testExtensions(true).patchedExtensions(true);
+						.patchedExtensions(!o.has("patchedExtensions") || o.get("patchedExtensions").getAsBoolean())
+						.throwOnOobAdd(!o.has("throwOnOobAdd") || o.get("throwOnOobAdd").getAsBoolean());
+			} else input = PatchContext.newContext().testExtensions(true).patchedExtensions(true).throwOnOobAdd(true);
 
 			final PatchContext runtime;
 			if (obj.has("runtime")) {
@@ -196,13 +200,17 @@ public final class PatchingTests {
 				runtime = PatchContext.newContext()
 						.testExtensions(!o.has("testExtensions") || o.get("testExtensions").getAsBoolean())
 						.patchedExtensions(!o.has("patchedExtensions") || o.get("patchedExtensions").getAsBoolean())
+						.throwOnOobAdd(!o.has("throwOnOobAdd") || o.get("throwOnOobAdd").getAsBoolean())
 						.testEvaluator(o.has("customTests") ? new SimpleTestEvaluator(o.get("customTests")) : null);
-			} else runtime = PatchContext.newContext().testExtensions(true).patchedExtensions(true);
+			} else runtime = PatchContext.newContext().testExtensions(true).patchedExtensions(true).throwOnOobAdd(true);
 
 			return new PatchContext[] { input, runtime };
 		}
 
-		return new PatchContext[] { PatchContext.newContext().testExtensions(true).patchedExtensions(true), PatchContext.newContext().testExtensions(true).patchedExtensions(true) };
+		return new PatchContext[] {
+				PatchContext.newContext().testExtensions(true).patchedExtensions(true).throwOnOobAdd(true),
+				PatchContext.newContext().testExtensions(true).patchedExtensions(true).throwOnOobAdd(true)
+		};
 	}
 
 	private static Test readTest(String name, boolean doOutputTest) {
