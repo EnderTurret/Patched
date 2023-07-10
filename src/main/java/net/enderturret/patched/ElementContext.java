@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.enderturret.patched.exception.TraversalException;
+import net.enderturret.patched.patch.PatchContext;
 import net.enderturret.patched.patch.PatchUtil.Operation;
 
 /**
@@ -17,6 +18,14 @@ import net.enderturret.patched.patch.PatchUtil.Operation;
 public interface ElementContext {
 
 	/**
+	 * @return The patch context.
+	 */
+	@Nullable
+	public default PatchContext context() {
+		return null;
+	}
+
+	/**
 	 * @return The parent element.
 	 */
 	@Nullable
@@ -25,6 +34,7 @@ public interface ElementContext {
 	/**
 	 * @return The element.
 	 */
+	@Nullable
 	public JsonElement elem();
 
 	/**
@@ -43,7 +53,7 @@ public interface ElementContext {
 	public default ElementContext child(String name, JsonElement elem) {
 		if (!(elem() instanceof JsonObject o))
 			throw new TraversalException("Not an object!");
-		return new Object(o, name, elem);
+		return new Object(context(), o, name, elem);
 	}
 
 	/**
@@ -56,20 +66,27 @@ public interface ElementContext {
 	public default ElementContext child(int index, JsonElement elem) {
 		if (!(elem() instanceof JsonArray a))
 			throw new TraversalException("Not an array!");
-		return new Array(a, index, elem);
+		return new Array(context(), a, index, elem);
 	}
 
 	/**
 	 * <p>An element without a parent.</p>
 	 * <p>Such an element cannot have operations applied to it.</p>
+	 * @param context The patch context. May be {@code null} in circumstances involving old code.
 	 * @param elem The element.
 	 * @author EnderTurret
 	 */
-	public static record NoParent(JsonElement elem) implements ElementContext {
+	public static record NoParent(@Nullable PatchContext context, JsonElement elem) implements ElementContext {
+
+		public NoParent {}
+		@Deprecated(forRemoval = true)
+		public NoParent(JsonElement elem) { this(null, elem); }
+
 		@Override
 		public JsonElement parent() {
 			return null;
 		}
+
 		@Override
 		public void apply(Operation op) {
 			// Just don't do anything. It'll be fine, probably.
@@ -78,10 +95,15 @@ public interface ElementContext {
 
 	/**
 	 * An element whose parent is the json document -- allows swapping out this element without needing to change 300 {@code void}s to {@code JsonElement}s.
+	 * @param context The patch context. May be {@code null} in circumstances involving old code.
 	 * @param doc The document.
 	 * @author EnderTurret
 	 */
-	public static record Document(JsonDocument doc) implements ElementContext {
+	public static record Document(@Nullable PatchContext context, JsonDocument doc) implements ElementContext {
+
+		public Document {}
+		@Deprecated(forRemoval = true)
+		public Document(JsonDocument doc) { this(null, doc); }
 
 		@Override
 		public JsonElement parent() {
@@ -95,18 +117,23 @@ public interface ElementContext {
 
 		@Override
 		public void apply(Operation op) {
-			op.apply(doc);
+			op.apply(this);
 		}
 	}
 
 	/**
 	 * An element whose parent is a {@link JsonObject}.
+	 * @param context The patch context. May be {@code null} in circumstances involving old code.
 	 * @param parent The parent.
 	 * @param name The name of the child element.
 	 * @param elem The child element.
 	 * @author EnderTurret
 	 */
-	public static record Object(JsonObject parent, String name, JsonElement elem) implements ElementContext {
+	public static record Object(@Nullable PatchContext context, JsonObject parent, String name, @Nullable JsonElement elem) implements ElementContext {
+
+		public Object {}
+		@Deprecated(forRemoval = true)
+		public Object(JsonObject parent, String name, @Nullable JsonElement elem) { this(null, parent, name, elem); }
 
 		@Override
 		public JsonObject parent() {
@@ -115,18 +142,23 @@ public interface ElementContext {
 
 		@Override
 		public void apply(Operation op) {
-			op.apply(parent, name);
+			op.apply(this);
 		}
 	}
 
 	/**
 	 * An element whose parent is a {@link JsonArray}.
+	 * @param context The patch context. May be {@code null} in circumstances involving old code.
 	 * @param parent The parent.
 	 * @param index The index of the child element.
 	 * @param elem The child element.
 	 * @author EnderTurret
 	 */
-	public static record Array(JsonArray parent, int index, JsonElement elem) implements ElementContext {
+	public static record Array(@Nullable PatchContext context, JsonArray parent, int index, @Nullable JsonElement elem) implements ElementContext {
+
+		public Array {}
+		@Deprecated(forRemoval = true)
+		public Array(JsonArray parent, int index, @Nullable JsonElement elem) { this(null, parent, index, elem); }
 
 		@Override
 		public JsonArray parent() {
@@ -135,7 +167,7 @@ public interface ElementContext {
 
 		@Override
 		public void apply(Operation op) {
-			op.apply(parent, index);
+			op.apply(this);
 		}
 	}
 }

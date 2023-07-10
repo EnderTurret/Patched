@@ -92,7 +92,7 @@ public abstract class JsonPatch {
 	 * @throws TraversalException If a path in the patch could not be traversed.
 	 */
 	public final void patch(JsonDocument root, PatchContext context) throws PatchingException, TraversalException {
-		patch(new ElementContext.Document(root), context);
+		patch(new ElementContext.Document(context, root), context);
 	}
 
 	/**

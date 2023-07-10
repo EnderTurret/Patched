@@ -39,11 +39,16 @@ public final class MovePatch extends JsonPatch {
 
 	@Override
 	public void patch(ElementContext root, PatchContext context) {
-		final JsonElement removed = from.remove(root, true).elem();
+		final ElementContext removed = from.select(root, true);
 
 		try {
-			final ElementContext e = last.add(path.select(root, true), true, removed);
-			if (context.audit() != null) context.audit().recordMove(path.toString(), last.toString(), from.toString(), e);
+			ElementContext added = path.select(root, true);
+			added = last.add(added, true, null);
+
+			PatchUtil.Operations.REMOVE.apply(removed);
+			new PatchUtil.AddOperation(removed.elem(), false).apply(added);
+
+			if (context.audit() != null) context.audit().recordMove(path.toString(), last.toString(), from.toString(), added);
 		} catch (TraversalException e) {
 			throw e.withPath(path + "/" + last);
 		}

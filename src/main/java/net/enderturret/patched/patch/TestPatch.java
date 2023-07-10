@@ -56,7 +56,7 @@ public class TestPatch extends JsonPatch {
 
 		if (path != null)
 			try {
-				ctx = path.select(root, context.throwOnFailedTest());
+				ctx = path.select(new ElementContext.NoParent(context, root), context.throwOnFailedTest());
 			} catch (TraversalException e) {
 				throw new PatchingException("Test failed: " + e.getMessage());
 			}

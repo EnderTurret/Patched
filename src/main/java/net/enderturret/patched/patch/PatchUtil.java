@@ -2,8 +2,11 @@ package net.enderturret.patched.patch;
 
 import java.util.List;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
 import net.enderturret.patched.ElementContext;
@@ -132,12 +135,29 @@ public final class PatchUtil {
 	public static interface Operation {
 
 		/**
+		 * Applies this operation to the element represented by the given context.
+		 * @param context The element.
+		 * @return An {@link ElementContext} containing the child element and related information.
+		 */
+		public default ElementContext apply(ElementContext context) {
+			if (context instanceof ElementContext.Object obj)
+				return apply(obj.parent(), obj.name());
+			if (context instanceof ElementContext.Array arr)
+				return apply(arr.parent(), arr.index());
+
+			return context;
+		}
+
+		/**
 		 * Applies this operation to the element with the given name inside the given object.
 		 * @param obj The object to find the element in.
 		 * @param name The name of the element to apply on.
 		 * @return An {@link ElementContext} containing the child element and related information.
 		 */
-		public ElementContext apply(JsonObject obj, String name);
+		@Deprecated(forRemoval = true)
+		public default ElementContext apply(JsonObject obj, String name) {
+			return apply(new ElementContext.Object(obj, name, JsonNull.INSTANCE));
+		}
 
 		/**
 		 * Applies this operation to the element at the given index inside the given array.
@@ -145,15 +165,9 @@ public final class PatchUtil {
 		 * @param idx The index of the element to apply on.
 		 * @return An {@link ElementContext} containing the child element and related information.
 		 */
-		public ElementContext apply(JsonArray arr, int idx);
-
-		/**
-		 * Applies this operation to the root element.
-		 * @param doc The json document.
-		 * @return The new {@link ElementContext}.
-		 */
-		public default ElementContext apply(JsonDocument doc) {
-			return new ElementContext.Document(doc);
+		@Deprecated(forRemoval = true)
+		public default ElementContext apply(JsonArray arr, int idx) {
+			return apply(new ElementContext.Array(arr, idx, JsonNull.INSTANCE));
 		}
 
 		/**
@@ -173,8 +187,14 @@ public final class PatchUtil {
 		 * }</pre>
 		 * The return value of this method determines whether this patch will succeed.
 		 * </p>
+		 * @param context The element.
 		 * @return {@code true} if out-of-bounds indices are allowed.
 		 */
+		public default boolean allowsOutOfBounds(ElementContext context) {
+			return false;
+		}
+
+		@Deprecated(forRemoval = true)
 		public default boolean allowsOutOfBounds() {
 			return false;
 		}
@@ -230,69 +250,65 @@ public final class PatchUtil {
 		REMOVE;
 
 		@Override
-		public ElementContext apply(JsonObject obj, String name) {
-			if (this == REMOVE)
-				return new ElementContext.Object(obj, name, obj.remove(name));
-			return new ElementContext.Object(obj, name, obj.get(name));
-		}
+		public ElementContext apply(ElementContext context) {
+			if (context instanceof ElementContext.Object obj)
+				return new ElementContext.Object(obj.context(), obj.parent(), obj.name(),
+						this == REMOVE ? obj.parent().remove(obj.name()) : obj.parent().get(obj.name()));
 
-		@Override
-		public ElementContext apply(JsonArray arr, int idx) {
-			if (this == REMOVE)
-				return new ElementContext.Array(arr, idx, arr.remove(idx));
-			return new ElementContext.Array(arr, idx, arr.get(idx));
-		}
+			if (context instanceof ElementContext.Array arr) {
+				return new ElementContext.Array(arr.context(), arr.parent(), arr.index(),
+						this == REMOVE ? arr.parent().remove(arr.index()) : arr.parent().get(arr.index()));
+			}
 
-		// We don't do anything here.
-		@Override
-		public ElementContext apply(JsonDocument doc) {
-			return Operation.super.apply(doc);
+			return context;
 		}
 	}
 
 	/**
 	 * Implements the {@code add} and {@code replace} operations.
-	 * @param elem The element to add or replace with.
+	 * @param elem The element to add or replace with. A {@code null} element "simulates" addition/replacement; it doesn't actually add or replace anything.
 	 * @param replace {@code true} if the element is intended to replace an existing element. This enables checks to verify the replaced element actually exists first.
 	 * @author EnderTurret
 	 */
-	public static record AddOperation(JsonElement elem, boolean replace) implements Operation {
+	public static record AddOperation(@Nullable JsonElement elem, boolean replace) implements Operation {
 
 		@Override
-		public ElementContext apply(JsonObject obj, String name) {
-			obj.add(name, elem());
-			return new ElementContext.Object(obj, name, elem());
-		}
+		public ElementContext apply(ElementContext context) {
+			if (context instanceof ElementContext.Object obj) {
+				if (elem != null) obj.parent().add(obj.name(), elem);
+				return new ElementContext.Object(obj.context(), obj.parent(), obj.name(), elem);
+			}
 
-		@Override
-		public ElementContext apply(JsonArray arr, int idx) {
-			if (replace())
-				arr.set(idx, elem());
-			else
-				add(arr, idx, elem());
+			if (context instanceof ElementContext.Array arr) {
+				if (elem != null)
+					if (replace())
+						arr.parent().set(arr.index(), elem);
+					else
+						add(arr.parent(), arr.index(), elem);
 
-			return new ElementContext.Array(arr, idx, elem());
-		}
+				return new ElementContext.Array(arr.context(), arr.parent(), arr.index(), elem);
+			}
 
-		@Override
-		public ElementContext apply(JsonDocument doc) {
-			doc.setRoot(elem());
-			return new ElementContext.Document(doc);
+			if (context instanceof ElementContext.Document doc)
+				doc.doc().setRoot(elem);
+
+			return context;
 		}
 
 		@Override
 		public boolean allowsEndOfArrayRef() {
-			return !replace();
+			return !replace;
 		}
 
 		@Override
-		public boolean allowsOutOfBounds() {
-			return !replace();
+		public boolean allowsOutOfBounds(ElementContext context) {
+			return !replace && (!context.context().throwOnOobAdd() || (context instanceof ElementContext.Array a
+					&& a.index() == a.parent().size()));
 		}
 
 		@Override
 		public boolean strictHas() {
-			return replace();
+			return replace;
 		}
 	}
 }

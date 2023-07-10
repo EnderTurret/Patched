@@ -2,6 +2,7 @@ package net.enderturret.patched;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
 import net.enderturret.patched.exception.TraversalException;
@@ -91,28 +92,33 @@ public interface JsonSelector {
 	}
 
 	/**
+	 * @deprecated Use {@link #select(ElementContext, boolean)} instead.
 	 * {@link JsonElement} version of {@link #select(ElementContext, boolean)}.
 	 * @param from The root or beginning element.
 	 * @param throwOnError Whether a {@link TraversalException} should be thrown if an element doesn't exist. This is {@code false} for the {@code test} operation.
 	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
 	 * @throws TraversalException If an error occurs traversing the path.
 	 */
+	@Deprecated(forRemoval = true)
 	public default ElementContext select(JsonElement from, boolean throwOnError) throws TraversalException {
 		return select(new ElementContext.NoParent(from), throwOnError, PatchUtil.Operations.NOOP);
 	}
 
 	/**
+	 * @deprecated Use {@link #remove(ElementContext, boolean)} instead.
 	 * {@link JsonElement} version of {@link #remove(ElementContext, boolean)}.
 	 * @param from The root or beginning element.
 	 * @param throwOnError Whether a {@link TraversalException} should be thrown if an element doesn't exist. This is {@code false} for the {@code test} operation.
 	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
 	 * @throws TraversalException If an error occurs traversing the path.
 	 */
+	@Deprecated(forRemoval = true)
 	public default ElementContext remove(JsonElement from, boolean throwOnError) throws TraversalException {
 		return select(new ElementContext.NoParent(from), throwOnError, PatchUtil.Operations.REMOVE);
 	}
 
 	/**
+	 * @deprecated Use {@link #add(ElementContext, boolean, JsonElement)} instead.
 	 * {@link JsonElement} version of {@link #add(ElementContext, boolean, JsonElement)}.
 	 * @param from The root or beginning element.
 	 * @param throwOnError Whether a {@link TraversalException} should be thrown if an element doesn't exist. This is {@code false} for the {@code test} operation.
@@ -120,11 +126,13 @@ public interface JsonSelector {
 	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
 	 * @throws TraversalException If an error occurs traversing the path.
 	 */
+	@Deprecated(forRemoval = true)
 	public default ElementContext add(JsonElement from, boolean throwOnError, JsonElement elem) throws TraversalException {
 		return select(new ElementContext.NoParent(from), throwOnError, new PatchUtil.AddOperation(elem, false));
 	}
 
 	/**
+	 * @deprecated Use {@link #replace(ElementContext, boolean, JsonElement)} instead.
 	 * {@link JsonElement} version of {@link #replace(ElementContext, boolean, JsonElement)}.
 	 * @param from The root or beginning element.
 	 * @param throwOnError Whether a {@link TraversalException} should be thrown if an element doesn't exist. This is {@code false} for the {@code test} operation.
@@ -132,6 +140,7 @@ public interface JsonSelector {
 	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
 	 * @throws TraversalException If an error occurs traversing the path.
 	 */
+	@Deprecated(forRemoval = true)
 	public default ElementContext replace(JsonElement from, boolean throwOnError, JsonElement elem) throws TraversalException {
 		return select(new ElementContext.NoParent(from), throwOnError, new PatchUtil.AddOperation(elem, true));
 	}
@@ -246,7 +255,7 @@ public interface JsonSelector {
 				return error(throwOnError, "Attempted to traverse null context!");
 
 			if ("-".equals(name) && context.elem() instanceof JsonArray arr && op.allowsEndOfArrayRef())
-				return op.apply(arr, arr.size());
+				return op.apply(new ElementContext.Array(context.context(), arr, arr.size(), null));
 
 			if (!(context.elem() instanceof JsonObject obj))
 				return error(throwOnError, "Expected object to find '" + name + "' in, found " + context.elem() + "!");
@@ -254,7 +263,7 @@ public interface JsonSelector {
 			if (op.strictHas() && !obj.has(name))
 				return error(throwOnError, "No such child " + name + "!");
 
-			return op.apply(obj, name);
+			return op.apply(new ElementContext.Object(context.context(), obj, name, null));
 		}
 
 		@Override
@@ -279,15 +288,17 @@ public interface JsonSelector {
 				if (index < 0)
 					return error(throwOnError, "Attempted to traverse negative index in array (" + index + ")!");
 
-				if (!op.allowsOutOfBounds() && arr.size() <= index)
+				final ElementContext newContext = new ElementContext.Array(context.context(), arr, index, null);
+
+				if (!op.allowsOutOfBounds(newContext) && arr.size() <= index)
 					return error(throwOnError, "No such child " + strIndex + "!");
 
-				return op.apply(arr, index);
+				return op.apply(newContext);
 			} else if (context.elem() instanceof JsonObject obj) {
 				if (op.strictHas() && !obj.has(strIndex))
 					return error(throwOnError, "No such child " + strIndex + "!");
 
-				return op.apply(obj, strIndex);
+				return op.apply(new ElementContext.Object(context.context(), obj, strIndex, null));
 			}
 
 			return error(throwOnError, "Expected array or object to find '" + strIndex + "' in, found " + context.elem() + "!");

@@ -39,17 +39,10 @@ public final class JsonPatchTests {
 				// Gson parses these numbers into 0 and 1, respectively.
 				// There is nothing we can do about this.
 				// Side note: there are two tests with this comment.
-				"test with bad array number that has leading zeros",
-				// Out-of-bounds addition is allowed for the purpose of mod compatibility;
-				// we don't error in this case but instead add to the end of the array, like if - was used.
-				"add item to array at index > length should fail");
+				"test with bad array number that has leading zeros");
 
 		test("/tests/json-patch-tests/tests.json", "json-patch", JsonPatchTests::mapPatchErrors,
-				(comment, test) -> !disabled1.contains(comment)
-				&& (!"no comment".equals(comment) || (
-						// See disabled1: out-of-bounds addition.
-						!"Out of bounds (upper)".equals(test.error)
-						)));
+				(comment, test) -> !disabled1.contains(comment));
 	}
 
 	private static String mapSpecErrors(String comment, String error) {
@@ -68,6 +61,7 @@ public final class JsonPatchTests {
 		case "Removing deep nonexistent path" -> "net.enderturret.patched.exception.TraversalException: /missing1: No such child missing1!";
 		case "Removing nonexistent index" -> "net.enderturret.patched.exception.TraversalException: /2: No such child 2!";
 		case "test replace with missing parent key should fail" -> "net.enderturret.patched.exception.TraversalException: /foo: No such child foo!";
+		case "add item to array at index > length should fail" -> "net.enderturret.patched.exception.TraversalException: /3: No such child 3!";
 
 		case "missing from location to copy" -> "net.enderturret.patched.exception.TraversalException: /bar: No such child bar!";
 		case "missing from location to move" -> "net.enderturret.patched.exception.TraversalException: /bar: No such child bar!";
@@ -96,6 +90,7 @@ public final class JsonPatchTests {
 		case "unrecognized op should fail" -> "net.enderturret.patched.exception.PatchingException: Unknown operation 'spam'";
 
 		default -> switch (error) {
+			case "Out of bounds (upper)" -> "net.enderturret.patched.exception.TraversalException: /bar/8: No such child 8!";
 			case "Out of bounds (lower)" -> "net.enderturret.patched.exception.TraversalException: /bar/-1: Attempted to traverse negative index in array (-1)!";
 			case "Object operation on array target" -> "net.enderturret.patched.exception.TraversalException: /bar: Expected object to find 'bar' in, found [\"foo\",\"sil\"]!";
 			case "test op should fail" -> "net.enderturret.patched.exception.PatchingException: Test {\"bar\":[1,2,5,4]} == [1,2] failed.";
@@ -139,7 +134,7 @@ public final class JsonPatchTests {
 			final JsonElement _patched = test.doc.deepCopy();
 			final JsonDocument doc = new JsonDocument(_patched);
 			final JsonPatch patch = Patches.readPatch(GSON, test.patch);
-			patch.patch(doc, PatchContext.newContext().throwOnFailedTest(true));
+			patch.patch(doc, PatchContext.newContext().throwOnFailedTest(true).throwOnOobAdd(true));
 
 			if (test.expected == null) {
 				System.err.printf("Test '%s': Expected errors but patch applied successfully?"
@@ -169,7 +164,7 @@ public final class JsonPatchTests {
 					e.printStackTrace();
 				}
 			} else {
-				System.err.println("Test " + test.comment + " failed with error:");
+				System.err.println("Test " + ("no comment".equals(test.comment) ? test.patch.toString() : test.comment) + " failed with error:");
 				e.printStackTrace();
 			}
 		}
