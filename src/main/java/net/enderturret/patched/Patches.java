@@ -1,9 +1,6 @@
 package net.enderturret.patched;
 
-import java.io.IOException;
 import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

@@ -13,16 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 /**
  * Various utilities used across test classes.

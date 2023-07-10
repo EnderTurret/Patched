@@ -1,19 +1,12 @@
 package tests;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
-import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -21,7 +14,6 @@ import com.google.gson.JsonPrimitive;
 
 import net.enderturret.patched.JsonDocument;
 import net.enderturret.patched.Patches;
-import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.patch.JsonPatch;
 import net.enderturret.patched.patch.PatchContext;
 

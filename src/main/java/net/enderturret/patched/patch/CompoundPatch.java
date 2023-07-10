@@ -3,7 +3,6 @@ package net.enderturret.patched.patch;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 
 import net.enderturret.patched.ElementContext;

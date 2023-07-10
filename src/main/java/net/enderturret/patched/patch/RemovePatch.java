@@ -1,7 +1,5 @@
 package net.enderturret.patched.patch;
 
-import com.google.gson.JsonElement;
-
 import net.enderturret.patched.ElementContext;
 import net.enderturret.patched.exception.TraversalException;
 
