@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.EnderTurret:Patched:1.1.1'
+    implementation 'com.github.EnderTurret:Patched:<version>'
 }
 ```
 
