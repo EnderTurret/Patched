@@ -76,7 +76,24 @@ publishing {
             from components.java
             pom {
                 name = 'Patched'
-                description = 'Enables patching of Json files for mods or other uses.'
+                description = 'A json patching library that implements RFC 6902 with some optional extensions.'
+                url = 'https://github.com/EnderTurret/Patched'
+                licenses {
+                    license {
+                        name = 'LGPL-2.1-or-later'
+                        url = 'https://www.gnu.org/licenses/old-licenses/lgpl-2.1-standalone.html'
+                        distribution = 'repo'
+                    }
+                }
+                issueManagement {
+                    system = 'GitHub Issues'
+                    url = 'https://github.com/EnderTurret/Patched/issues'
+                }
+                scm {
+                    url = 'https://github.com/EnderTurret/Patched'
+                    connection = 'scm:git:https://github.com/EnderTurret/Patched.git'
+                    developerConnection = 'scm:git:https://github.com/EnderTurret/Patched.git'
+                }
             }
             artifact patcherJar
             artifact patcherSourcesJar
