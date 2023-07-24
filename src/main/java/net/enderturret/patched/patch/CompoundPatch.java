@@ -12,7 +12,7 @@ import net.enderturret.patched.ElementContext;
  * @see PatchUtil#compound(JsonPatch...)
  * @author EnderTurret
  */
-public class CompoundPatch extends JsonPatch {
+public class CompoundPatch extends ManualTraversalPatch {
 
 	private final JsonPatch[] patches;
 
@@ -33,9 +33,6 @@ public class CompoundPatch extends JsonPatch {
 			patch.patch(root, context);
 		}
 	}
-
-	@Override
-	protected void patchJson(ElementContext elem, PatchContext context) {}
 
 	@Override
 	protected String operation() { return null; }

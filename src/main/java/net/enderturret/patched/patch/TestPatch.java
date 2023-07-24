@@ -17,7 +17,7 @@ import net.enderturret.patched.exception.TraversalException;
  * @see PatchUtil#test(String, JsonElement, boolean)
  * @author EnderTurret
  */
-public class TestPatch extends JsonPatch {
+public class TestPatch extends ManualTraversalPatch {
 
 	@Nullable
 	protected final String type;
@@ -90,9 +90,6 @@ public class TestPatch extends JsonPatch {
 
 	@Override
 	public void patch(ElementContext root, PatchContext context) {}
-
-	@Override
-	protected void patchJson(ElementContext elem, PatchContext context) {}
 
 	@Override
 	protected void writeAdditional(JsonObject obj, JsonSerializationContext context) {

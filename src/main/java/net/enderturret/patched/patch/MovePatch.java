@@ -1,6 +1,5 @@
 package net.enderturret.patched.patch;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
@@ -13,7 +12,7 @@ import net.enderturret.patched.exception.TraversalException;
  * @see PatchUtil#move(String, String)
  * @author EnderTurret
  */
-public final class MovePatch extends JsonPatch {
+public final class MovePatch extends ManualTraversalPatch {
 
 	protected final JsonSelector from;
 
@@ -53,7 +52,4 @@ public final class MovePatch extends JsonPatch {
 			throw e.withPath(path + "/" + last);
 		}
 	}
-
-	@Override
-	protected void patchJson(ElementContext elem, PatchContext context) {}
 }

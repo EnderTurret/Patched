@@ -13,7 +13,7 @@ import net.enderturret.patched.exception.TraversalException;
  * @see PatchUtil#copy(String, String)
  * @author EnderTurret
  */
-public final class CopyPatch extends JsonPatch {
+public final class CopyPatch extends ManualTraversalPatch {
 
 	protected final JsonSelector from;
 
@@ -48,7 +48,4 @@ public final class CopyPatch extends JsonPatch {
 			throw e.withPath(path + "/" + last);
 		}
 	}
-
-	@Override
-	protected void patchJson(ElementContext elem, PatchContext context) {}
 }

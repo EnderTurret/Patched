@@ -11,7 +11,6 @@ import com.google.gson.JsonObject;
 
 import net.enderturret.patched.ElementContext;
 import net.enderturret.patched.ITestEvaluator;
-import net.enderturret.patched.JsonDocument;
 import net.enderturret.patched.exception.PatchingException;
 
 /**
