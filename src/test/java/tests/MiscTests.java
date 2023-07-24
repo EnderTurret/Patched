@@ -1,7 +1,14 @@
 package tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.jupiter.api.Test;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -24,18 +31,10 @@ import tests.util.TestUtil;
  * Miscellaneous tests for miscellaneous things.
  * @author EnderTurret
  */
-public final class MiscTests {
+final class MiscTests {
 
-	public static void main(String... args) {
-		exceptions();
-		patchBuilding();
-		testCompoundSelector();
-		testPatchSerializer();
-		testBadPatch();
-		testAuditMethods();
-	}
-
-	private static void patchBuilding() {
+	@Test
+	void patchBuilding() {
 		final List<JsonPatch> patches = new ArrayList<>();
 
 		patches.add(PatchUtil.add("/add", new JsonPrimitive(true)));
@@ -53,15 +52,11 @@ public final class MiscTests {
 		final String target = TestUtil.read("/tests/built_patch.json");
 		final String output = PatchingTests.GSON.toJson(result);
 
-		if (!output.equals(target)) {
-			System.out.println("Built patch test failed!\n");
-			System.out.println(target);
-			System.out.println("\n(expected) vs (output)\n");
-			System.out.println(output);
-		}
+		assertEquals(target, output);
 	}
 
-	private static void exceptions() {
+	@Test
+	void exceptions() {
 		// Instantiate some exceptions. They don't really need testing.
 		// This might be coverage hacking, but it's fine I swear.
 		final PatchingException e = new PatchingException();
@@ -72,16 +67,15 @@ public final class MiscTests {
 		new TraversalException("this is also a message", e);
 	}
 
-	private static void testPatchSerializer() {
+	@Test
+	void testPatchSerializer() {
 		new JsonPatch.Serializer();
 
-		try {
-			new JsonPatch.Serializer(null, true, false, false);
-			System.out.println("Null-enforcing op test failed: no exception occured.");
-		} catch (IllegalArgumentException ignored) {}
+		assertThrows(IllegalArgumentException.class, () -> new JsonPatch.Serializer(null, true, false, false));
 	}
 
-	private static void testBadPatch() {
+	@Test
+	void testBadPatch() {
 		final JsonPatch bad = new JsonPatch(null) {
 			@Override
 			protected String operation() {
@@ -91,61 +85,40 @@ public final class MiscTests {
 			protected void patchJson(ElementContext elem, PatchContext context) throws PatchingException, TraversalException {}
 		};
 
-		try {
-			bad.patch(new JsonDocument(new JsonObject()), PatchContext.newContext());
-			System.out.println("Bad patch implementation test failed: no exception occured.");
-		} catch (UnsupportedOperationException ignored) {}
+		{
+			final JsonDocument doc = new JsonDocument(new JsonObject());
+			assertThrows(UnsupportedOperationException.class, () -> bad.patch(doc, PatchContext.newContext()), "Should throw for null path");
+		}
 
-		try {
-			new TestPatch(null, null, null, false) {};
-			System.out.println("Ambiguous test patch construction test failed: no exception occured.");
-		} catch (IllegalArgumentException ignored) {}
+		assertThrows(IllegalArgumentException.class, () -> new TestPatch(null, null, null, false) {}, "Should throw for ambiguous type, path, and test");
 	}
 
-	private static void testAuditMethods() {
+	@Test
+	void testAuditMethods() {
 		PatchAudit audit = new PatchAudit("what");
 		audit.setPatchPath("something else");
 
-		if (audit.hasRecords())
-			System.out.println("hasRecords() test one failed: audit should not have records yet.");
+		assertFalse(audit.hasRecords());
 
 		audit.recordReplace("/fake", "2");
 
-		if (!audit.hasRecords())
-			System.out.println("hasRecords() test two failed: audit should have one record.");
+		assertTrue(audit.hasRecords());
 
 		audit = new PatchAudit("what");
 
 		audit.recordRemove("/fake", "2", new JsonPrimitive(true));
 
-		if (!audit.hasRecords())
-			System.out.println("hasRecords() test three failed: audit should have one removal record.");
+		assertTrue(audit.hasRecords());
 	}
 
-	// Maybe one day I will convert all this to JUnit like a modern Java developer.
-	private static void testCompoundSelector() {
+	@Test
+	void testCompoundSelector() {
 		final CompoundSelector selector = JsonSelector.of("/a/b/c");
 
-		try {
-			selector.toString(3, 2);
-			System.out.println("Test toString(3, 2) failed: no exception occured.");
-		} catch (IndexOutOfBoundsException ignored) {}
+		assertThrows(IndexOutOfBoundsException.class, () -> selector.toString(3, 2));
+		assertThrows(IndexOutOfBoundsException.class, () -> selector.toString(0, 7));
 
-		try {
-			selector.toString(0, 7);
-			System.out.println("Test toString(0, 7) failed: no exception occured.");
-		} catch (IndexOutOfBoundsException ignored) {}
-
-		{
-			final String str = selector.toString(1, 2);
-			if (!"b".equals(str))
-				System.out.println("Test toString(1, 2) failed: got " + str);
-		}
-
-		{
-			final String str = selector.toString(1, 3);
-			if (!"b/c".equals(str))
-				System.out.println("Test toString(1, 3) failed: got " + str);
-		}
+		assertEquals("b", selector.toString(1, 2));
+		assertEquals("b/c", selector.toString(1, 3));
 	}
 }

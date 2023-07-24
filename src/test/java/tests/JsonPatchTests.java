@@ -1,10 +1,19 @@
 package tests;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -14,6 +23,7 @@ import com.google.gson.JsonPrimitive;
 
 import net.enderturret.patched.JsonDocument;
 import net.enderturret.patched.Patches;
+import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.patch.JsonPatch;
 import net.enderturret.patched.patch.PatchContext;
 
@@ -25,25 +35,8 @@ import tests.util.TestUtil;
  */
 public final class JsonPatchTests {
 
-	private static final boolean PRINT_TEST_SUCCESS = false;
-
 	private static final Gson GSON = Patches.patchGson(false, false).setPrettyPrinting().create();
-
-	public static void main(String... args) {
-		test("/tests/json-patch-tests/spec_tests.json", "RFC", JsonPatchTests::mapSpecErrors, (comment, test) -> true);
-
-		// --------------------------------------------------------------------------------------------
-
-		final Set<String> disabled1 = Set.of(
-				// This is actually up to the Json parser -- not the patch applier.
-				// Gson parses these numbers into 0 and 1, respectively.
-				// There is nothing we can do about this.
-				// Side note: there are two tests with this comment.
-				"test with bad array number that has leading zeros");
-
-		test("/tests/json-patch-tests/tests.json", "json-patch", JsonPatchTests::mapPatchErrors,
-				(comment, test) -> !disabled1.contains(comment));
-	}
+	private static final PatchContext CONTEXT = PatchContext.newContext().throwOnFailedTest(true).throwOnOobAdd(true);
 
 	private static String mapSpecErrors(String comment, String error) {
 		return switch (comment) {
@@ -99,7 +92,24 @@ public final class JsonPatchTests {
 		};
 	}
 
-	private static void test(String path, String name, BinaryOperator<String> errorMapper, BiPredicate<String, Test> filter) {
+	@TestFactory
+	Stream<DynamicTest> testSpecTests() {
+		return test("/tests/json-patch-tests/spec_tests.json", "RFC", JsonPatchTests::mapSpecErrors, (comment, test) -> true);
+	}
+
+	@TestFactory
+	Stream<DynamicTest> testPatchTests() {
+		final Set<String> disabled1 = Set.of(
+				// This is actually up to the Json parser -- not the patch applier.
+				// Gson parses these numbers into 0 and 1, respectively.
+				// There is nothing we can do about this.
+				// Side note: there are two tests with this comment.
+				"test with bad array number that has leading zeros");
+		return test("/tests/json-patch-tests/tests.json", "json-patch", JsonPatchTests::mapPatchErrors,
+				(comment, test) -> !disabled1.contains(comment));
+	}
+
+	private static Stream<DynamicTest> test(String path, String name, BinaryOperator<String> errorMapper, BiPredicate<String, Test> filter) {
 		final List<Test> tests;
 
 		{
@@ -109,67 +119,25 @@ public final class JsonPatchTests {
 			tests = readTests(testsElem);
 		}
 
-		int passed = 0;
-		int skipped = 0;
+		return tests.stream()
+				.map(test -> DynamicTest.dynamicTest(test.comment(), () -> {
+					assumeFalse(test.disabled || !filter.test(test.comment, test), "Test is disabled");
 
-		for (int i = 0; i < tests.size(); i++) {
-			final Test test = tests.get(i);
+					final JsonElement _patched = test.doc.deepCopy();
+					final JsonDocument doc = new JsonDocument(_patched);
 
-			if (test.disabled || !filter.test(test.comment, test)) {
-				skipped++;
-				continue;
-			}
-
-			if (testSingle(test, errorMapper))
-				passed++;
-		}
-
-		System.out.printf("%d / %d %s tests passed %s.\n", passed, tests.size() - skipped,
-				name,
-				skipped > 0 ? "(" + skipped + " skipped)" : "");
-	}
-
-	private static boolean testSingle(Test test, BinaryOperator<String> errorMapper) {
-		try {
-			final JsonElement _patched = test.doc.deepCopy();
-			final JsonDocument doc = new JsonDocument(_patched);
-			final JsonPatch patch = Patches.readPatch(GSON, test.patch);
-			patch.patch(doc, PatchContext.newContext().throwOnFailedTest(true).throwOnOobAdd(true));
-
-			if (test.expected == null) {
-				System.err.printf("Test '%s': Expected errors but patch applied successfully?"
-						+ "\nExpected: %s\nOutput:\n%s\n",
-						test.comment, test.error, GSON.toJson(doc.getRoot()));
-			}
-
-			else if (test.expected.equals(doc.getRoot())) {
-				if (PRINT_TEST_SUCCESS)
-					System.out.println("Test '" + test.comment + "' passed.");
-				return true;
-			} else {
-				System.err.printf("Test '%s' failed!\n\n"
-						+ "%s\n(expected) vs (output)\n%s\n",
-						test.comment, GSON.toJson(test.expected), GSON.toJson(doc.getRoot()));
-			}
-		} catch (Exception e) {
-			if (test.error != null) {
-				final String error = e.toString();
-				if (errorMapper.apply(test.comment, test.error).equals(error)) {
-					if (PRINT_TEST_SUCCESS)
-						System.out.println("Test '" + test.comment + "' passed.");
-					return true;
-				} else {
-					System.out.printf("Test '%s' expected error: %s"
-							+ "\nGot error:\n", test.comment, test.error);
-					e.printStackTrace();
-				}
-			} else {
-				System.err.println("Test " + ("no comment".equals(test.comment) ? test.patch.toString() : test.comment) + " failed with error:");
-				e.printStackTrace();
-			}
-		}
-
-		return false;
+					if (test.expected == null) {
+						final PatchingException e = assertThrows(PatchingException.class, () -> {
+							final JsonPatch patch = Patches.readPatch(GSON, test.patch);
+							patch.patch(doc, CONTEXT);
+						}, () -> "Resultant document: " + doc.getRoot());
+						assertEquals(errorMapper.apply(test.comment, test.error), e.toString());
+					} else {
+						final JsonPatch patch = assertDoesNotThrow(() -> Patches.readPatch(GSON, test.patch));
+						assertDoesNotThrow(() -> patch.patch(doc, CONTEXT));
+						assertEquals(test.expected, doc.getRoot());
+					}
+				}));
 	}
 
 	private static List<Test> readTests(JsonElement testsElem) {
