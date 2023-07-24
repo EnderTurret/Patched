@@ -1,15 +1,13 @@
 package tests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
@@ -34,7 +32,7 @@ import tests.util.TestUtil;
 final class MiscTests {
 
 	@Test
-	void patchBuilding() {
+	void testPatchBuilding() {
 		final List<JsonPatch> patches = new ArrayList<>();
 
 		patches.add(PatchUtil.add("/add", new JsonPrimitive(true)));
@@ -56,7 +54,7 @@ final class MiscTests {
 	}
 
 	@Test
-	void exceptions() {
+	void testExceptions() {
 		// Instantiate some exceptions. They don't really need testing.
 		// This might be coverage hacking, but it's fine I swear.
 		final PatchingException e = new PatchingException();
@@ -120,5 +118,25 @@ final class MiscTests {
 
 		assertEquals("b", selector.toString(1, 2));
 		assertEquals("b/c", selector.toString(1, 3));
+	}
+
+	@Test
+	void testElementContexts() {
+		final ElementContext context = new ElementContext.NoParent(PatchContext.newContext(), JsonNull.INSTANCE);
+		assertNull(context.parent());
+		assertThrows(TraversalException.class, () -> context.child(0, JsonNull.INSTANCE));
+		assertThrows(TraversalException.class, () -> context.child("some path", JsonNull.INSTANCE));
+	}
+
+	@Test
+	void testJsonDocuments() {
+		final JsonDocument doc = new JsonDocument(new JsonPrimitive("this"));
+		assertEquals("\"this\"", doc.toString());
+		assertEquals(new JsonPrimitive("this").hashCode(), doc.hashCode());
+
+		assertEquals(doc, doc);
+		assertEquals(new JsonDocument(new JsonPrimitive("this")), doc);
+		assertNotEquals(doc, null);
+		assertNotEquals("this", doc);
 	}
 }
