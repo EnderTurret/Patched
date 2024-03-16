@@ -11,15 +11,30 @@ import net.enderturret.patched.patch.PatchUtil.Operation;
 import net.enderturret.patched.patch.PatchUtil.Operations;
 
 /**
- * <p>Represents a Json path.</p>
+ * <p>
+ * Represents a Json path -- a way of identifying a specific element in a Json tree.
+ * </p>
+ * <p>
+ * A Json path consists of a series of "path elements" delimited with slashes.
+ * Each path element identifies a kind of Json element, like an object or array.
+ * For example, the path element "2" could be the third item in an array, or something associated with the key "2" in an object.
+ * </p>
+ * <p>
+ * Since there's nothing stopping anyone from including a slash inside a key, Json paths come with the following bespoke escape sequences:
+ * <table border="1">
+ * <tr><th>Escape sequence</th><th>Resulting character</th></tr>
+ * <tr><td>~0</td><td>~</td></tr>
+ * <tr><td>~1</td><td>/</td></tr>
+ * </table>
+ * </p>
  *
- * <p>Some examples include:
+ * <p>
+ * Some examples of Json paths include:
  * <pre>
  * /object/one/2
  * /array/-</pre>
- * </p>
  *
- * <p>Real world examples:
+ * Or some real world examples:
  * <pre>
  * /server/server/performance/server/performance/memory/low-mode
  * /sounds/learnBlueprint/-
