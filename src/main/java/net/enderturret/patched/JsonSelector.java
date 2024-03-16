@@ -42,6 +42,7 @@ import net.enderturret.patched.patch.PatchUtil.Operations;
  * </p>
  *
  * @author EnderTurret
+ * @since 1.0.0
  */
 public interface JsonSelector {
 
@@ -53,6 +54,7 @@ public interface JsonSelector {
 	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
 	 * @throws TraversalException If an error occurs traversing the path.
 	 * @see Operation#apply(ElementContext)
+	 * @since 1.0.0
 	 */
 	public ElementContext select(ElementContext context, boolean throwOnError, PatchUtil.Operation op) throws TraversalException;
 
@@ -63,6 +65,7 @@ public interface JsonSelector {
 	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
 	 * @throws TraversalException If an error occurs traversing the path.
 	 * @see #select(ElementContext, boolean, Operation)
+	 * @since 1.0.0
 	 */
 	public default ElementContext select(ElementContext context, boolean throwOnError) throws TraversalException {
 		return select(context, throwOnError, PatchUtil.Operations.NOOP);
@@ -75,6 +78,7 @@ public interface JsonSelector {
 	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
 	 * @throws TraversalException If an error occurs traversing the path.
 	 * @see #select(ElementContext, boolean, Operation)
+	 * @since 1.0.0
 	 */
 	public default ElementContext remove(ElementContext context, boolean throwOnError) throws TraversalException {
 		return select(context, throwOnError, PatchUtil.Operations.REMOVE);
@@ -88,6 +92,7 @@ public interface JsonSelector {
 	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
 	 * @throws TraversalException If an error occurs traversing the path.
 	 * @see #select(ElementContext, boolean, Operation)
+	 * @since 1.0.0
 	 */
 	public default ElementContext add(ElementContext context, boolean throwOnError, JsonElement elem) throws TraversalException {
 		return select(context, throwOnError, new PatchUtil.AddOperation(elem, false));
@@ -101,6 +106,7 @@ public interface JsonSelector {
 	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
 	 * @throws TraversalException If an error occurs traversing the path.
 	 * @see #select(ElementContext, boolean, Operation)
+	 * @since 1.0.0
 	 */
 	public default ElementContext replace(ElementContext context, boolean throwOnError, JsonElement elem) throws TraversalException {
 		return select(context, throwOnError, new PatchUtil.AddOperation(elem, true));
@@ -113,6 +119,7 @@ public interface JsonSelector {
 	 * @param throwOnError Whether a {@link TraversalException} should be thrown if an element doesn't exist. This is {@code false} for the {@code test} operation.
 	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
 	 * @throws TraversalException If an error occurs traversing the path.
+	 * @since 1.0.0
 	 */
 	@Deprecated(forRemoval = true)
 	public default ElementContext select(JsonElement from, boolean throwOnError) throws TraversalException {
@@ -126,6 +133,7 @@ public interface JsonSelector {
 	 * @param throwOnError Whether a {@link TraversalException} should be thrown if an element doesn't exist. This is {@code false} for the {@code test} operation.
 	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
 	 * @throws TraversalException If an error occurs traversing the path.
+	 * @since 1.0.0
 	 */
 	@Deprecated(forRemoval = true)
 	public default ElementContext remove(JsonElement from, boolean throwOnError) throws TraversalException {
@@ -140,6 +148,7 @@ public interface JsonSelector {
 	 * @param elem The element to add.
 	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
 	 * @throws TraversalException If an error occurs traversing the path.
+	 * @since 1.0.0
 	 */
 	@Deprecated(forRemoval = true)
 	public default ElementContext add(JsonElement from, boolean throwOnError, JsonElement elem) throws TraversalException {
@@ -154,6 +163,7 @@ public interface JsonSelector {
 	 * @param elem The element to replace with.
 	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
 	 * @throws TraversalException If an error occurs traversing the path.
+	 * @since 1.0.0
 	 */
 	@Deprecated(forRemoval = true)
 	public default ElementContext replace(JsonElement from, boolean throwOnError, JsonElement elem) throws TraversalException {
@@ -162,6 +172,7 @@ public interface JsonSelector {
 
 	/**
 	 * @return {@code true} if this selector is empty.
+	 * @since 1.0.0
 	 */
 	public default boolean isEmpty() {
 		return false;
@@ -172,6 +183,7 @@ public interface JsonSelector {
 	 * @param path The input path.
 	 * @return The {@link CompoundSelector}.
 	 * @throws TraversalException If the path does not begin with a slash.
+	 * @since 1.0.0
 	 */
 	public static CompoundSelector of(String path) {
 		if (path.isEmpty())
@@ -198,6 +210,7 @@ public interface JsonSelector {
 	 * but this method will give you the path {@code ["/array/1"]}.</p>
 	 * @param path The input path.
 	 * @return The selector.
+	 * @since 1.0.0
 	 */
 	public static JsonSelector ofSingle(String path) {
 		if (path.isEmpty())
@@ -226,6 +239,7 @@ public interface JsonSelector {
 	 * @param msg The detail message of the exception.
 	 * @return {@code null}.
 	 * @throws TraversalException If {@code throwOnError} is {@code true}.
+	 * @since 1.0.0
 	 */
 	public static ElementContext error(boolean throwOnError, String msg) throws TraversalException {
 		if (throwOnError)
@@ -237,6 +251,7 @@ public interface JsonSelector {
 	/**
 	 * A selector that returns the input element.
 	 * @author EnderTurret
+	 * @since 1.0.0
 	 */
 	public static record EmptySelector() implements JsonSelector {
 		@Override
@@ -262,6 +277,7 @@ public interface JsonSelector {
 	 * or the end of an array in the case of {@code '-'}.
 	 * @param name The name of the element to find.
 	 * @author EnderTurret
+	 * @since 1.0.0
 	 */
 	public static record NameSelector(String name) implements JsonSelector {
 		@Override
@@ -292,6 +308,7 @@ public interface JsonSelector {
 	 * @param index The index to path to in an array.
 	 * @param strIndex The string version of the index.
 	 * @author EnderTurret
+	 * @since 1.0.0
 	 */
 	public static record NumericSelector(int index, String strIndex) implements JsonSelector {
 		@Override
@@ -329,6 +346,7 @@ public interface JsonSelector {
 	 * A selector that is made up of multiple other selectors.
 	 * @param path The path of selectors.
 	 * @author EnderTurret
+	 * @since 1.0.0
 	 */
 	public static record CompoundSelector(JsonSelector[] path) implements JsonSelector {
 		@Override
@@ -350,6 +368,7 @@ public interface JsonSelector {
 		 * @param from The beginning index of the path (inclusive).
 		 * @param to The ending index of the path (exclusive).
 		 * @return The built array.
+		 * @since 1.0.0
 		 */
 		public JsonSelector[] path(int from, int to) {
 			final JsonSelector[] ret = new JsonSelector[to - from];
@@ -359,6 +378,7 @@ public interface JsonSelector {
 
 		/**
 		 * @return The length of the path represented by this {@link CompoundSelector}.
+		 * @since 1.0.0
 		 */
 		public int size() {
 			return path.length;
@@ -367,6 +387,7 @@ public interface JsonSelector {
 		/**
 		 * @param index The index of the selector to return.
 		 * @return The selector at {@code index} in the path.
+		 * @since 1.0.0
 		 */
 		public JsonSelector path(int index) {
 			return path[index];
@@ -377,6 +398,7 @@ public interface JsonSelector {
 		 * @param from The beginning index (inclusive).
 		 * @param to The ending index (exclusive).
 		 * @return The string path between the given points.
+		 * @since 1.0.0
 		 */
 		public String toString(int from, int to) {
 			if (from >= to) throw new IndexOutOfBoundsException("Bounds: (from >= to) " + from + " >= " + to);

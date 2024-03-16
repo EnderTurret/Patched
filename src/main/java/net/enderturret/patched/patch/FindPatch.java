@@ -15,6 +15,7 @@ import net.enderturret.patched.exception.PatchingException;
  * A patch that finds an element matching some criteria and applies a patch to it.
  * @see PatchUtil#find(String, List, JsonPatch, boolean)
  * @author EnderTurret
+ * @since 1.0.0
  */
 public final class FindPatch extends JsonPatch {
 
@@ -28,6 +29,7 @@ public final class FindPatch extends JsonPatch {
 	 * @param tests A list of tests that an element must pass to have {@code then} applied to it.
 	 * @param then A patch to apply to elements passing the tests.
 	 * @param multi Whether to continue searching for matching elements after the first one is found.
+	 * @since 1.0.0
 	 */
 	protected FindPatch(String path, List<TestPatch> tests, JsonPatch then, boolean multi) {
 		super(path);

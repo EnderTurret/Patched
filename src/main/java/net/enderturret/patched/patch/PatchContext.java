@@ -15,6 +15,7 @@ import net.enderturret.patched.audit.PatchAudit;
  * @param testEvaluator An evaluator for custom tests used in {@code test} patches. May be {@code null}.
  * @param audit An audit to record changes made by patches. May be {@code null}.
  * @author EnderTurret
+ * @since 1.0.0
  */
 public record PatchContext(boolean testExtensions, boolean patchedExtensions, boolean throwOnFailedTest, boolean throwOnOobAdd, @Nullable ITestEvaluator testEvaluator, @Nullable PatchAudit audit) {
 
@@ -35,6 +36,7 @@ public record PatchContext(boolean testExtensions, boolean patchedExtensions, bo
 	 * Returns whether or not {@code testExtensions} is enabled.
 	 * @deprecated Use {@link #testExtensions()} instead.
 	 * @return {@code true} if {@code testExtensions} is enabled.
+	 * @since 1.0.0
 	 */
 	@Deprecated(forRemoval = true)
 	public boolean sbExtensions() {
@@ -44,6 +46,7 @@ public record PatchContext(boolean testExtensions, boolean patchedExtensions, bo
 	/**
 	 * Returns a new {@code PatchContext} initialized with default values.
 	 * @return A new {@code PatchContext}.
+	 * @since 1.0.0
 	 */
 	public static PatchContext newContext() {
 		return new PatchContext(false, false, false, false, null, null);
@@ -54,6 +57,7 @@ public record PatchContext(boolean testExtensions, boolean patchedExtensions, bo
 	 * @deprecated Use {@link #testExtensions(boolean)} instead.
 	 * @param value Whether extensions to the {@code test} operation should be enabled.
 	 * @return The new {@code PatchContext}.
+	 * @since 1.0.0
 	 */
 	@Deprecated(forRemoval = true)
 	public PatchContext sbExtensions(boolean value) {
@@ -64,6 +68,7 @@ public record PatchContext(boolean testExtensions, boolean patchedExtensions, bo
 	 * Returns a copy of this {@code PatchContext} with {@link #testExtensions} set to the given value.
 	 * @param value Whether extensions to the {@code test} operation should be enabled.
 	 * @return The new {@code PatchContext}.
+	 * @since 1.3.0
 	 */
 	public PatchContext testExtensions(boolean value) {
 		return new PatchContext(value, patchedExtensions, throwOnFailedTest, throwOnOobAdd, testEvaluator, audit);
@@ -73,6 +78,7 @@ public record PatchContext(boolean testExtensions, boolean patchedExtensions, bo
 	 * Returns a copy of this {@code PatchContext} with {@link #patchedExtensions} set to the given value.
 	 * @param value Whether this library's patching extensions are enabled.
 	 * @return The new {@code PatchContext}.
+	 * @since 1.0.0
 	 */
 	public PatchContext patchedExtensions(boolean value) {
 		return new PatchContext(testExtensions, value, throwOnFailedTest, throwOnOobAdd, testEvaluator, audit);
@@ -82,6 +88,7 @@ public record PatchContext(boolean testExtensions, boolean patchedExtensions, bo
 	 * Returns a copy of this {@code PatchContext} with {@link #throwOnFailedTest} set to the given value.
 	 * @param value Whether the test operation should throw an exception if it fails.
 	 * @return The new {@code PatchContext}.
+	 * @since 1.0.0
 	 */
 	public PatchContext throwOnFailedTest(boolean value) {
 		return new PatchContext(testExtensions, patchedExtensions, value, throwOnOobAdd, testEvaluator, audit);
@@ -91,6 +98,7 @@ public record PatchContext(boolean testExtensions, boolean patchedExtensions, bo
 	 * Returns a copy of this {@code PatchContext} with {@link #throwOnOobAdd} set to the given value.
 	 * @param value Whether to throw an exception when using an {@code add} patch to add an element at a positive out-of-bounds index.
 	 * @return The new {@code PatchContext}.
+	 * @since 1.3.0
 	 */
 	public PatchContext throwOnOobAdd(boolean value) {
 		return new PatchContext(testExtensions, patchedExtensions, throwOnFailedTest, value, testEvaluator, audit);
@@ -100,6 +108,7 @@ public record PatchContext(boolean testExtensions, boolean patchedExtensions, bo
 	 * Returns a copy of this {@code PatchContext} with {@link #testEvaluator} set to the given value.
 	 * @param value An evaluator for custom tests in the {@code test} operation. May be {@code null}.
 	 * @return The new {@code PatchContext}.
+	 * @since 1.1.0
 	 */
 	public PatchContext testEvaluator(@Nullable ITestEvaluator value) {
 		return new PatchContext(testExtensions, patchedExtensions, throwOnFailedTest, throwOnOobAdd, value, audit);
@@ -109,6 +118,7 @@ public record PatchContext(boolean testExtensions, boolean patchedExtensions, bo
 	 * Returns a copy of this {@code PatchContext} with {@link #audit} set to the given value.
 	 * @param value An audit to record changes made by patches. May be {@code null}.
 	 * @return The new {@code PatchContext}.
+	 * @since 1.2.0
 	 */
 	public PatchContext audit(@Nullable PatchAudit value) {
 		return new PatchContext(testExtensions, patchedExtensions, throwOnFailedTest, throwOnOobAdd, testEvaluator, value);

@@ -12,6 +12,7 @@ import net.enderturret.patched.exception.TraversalException;
  * A patch that copies an element from one location to another.
  * @see PatchUtil#copy(String, String)
  * @author EnderTurret
+ * @since 1.0.0
  */
 public final class CopyPatch extends ManualTraversalPatch {
 
@@ -21,6 +22,7 @@ public final class CopyPatch extends ManualTraversalPatch {
 	 * Users: don't instantiate directly. Use {@link PatchUtil#copy(String, String)} instead.
 	 * @param path The location the element will be copied to.
 	 * @param from The path to the element to copy.
+	 * @since 1.0.0
 	 */
 	protected CopyPatch(String path, String from) {
 		super(path);

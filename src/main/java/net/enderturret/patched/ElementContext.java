@@ -14,11 +14,13 @@ import net.enderturret.patched.patch.PatchUtil.Operation;
  * <p>Represents a {@link JsonElement} and its parent element.</p>
  * <p>This class acts as an abstraction layer to the different kinds of elements that can be parents.</p>
  * @author EnderTurret
+ * @since 1.0.0
  */
 public interface ElementContext {
 
 	/**
 	 * @return The patch context.
+	 * @since 1.3.0
 	 */
 	@Nullable
 	public default PatchContext context() {
@@ -27,12 +29,14 @@ public interface ElementContext {
 
 	/**
 	 * @return The parent element.
+	 * @since 1.0.0
 	 */
 	@Nullable
 	public JsonElement parent();
 
 	/**
 	 * @return The element.
+	 * @since 1.0.0
 	 */
 	@Nullable
 	public JsonElement elem();
@@ -41,6 +45,7 @@ public interface ElementContext {
 	 * Applies the given operation to this element.
 	 * @deprecated Use {@link Operation#apply(ElementContext)} instead.
 	 * @param op The operation to apply.
+	 * @since 1.0.0
 	 */
 	@Deprecated(forRemoval = true)
 	public default void apply(Operation op) {
@@ -53,6 +58,7 @@ public interface ElementContext {
 	 * @param elem The element wrapped by the {@link ElementContext}.
 	 * @return The new {@link ElementContext}.
 	 * @throws TraversalException If this element is not a {@link JsonObject}.
+	 * @since 1.0.0
 	 */
 	public default ElementContext child(String name, JsonElement elem) {
 		if (!(elem() instanceof JsonObject o))
@@ -66,6 +72,7 @@ public interface ElementContext {
 	 * @param elem The element wrapped by the {@link ElementContext}.
 	 * @return The new {@link ElementContext}.
 	 * @throws TraversalException If this element is not a {@link JsonArray}.
+	 * @since 1.0.0
 	 */
 	public default ElementContext child(int index, JsonElement elem) {
 		if (!(elem() instanceof JsonArray a))
@@ -79,6 +86,7 @@ public interface ElementContext {
 	 * @param context The patch context. May be {@code null} in circumstances involving old code.
 	 * @param elem The element.
 	 * @author EnderTurret
+	 * @since 1.0.0
 	 */
 	public static record NoParent(@Nullable PatchContext context, JsonElement elem) implements ElementContext {
 
@@ -97,6 +105,7 @@ public interface ElementContext {
 	 * @param context The patch context. May be {@code null} in circumstances involving old code.
 	 * @param doc The document.
 	 * @author EnderTurret
+	 * @since 1.3.0
 	 */
 	public static record Document(@Nullable PatchContext context, JsonDocument doc) implements ElementContext {
 
@@ -122,6 +131,7 @@ public interface ElementContext {
 	 * @param name The name of the child element.
 	 * @param elem The child element.
 	 * @author EnderTurret
+	 * @since 1.0.0
 	 */
 	public static record Object(@Nullable PatchContext context, JsonObject parent, String name, @Nullable JsonElement elem) implements ElementContext {
 
@@ -142,6 +152,7 @@ public interface ElementContext {
 	 * @param index The index of the child element.
 	 * @param elem The child element.
 	 * @author EnderTurret
+	 * @since 1.0.0
 	 */
 	public static record Array(@Nullable PatchContext context, JsonArray parent, int index, @Nullable JsonElement elem) implements ElementContext {
 

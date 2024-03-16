@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * A generic exception thrown when something goes wrong during patch application or deserialization.
  * @author EnderTurret
+ * @since 1.0.0
  */
 public class PatchingException extends RuntimeException {
 

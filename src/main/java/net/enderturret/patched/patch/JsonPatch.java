@@ -29,6 +29,7 @@ import net.enderturret.patched.exception.TraversalException;
  * <p>This is the base class that all of the other patches extend from.<p>
  * <p>You can obtain one of these patches using {@link Patches}.</p>
  * @author EnderTurret
+ * @since 1.0.0
  */
 public abstract class JsonPatch {
 
@@ -40,6 +41,7 @@ public abstract class JsonPatch {
 	/**
 	 * Constructs a new {@code JsonPatch}.
 	 * @param path The path that will be followed to find the element passed to {@link #patchJson(ElementContext, PatchContext)}, or {@code null} to handle this yourself.
+	 * @since 1.0.0
 	 */
 	protected JsonPatch(@Nullable String path) {
 		if (path != null) {
@@ -66,6 +68,7 @@ public abstract class JsonPatch {
 	 * @throws PatchingException If the patch could not be applied for some reason.
 	 * @throws TraversalException If a path in the patch could not be traversed.
 	 * @throws UnsupportedOperationException If someone passes {@code null} into {@link #JsonPatch(String)} and does not override this method.
+	 * @since 1.0.0
 	 */
 	public void patch(ElementContext root, PatchContext context) throws PatchingException, TraversalException {
 		if (path == null) throw new UnsupportedOperationException("Patch was not implemented correctly! (op = " + operation() + ")");
@@ -79,6 +82,7 @@ public abstract class JsonPatch {
 	 * @param context The {@link PatchContext}. This customizes what features are available, among other things.
 	 * @throws PatchingException If the patch could not be applied for some reason.
 	 * @throws TraversalException If a path in the patch could not be traversed.
+	 * @since 1.0.0
 	 */
 	@Deprecated(forRemoval = true)
 	public final void patch(JsonElement root, PatchContext context) throws PatchingException, TraversalException {
@@ -91,6 +95,7 @@ public abstract class JsonPatch {
 	 * @param context The {@link PatchContext}. This customizes what features are available, among other things.
 	 * @throws PatchingException If the patch could not be applied for some reason.
 	 * @throws TraversalException If a path in the patch could not be traversed.
+	 * @since 1.3.0
 	 */
 	public final void patch(JsonDocument root, PatchContext context) throws PatchingException, TraversalException {
 		patch(new ElementContext.Document(context, root), context);
@@ -103,6 +108,7 @@ public abstract class JsonPatch {
 	 * @throws PatchingException If the patch could not be applied for some reason.
 	 * @throws TraversalException If a path in the patch could not be traversed.
 	 * @see #patch(ElementContext, PatchContext)
+	 * @since 1.0.0
 	 */
 	protected abstract void patchJson(ElementContext elem, PatchContext context) throws PatchingException, TraversalException;
 
@@ -110,6 +116,7 @@ public abstract class JsonPatch {
 	 * @return The operation this patch applies.
 	 * @see #write(JsonSerializationContext, String)
 	 * @see Serializer#serialize(JsonPatch, Type, JsonSerializationContext)
+	 * @since 1.0.0
 	 */
 	protected abstract String operation();
 
@@ -118,6 +125,7 @@ public abstract class JsonPatch {
 	 * @param context The context to use for serialization. See {@link JsonSerializer}.
 	 * @param omitOperation If non-{@code null}, specifies an operation that can be omitted from the output. This is useful for nicer output in places where the operation is limited or defaulted.
 	 * @return The {@link JsonElement}.
+	 * @since 1.0.0
 	 */
 	protected JsonElement write(JsonSerializationContext context, @Nullable String omitOperation) {
 		final JsonObject obj = new JsonObject();
@@ -137,6 +145,7 @@ public abstract class JsonPatch {
 	 * <p>This is required for patches like {@link AddPatch} to serialize correctly.</p>
 	 * @param obj The object to add information to.
 	 * @param context The context to use for serialization. See {@link JsonSerializer}.
+	 * @since 1.0.0
 	 */
 	protected void writeAdditional(JsonObject obj, JsonSerializationContext context) {}
 
@@ -144,6 +153,7 @@ public abstract class JsonPatch {
 	 * The (de)serializer for Json patches.
 	 * @author EnderTurret
 	 * @see Patches#patchGson(boolean, boolean)
+	 * @since 1.0.0
 	 */
 	public static class Serializer implements JsonDeserializer<JsonPatch>, JsonSerializer<JsonPatch> {
 
@@ -171,6 +181,7 @@ public abstract class JsonPatch {
 		 * @param enforceOp Whether to enforce the default operation. This can be used to force all read patches to be a specific kind.
 		 * @param testExtensions Whether to enable deserializing patches using the test extensions -- see {@link PatchContext}.
 		 * @param patchedExtensions Whether to enable deserializing patches using the "find" operation -- see {@link PatchContext}.
+		 * @since 1.0.0
 		 */
 		public Serializer(@Nullable String defaultOp, boolean enforceOp, boolean testExtensions, boolean patchedExtensions) {
 			this.defaultOp = defaultOp;
@@ -186,6 +197,7 @@ public abstract class JsonPatch {
 		 * Equivalent to {@link #Serializer(String, boolean, boolean, boolean)} with no default operation.
 		 * @param testExtensions Whether to enable deserializing patches using the test extensions -- see {@link PatchContext}.
 		 * @param patchedExtensions Whether to enable deserializing patches using the "find" operation -- see {@link PatchContext}.
+		 * @since 1.0.0
 		 */
 		public Serializer(boolean testExtensions, boolean patchedExtensions) {
 			this(null, false, testExtensions, patchedExtensions);
@@ -193,6 +205,7 @@ public abstract class JsonPatch {
 
 		/**
 		 * Equivalent to {@link #Serializer(boolean, boolean)} with all extensions enabled.
+		 * @since 1.0.0
 		 */
 		public Serializer() {
 			this(null, false, true, true);
@@ -204,6 +217,7 @@ public abstract class JsonPatch {
 		 * @param path The name of the element.
 		 * @return The element.
 		 * @throws PatchingException If the element does not exist.
+		 * @since 1.0.0
 		 */
 		private static JsonElement get(JsonObject obj, String path) throws PatchingException {
 			final JsonElement elem = obj.get(path);
@@ -221,6 +235,7 @@ public abstract class JsonPatch {
 		 * @return The string.
 		 * @throws PatchingException If the string does not exist or is not a string.
 		 * @see #get(JsonObject, String)
+		 * @since 1.0.0
 		 */
 		private static String getString(JsonObject obj, String path) throws PatchingException {
 			final JsonElement elem = get(obj, path);

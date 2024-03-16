@@ -11,6 +11,7 @@ import net.enderturret.patched.exception.TraversalException;
  * A patch that replaces an element with something else.
  * @see PatchUtil#replace(String, JsonElement)
  * @author EnderTurret
+ * @since 1.0.0
  */
 public final class ReplacePatch extends JsonPatch {
 
@@ -20,6 +21,7 @@ public final class ReplacePatch extends JsonPatch {
 	 * Users: don't instantiate directly. Use {@link PatchUtil#replace(String, JsonElement)} instead.
 	 * @param path The path to the element to replace.
 	 * @param value The value to replace the element with.
+	 * @since 1.0.0
 	 */
 	protected ReplacePatch(String path, JsonElement value) {
 		super(path);

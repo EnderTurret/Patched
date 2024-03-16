@@ -11,6 +11,7 @@ import net.enderturret.patched.ElementContext;
  * Represents a patch made of multiple patches.
  * @see PatchUtil#compound(JsonPatch...)
  * @author EnderTurret
+ * @since 1.0.0
  */
 public class CompoundPatch extends ManualTraversalPatch {
 
@@ -19,6 +20,7 @@ public class CompoundPatch extends ManualTraversalPatch {
 	/**
 	 * Users: don't instantiate directly. Use {@link PatchUtil#compound(JsonPatch...)} instead.
 	 * @param patches The patches that will be contained within this {@link CompoundPatch}.
+	 * @since 1.0.0
 	 */
 	protected CompoundPatch(JsonPatch[] patches) {
 		super(null);

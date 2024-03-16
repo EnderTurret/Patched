@@ -13,6 +13,7 @@ import net.enderturret.patched.patch.PatchContext;
 /**
  * Various utilities for reading and writing patches.
  * @author EnderTurret
+ * @since 1.0.0
  */
 public final class Patches {
 
@@ -23,6 +24,7 @@ public final class Patches {
 	 * @param testExtensions Whether extensions to the {@code test} operation are enabled. See {@link PatchContext}.
 	 * @param patchedExtensions Whether extensions from this library are enabled. See {@link PatchContext}.
 	 * @return The created {@code GsonBuilder}.
+	 * @since 1.0.0
 	 */
 	public static GsonBuilder patchGson(boolean testExtensions, boolean patchedExtensions) {
 		return new GsonBuilder()
@@ -34,6 +36,7 @@ public final class Patches {
 	 * {@link PatchContext} version of {@link #patchGson(boolean, boolean)}.
 	 * @param context The {@code PatchContext}.
 	 * @return The created {@code GsonBuilder}.
+	 * @since 1.3.0
 	 */
 	public static GsonBuilder patchGson(PatchContext context) {
 		return patchGson(context.testExtensions(), context.patchedExtensions());
@@ -45,6 +48,7 @@ public final class Patches {
 	 * @param json The Json to parse a patch from.
 	 * @return The patch.
 	 * @throws PatchingException If an exception occurs reading the patch.
+	 * @since 1.0.0
 	 */
 	public static JsonPatch readPatch(Gson gson, String json) throws PatchingException {
 		return gson.fromJson(json, JsonPatch.class);
@@ -56,6 +60,7 @@ public final class Patches {
 	 * @param reader The reader to read the patch Json from.
 	 * @return The patch.
 	 * @throws PatchingException If an exception occurs reading the patch.
+	 * @since 1.0.0
 	 */
 	public static JsonPatch readPatch(Gson gson, Reader reader) throws PatchingException {
 		return gson.fromJson(reader, JsonPatch.class);
@@ -67,6 +72,7 @@ public final class Patches {
 	 * @param elem The Json to parse a patch from.
 	 * @return The patch.
 	 * @throws PatchingException If an exception occurs reading the patch.
+	 * @since 1.0.0
 	 */
 	public static JsonPatch readPatch(Gson gson, JsonElement elem) throws PatchingException {
 		return gson.fromJson(elem, JsonPatch.class);

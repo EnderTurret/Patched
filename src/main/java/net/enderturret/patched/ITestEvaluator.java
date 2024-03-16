@@ -17,6 +17,7 @@ import net.enderturret.patched.patch.PatchContext;
  * the {@code test} patch will be passed to the evaluator to determine whether or not the condition succeeds.
  * </p>
  * @author EnderTurret
+ * @since 1.1.0
  */
 @FunctionalInterface
 public interface ITestEvaluator {
@@ -29,6 +30,7 @@ public interface ITestEvaluator {
 	 * @param value The value. In a normal {@code test} patch, this is the element that {@code target} is being compared against. May be {@code null}.
 	 * @param context The patch context.
 	 * @return {@code true} if the test succeeds, {@code false} otherwise.
+	 * @since 1.1.0
 	 */
 	public boolean test(JsonElement root, String type, @Nullable JsonElement target, @Nullable JsonElement value, PatchContext context);
 }

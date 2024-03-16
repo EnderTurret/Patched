@@ -16,6 +16,7 @@ import net.enderturret.patched.exception.TraversalException;
  * A patch that performs a check of some kind before allowing other patches to proceed.
  * @see PatchUtil#test(String, JsonElement, boolean)
  * @author EnderTurret
+ * @since 1.0.0
  */
 public class TestPatch extends ManualTraversalPatch {
 
@@ -33,6 +34,7 @@ public class TestPatch extends ManualTraversalPatch {
 	 * @param path The path to the element to test. May be {@code null} only if {@code type} is not.
 	 * @param test The test element. May be {@code null}.
 	 * @param inverse Whether the check is inverted, i.e checking to see if something doesn't exist.
+	 * @since 1.1.0
 	 */
 	protected TestPatch(@Nullable String type, @Nullable String path, @Nullable JsonElement test, boolean inverse) {
 		super(null);
@@ -50,6 +52,7 @@ public class TestPatch extends ManualTraversalPatch {
 	 * @param context The {@link PatchContext}. This customizes what features are available, among other things.
 	 * @return {@code true} if the test passes.
 	 * @throws PatchingException If {@link PatchContext#throwOnFailedTest()} is enabled.
+	 * @since 1.0.0
 	 */
 	public boolean test(JsonElement root, PatchContext context) {
 		ElementContext ctx = null;
