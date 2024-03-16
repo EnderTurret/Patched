@@ -36,6 +36,7 @@ public final class PatchAudit {
 	private String pathKey;
 
 	/**
+	 * Constructs a new {@code PatchAudit}.
 	 * @param patchPath A string representing the path to the patch being applied. This is used for informational purposes.
 	 */
 	public PatchAudit(String patchPath) {

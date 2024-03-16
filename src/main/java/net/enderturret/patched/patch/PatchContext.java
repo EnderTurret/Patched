@@ -19,7 +19,8 @@ import net.enderturret.patched.audit.PatchAudit;
 public record PatchContext(boolean testExtensions, boolean patchedExtensions, boolean throwOnFailedTest, boolean throwOnOobAdd, @Nullable ITestEvaluator testEvaluator, @Nullable PatchAudit audit) {
 
 	/**
-	 * @deprecated Use {@link #newContext()} where possible to avoid new fields causing binary and source compatibility breaks.
+	 * Constructs a new {@code PatchContext}.
+	 * @deprecated To avoid breaking changes to the contents of this record, use {@link #newContext()} instead of calling this directly.
 	 * @param testExtensions Whether extensions to the {@code test} operation should be enabled.
 	 * @param patchedExtensions Whether extensions from this library should be enabled.
 	 * @param throwOnFailedTest Whether the test operation should throw an exception if it fails.

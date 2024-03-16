@@ -38,8 +38,8 @@ public interface ElementContext {
 	public JsonElement elem();
 
 	/**
-	 * @deprecated Use {@link Operation#apply(ElementContext)} instead.
 	 * Applies the given operation to this element.
+	 * @deprecated Use {@link Operation#apply(ElementContext)} instead.
 	 * @param op The operation to apply.
 	 */
 	@Deprecated(forRemoval = true)

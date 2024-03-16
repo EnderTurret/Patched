@@ -8,7 +8,7 @@ import net.enderturret.patched.ElementContext;
 import net.enderturret.patched.exception.TraversalException;
 
 /**
- * A patch that adds an element to something.
+ * A patch that adds an element to something, such as a Json object or array.
  * @see PatchUtil#add(String, JsonElement)
  * @author EnderTurret
  */

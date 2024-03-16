@@ -22,7 +22,7 @@ public final class Patches {
 	 * Creates a {@link GsonBuilder} configured to serialize and deserialize patches with the given extensions enabled or disabled.
 	 * @param testExtensions Whether extensions to the {@code test} operation are enabled. See {@link PatchContext}.
 	 * @param patchedExtensions Whether extensions from this library are enabled. See {@link PatchContext}.
-	 * @return The created {@link GsonBuilder}.
+	 * @return The created {@code GsonBuilder}.
 	 */
 	public static GsonBuilder patchGson(boolean testExtensions, boolean patchedExtensions) {
 		return new GsonBuilder()
@@ -30,6 +30,11 @@ public final class Patches {
 				.serializeNulls();
 	}
 
+	/**
+	 * {@link PatchContext} version of {@link #patchGson(boolean, boolean)}.
+	 * @param context The {@code PatchContext}.
+	 * @return The created {@code GsonBuilder}.
+	 */
 	public static GsonBuilder patchGson(PatchContext context) {
 		return patchGson(context.testExtensions(), context.patchedExtensions());
 	}

@@ -11,14 +11,14 @@ public class PatchingException extends RuntimeException {
 	public PatchingException() {}
 
 	public PatchingException(@Nullable String message) {
-        super(message);
-    }
+		super(message);
+	}
 
-    public PatchingException(@Nullable String message, @Nullable Throwable cause) {
-        super(message, cause);
-    }
+	public PatchingException(@Nullable String message, @Nullable Throwable cause) {
+		super(message, cause);
+	}
 
-    public PatchingException(@Nullable Throwable cause) {
-        super(cause);
-    }
+	public PatchingException(@Nullable Throwable cause) {
+		super(cause);
+	}
 }

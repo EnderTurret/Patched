@@ -45,84 +45,93 @@ public final class PatchUtil {
 	}
 
 	/**
+	 * Creates an {@link AddPatch} from the specified values.
 	 * @param path The location the element will be placed.
 	 * @param value The element that will be added.
-	 * @return A new {@link AddPatch}.
+	 * @return A new {@code AddPatch}.
 	 */
 	public static AddPatch add(String path, JsonElement value) {
 		return new AddPatch(path, value);
 	}
 
 	/**
+	 * Creates a {@link CopyPatch} from the specified values.
 	 * @param path The location the element will be copied to.
 	 * @param from The path to the element to copy.
-	 * @return A new {@link CopyPatch}.
+	 * @return A new {@code CopyPatch}.
 	 */
 	public static CopyPatch copy(String path, String from) {
 		return new CopyPatch(path, from);
 	}
 
 	/**
+	 * Creates a {@link MovePatch} from the specified values.
 	 * @param path The location the element will be moved to.
 	 * @param from The path to the element to move.
-	 * @return A new {@link MovePatch}.
+	 * @return A new {@code MovePatch}.
 	 */
 	public static MovePatch move(String path, String from) {
 		return new MovePatch(path, from);
 	}
 
 	/**
+	 * Creates a {@link RemovePatch} from the specified values.
 	 * @param path The path to the element to remove.
-	 * @return A new {@link RemovePatch}.
+	 * @return A new {@code RemovePatch}.
 	 */
 	public static RemovePatch remove(String path) {
 		return new RemovePatch(path);
 	}
 
 	/**
+	 * Creates a {@link ReplacePatch} from the specified values.
 	 * @param path The path to the element to replace.
 	 * @param value The value to replace the element with.
-	 * @return A new {@link ReplacePatch}.
+	 * @return A new {@code ReplacePatch}.
 	 */
 	public static ReplacePatch replace(String path, JsonElement value) {
 		return new ReplacePatch(path, value);
 	}
 
 	/**
+	 * Creates a {@link TestPatch} from the specified values.
 	 * @param type A custom type for {@link ITestEvaluator}.
 	 * @param path The path to the element to test. May be {@code null}.
 	 * @param test The test element. May be {@code null}.
 	 * @param inverse Whether the check is inverted, i.e checking to see if something doesn't exist.
-	 * @return A new {@link TestPatch}.
+	 * @return A new {@code TestPatch}.
 	 */
 	public static TestPatch test(String type, String path, JsonElement test, boolean inverse) {
 		return new TestPatch(type, path, test, inverse);
 	}
 
 	/**
+	 * Creates a {@link TestPatch} from the specified values.
 	 * @param path The path to the element to test.
 	 * @param test The test element. May be {@code null}.
 	 * @param inverse Whether the check is inverted, i.e checking to see if something doesn't exist.
-	 * @return A new {@link TestPatch}.
+	 * @return A new {@code TestPatch}.
 	 */
 	public static TestPatch test(String path, JsonElement test, boolean inverse) {
 		return new TestPatch(null, path, test, inverse);
 	}
 
 	/**
+	 * Creates a {@link FindPatch} from the specified values.
 	 * @param path The path to the element to find things in.
 	 * @param tests A list of tests that an element must pass to have {@code then} applied to it.
 	 * @param then A patch to apply to elements passing the tests.
 	 * @param multi Whether to continue searching for matching elements after the first one is found.
-	 * @return A new {@link FindPatch}.
+	 * @return A new {@code FindPatch}.
 	 */
 	public static FindPatch find(String path, List<TestPatch> tests, JsonPatch then, boolean multi) {
 		return new FindPatch(path, tests, then, multi);
 	}
 
 	/**
+	 * Creates a {@link CompoundPatch} from the specified values.
 	 * @param patches The patches that will be contained within the {@link CompoundPatch}.
-	 * @return A new {@link CompoundPatch}.
+	 * @return A new {@code CompoundPatch}.
 	 */
 	public static CompoundPatch compound(JsonPatch... patches) {
 		return new CompoundPatch(patches);
@@ -194,6 +203,26 @@ public final class PatchUtil {
 			return false;
 		}
 
+		/**
+		 * <p>Whether a path may include an out-of-bounds index.</p>
+		 * <p>
+		 * Consider the following:
+		 * <pre>
+		 * // patch
+		 * {
+		 *   "op": "add",
+		 *   "path": "/array/9",
+		 *   "value": "e"
+		 * }
+		 * // document
+		 * {
+		 *   "array": [1]
+		 * }</pre>
+		 * The return value of this method determines whether this patch will succeed.
+		 * </p>
+		 * @deprecated Use {@link #allowsOutOfBounds(ElementContext)} instead.
+		 * @return {@code true} if out-of-bounds indices are allowed.
+		 */
 		@Deprecated(forRemoval = true)
 		public default boolean allowsOutOfBounds() {
 			return false;

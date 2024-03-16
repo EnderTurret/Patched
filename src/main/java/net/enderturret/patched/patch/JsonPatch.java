@@ -25,7 +25,7 @@ import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.exception.TraversalException;
 
 /**
- * <p>A patch that can be used to modify Json.</p>
+ * <p>A patch that can be used to modify Json data.</p>
  * <p>This is the base class that all of the other patches extend from.<p>
  * <p>You can obtain one of these patches using {@link Patches}.</p>
  * @author EnderTurret
@@ -38,6 +38,7 @@ public abstract class JsonPatch {
 	protected JsonSelector last;
 
 	/**
+	 * Constructs a new {@code JsonPatch}.
 	 * @param path The path that will be followed to find the element passed to {@link #patchJson(ElementContext, PatchContext)}, or {@code null} to handle this yourself.
 	 */
 	protected JsonPatch(@Nullable String path) {
