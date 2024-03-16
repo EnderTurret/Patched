@@ -133,7 +133,8 @@ public abstract class JsonPatch {
 		if (!operation().equals(omitOperation))
 			obj.addProperty("op", operation());
 
-		obj.addProperty("path", path + (last.isEmpty() ? "" : "/" + last));
+		if (path != null)
+			obj.addProperty("path", path + (last.isEmpty() ? "" : "/" + last));
 
 		writeAdditional(obj, context);
 
