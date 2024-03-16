@@ -177,6 +177,7 @@ public abstract class JsonPatch {
 		private final boolean patchedExtensions;
 
 		/**
+		 * Constructs a new {@code Serializer}.
 		 * @param defaultOp The default operation. This is the operation used if one isn't provided in the patch.
 		 * @param enforceOp Whether to enforce the default operation. This can be used to force all read patches to be a specific kind.
 		 * @param testExtensions Whether to enable deserializing patches using the test extensions -- see {@link PatchContext}.
@@ -271,30 +272,34 @@ public abstract class JsonPatch {
 				throw new PatchingException("Unexpected operation \"" + op + "\": only " + defaultOp + " is allowed here.");
 
 			return switch (op) {
-			case "test" -> {
-				final String type = patchedExtensions && obj.has("type") ? obj.get("type").getAsString() : null;
-				final String path = type != null && !obj.has("path") ? null : getString(obj, "path");
-				final JsonElement value = testExtensions || type != null ? obj.get("value") : get(obj, "value");
-				final boolean inverse = testExtensions && obj.has("inverse") && obj.get("inverse").getAsBoolean();
-				yield new TestPatch(type, path, value, inverse);
-			}
-			case "add" -> new AddPatch(getString(obj, "path"), get(obj, "value"));
-			case "remove" -> new RemovePatch(getString(obj, "path"));
-			case "copy" -> new CopyPatch(getString(obj, "path"), getString(obj, "from"));
-			case "move" -> new MovePatch(getString(obj, "path"), getString(obj, "from"));
-			case "replace" -> new ReplacePatch(getString(obj, "path"), get(obj, "value"));
-			case "find" -> {
-				if (!patchedExtensions)
-					throw new PatchingException("Unsupported operation 'find': Patched extensions are not enabled.");
-				yield new FindPatch(getString(obj, "path"),
-					obj.get("test").isJsonArray() ?
-							ENFORCING_GSON.fromJson(obj.get("test"), TESTPATCH_LIST)
-							: List.of(ENFORCING_GSON.fromJson(obj.get("test"), TestPatch.class)),
-					context.deserialize(obj.get("then"), JsonPatch.class),
-					obj.has("multi") && obj.get("multi").getAsBoolean());
-			}
+				case "test" -> {
+					final String type = patchedExtensions && obj.has("type") ? obj.get("type").getAsString() : null;
+					final String path = type != null && !obj.has("path") ? null : getString(obj, "path");
+					final JsonElement value = testExtensions || type != null ? obj.get("value") : get(obj, "value");
+					final boolean inverse = testExtensions && obj.has("inverse") && obj.get("inverse").getAsBoolean();
 
-			default -> throw new PatchingException("Unknown operation '" + op + "'");
+					yield new TestPatch(type, path, value, inverse);
+				}
+				case "add" -> new AddPatch(getString(obj, "path"), get(obj, "value"));
+				case "remove" -> new RemovePatch(getString(obj, "path"));
+				case "copy" -> new CopyPatch(getString(obj, "path"), getString(obj, "from"));
+				case "move" -> new MovePatch(getString(obj, "path"), getString(obj, "from"));
+				case "replace" -> new ReplacePatch(getString(obj, "path"), get(obj, "value"));
+
+				case "find" -> {
+					if (!patchedExtensions)
+						throw new PatchingException("Unsupported operation 'find': Patched extensions are not enabled.");
+
+					yield new FindPatch(
+							getString(obj, "path"),
+							obj.get("test").isJsonArray()
+									? ENFORCING_GSON.fromJson(obj.get("test"), TESTPATCH_LIST)
+									: List.of(ENFORCING_GSON.fromJson(obj.get("test"), TestPatch.class)),
+							context.deserialize(obj.get("then"), JsonPatch.class),
+							obj.has("multi") && obj.get("multi").getAsBoolean());
+				}
+
+				default -> throw new PatchingException("Unknown operation '" + op + "'");
 			};
 		}
 	}

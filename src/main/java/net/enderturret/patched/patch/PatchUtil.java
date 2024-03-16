@@ -172,6 +172,7 @@ public final class PatchUtil {
 
 		/**
 		 * Applies this operation to the element with the given name inside the given object.
+		 * @deprecated Use {@link #apply(ElementContext)} instead.
 		 * @param obj The object to find the element in.
 		 * @param name The name of the element to apply on.
 		 * @return An {@link ElementContext} containing the child element and related information.
@@ -184,6 +185,7 @@ public final class PatchUtil {
 
 		/**
 		 * Applies this operation to the element at the given index inside the given array.
+		 * @deprecated Use {@link #apply(ElementContext)} instead.
 		 * @param arr The array to find the element in.
 		 * @param idx The index of the element to apply on.
 		 * @return An {@link ElementContext} containing the child element and related information.
