@@ -7,5 +7,6 @@
 * [`move`](ops/move.md)
 * [`test`](ops/test.md)
 * [`find`](ops/find.md)
+* [`include`](ops/include.md)
 
 While not an operation, there are also [compound patches](ops/compound.md).

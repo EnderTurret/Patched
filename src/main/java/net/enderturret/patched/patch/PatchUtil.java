@@ -139,6 +139,15 @@ public final class PatchUtil {
 	}
 
 	/**
+	 * Creates an {@link IncludePatch} from the specified values.
+	 * @param path The path to the patch file to include.
+	 * @return A new {@code IncludePatch}.
+	 */
+	public static IncludePatch include(String path) {
+		return new IncludePatch(path);
+	}
+
+	/**
 	 * Creates a {@link CompoundPatch} from the specified values.
 	 * @param patches The patches that will be contained within the {@link CompoundPatch}.
 	 * @return A new {@code CompoundPatch}.

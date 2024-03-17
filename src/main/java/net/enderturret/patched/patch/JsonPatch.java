@@ -299,6 +299,12 @@ public abstract class JsonPatch {
 							context.deserialize(obj.get("then"), JsonPatch.class),
 							obj.has("multi") && obj.get("multi").getAsBoolean());
 				}
+				case "include" -> {
+					if (!patchedExtensions)
+						throw new PatchingException("Unsupported operation 'include': Patched extensions are not enabled.");
+
+					yield new IncludePatch(getString(obj, "path"));
+				}
 
 				default -> throw new PatchingException("Unknown operation '" + op + "'");
 			};

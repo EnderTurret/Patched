@@ -85,6 +85,8 @@
     { "path": "find/remove_unspecific", "doOutputTest": false },
     { "path": "find/redundant_multi", "doOutputTest": false },
 
+    "include/simple",
+
     "selectors/double_empty",
     "selectors/empty",
     "selectors/empty2",
@@ -128,6 +130,10 @@
     "error/parsing/missing_value_test": "'value' is missing!",
     "error/parsing/op_not_string": "Unknown operation '3'",
     "error/parsing/path_not_string": "'path' must be a string (was: true)!",
-    "error/test/no_custom_evaluator": "Cannot handle custom test type 'custom' as no evaluator is installed!"
+    "error/test/no_custom_evaluator": "Cannot handle custom test type 'custom' as no evaluator is installed!",
+    "error/include/disabled_in_deserialization": "Unsupported operation 'include': Patched extensions are not enabled.",
+    "error/include/disabled_in_runtime": "Attempted to include a patch, but Patched extensions are not enabled!",
+    "error/include/no_file_access": "Attempted to include a patch, but no file access has been installed!",
+    "error/include/nonexistent_file": "Attempted to include a patch that doesn't exist: some_nonexistent_patch"
   }
 }

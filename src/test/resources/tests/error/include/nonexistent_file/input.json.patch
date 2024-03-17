@@ -1,0 +1,6 @@
+[
+  {
+    "op": "include",
+    "path": "some_nonexistent_patch"
+  }
+]

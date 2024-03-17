@@ -28,6 +28,7 @@ import net.enderturret.patched.exception.TraversalException;
 import net.enderturret.patched.patch.JsonPatch;
 import net.enderturret.patched.patch.PatchContext;
 
+import tests.util.SimpleFileAccess;
 import tests.util.SimpleTestEvaluator;
 import tests.util.TestUtil;
 
@@ -69,7 +70,8 @@ public final class PatchingTests {
 						.testExtensions(!o.has("testExtensions") || o.get("testExtensions").getAsBoolean())
 						.patchedExtensions(!o.has("patchedExtensions") || o.get("patchedExtensions").getAsBoolean())
 						.throwOnOobAdd(!o.has("throwOnOobAdd") || o.get("throwOnOobAdd").getAsBoolean())
-						.testEvaluator(o.has("customTests") ? new SimpleTestEvaluator(o.get("customTests")) : null);
+						.testEvaluator(o.has("customTests") ? new SimpleTestEvaluator(o.get("customTests")) : null)
+						.fileAccess(o.has("include") ? new SimpleFileAccess() : null);
 			} else runtime = PatchContext.newContext().testExtensions(true).patchedExtensions(true).throwOnOobAdd(true);
 
 			return new PatchContext[] { input, runtime };

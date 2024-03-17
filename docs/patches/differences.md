@@ -11,5 +11,6 @@ These extensions are the following:
 * Patched Extensions (`patchedExtensions`)
 	* ["Custom" test patch type](ops/test.md#custom)
 	* [`find` operation](ops/find.md)
+	* [`include` operation](ops/include.md)
 
 All of these extensions are off by default, which brings Patched more in line with the original specification.
