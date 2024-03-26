@@ -31,6 +31,7 @@ public record PatchContext(boolean testExtensions, boolean patchedExtensions, bo
 	 * @param testEvaluator An evaluator for custom tests in the {@code test} operation. May be {@code null}.
 	 * @param fileAccess File access for {@linkplain IncludePatch include patches}. May be {@code null}.
 	 * @param audit An audit to record changes made by patches. May be {@code null}.
+	 * @since 1.4.0
 	 */
 	@Deprecated
 	public PatchContext {}
@@ -121,6 +122,7 @@ public record PatchContext(boolean testExtensions, boolean patchedExtensions, bo
 	 * Returns a copy of this {@code PatchContext} with {@link #fileAccess} set to the given value.
 	 * @param value File access for {@linkplain IncludePatch include patches}. May be {@code null}.
 	 * @return The new {@code PatchContext}.
+	 * @since 1.4.0
 	 */
 	public PatchContext fileAccess(@Nullable IFileAccess value) {
 		return new PatchContext(testExtensions, patchedExtensions, throwOnFailedTest, throwOnOobAdd, testEvaluator, value, audit);

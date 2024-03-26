@@ -9,6 +9,7 @@ import net.enderturret.patched.exception.TraversalException;
 /**
  * An intermediate subclass of {@link JsonPatch} that makes {@link #patch(ElementContext, PatchContext)} abstract instead of {@link #patchJson(ElementContext, PatchContext)}.
  * @author EnderTurret
+ * @since 1.4.0
  */
 abstract class ManualTraversalPatch extends JsonPatch {
 

@@ -9,6 +9,7 @@ import net.enderturret.patched.patch.JsonPatch;
  * Provides access to files (which need not be actual files on the filesystem) for {@linkplain IncludePatch include patches},
  * so that they can include other patches.
  * @author EnderTurret
+ * @since 1.4.0
  */
 public interface IFileAccess {
 
@@ -23,6 +24,7 @@ public interface IFileAccess {
 	 * </p>
 	 * @param path The path to the patch, specified by the include patch.
 	 * @return The contents of the patch. May be {@code null} if no such patch exists.
+	 * @since 1.4.0
 	 */
 	@Nullable
 	public JsonPatch readIncludedPatch(String path);

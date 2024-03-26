@@ -19,6 +19,7 @@ import net.enderturret.patched.exception.TraversalException;
  * a {@linkplain PatchContext#fileAccess() file access} is installed in the {@link PatchContext}.
  * </p>
  * @author EnderTurret
+ * @since 1.4.0
  */
 public final class IncludePatch extends ManualTraversalPatch {
 
@@ -27,6 +28,7 @@ public final class IncludePatch extends ManualTraversalPatch {
 	/**
 	 * Constructs a new {@code IncludePatch}.
 	 * @param path The path to the patch file to include.
+	 * @since 1.4.0
 	 */
 	protected IncludePatch(String path) {
 		super(null);
