@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiPredicate;
-import java.util.function.BinaryOperator;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DynamicTest;
@@ -38,7 +37,7 @@ public final class JsonPatchTests {
 	private static final Gson GSON = Patches.patchGson(false, false).setPrettyPrinting().create();
 	private static final PatchContext CONTEXT = PatchContext.newContext().throwOnFailedTest(true).throwOnOobAdd(true);
 
-	private static String mapSpecErrors(String comment, String error) {
+	private static String mapSpecErrors(String comment, String error, int index) {
 		return switch (comment) {
 		case "4.1. add with missing object" -> "net.enderturret.patched.exception.TraversalException: /a: No such child a!";
 		case "A.12.  Adding to a Non-existent Target" -> "net.enderturret.patched.exception.TraversalException: /baz: No such child baz!";
@@ -48,7 +47,7 @@ public final class JsonPatchTests {
 		};
 	}
 
-	private static String mapPatchErrors(String comment, String error) {
+	private static String mapPatchErrors(String comment, String error, int index) {
 		return switch (comment) {
 		case "Removing nonexistent field" -> "net.enderturret.patched.exception.TraversalException: /baz: No such child baz!";
 		case "Removing deep nonexistent path" -> "net.enderturret.patched.exception.TraversalException: /missing1: No such child missing1!";
@@ -109,7 +108,7 @@ public final class JsonPatchTests {
 				(comment, test) -> !disabled1.contains(comment));
 	}
 
-	private static Stream<DynamicTest> test(String path, String name, BinaryOperator<String> errorMapper, BiPredicate<String, Test> filter) {
+	private static Stream<DynamicTest> test(String path, String name, ErrorMapper errorMapper, BiPredicate<String, Test> filter) {
 		final List<Test> tests;
 
 		{
@@ -131,7 +130,7 @@ public final class JsonPatchTests {
 							final JsonPatch patch = Patches.readPatch(GSON, test.patch);
 							patch.patch(doc, CONTEXT);
 						}, () -> "Resultant document: " + doc.getRoot());
-						assertEquals(errorMapper.apply(test.comment, test.error), e.toString());
+						assertEquals(errorMapper.map(test.comment, test.error, test.index), e.toString());
 					} else {
 						final JsonPatch patch = assertDoesNotThrow(() -> Patches.readPatch(GSON, test.patch));
 						assertDoesNotThrow(() -> patch.patch(doc, CONTEXT));
@@ -143,6 +142,7 @@ public final class JsonPatchTests {
 	private static List<Test> readTests(JsonElement testsElem) {
 		final List<Test> tests = new ArrayList<>();
 
+		int index = 0;
 		for (JsonElement elem : testsElem.getAsJsonArray()) {
 			if (!(elem instanceof JsonObject obj)) {
 				System.err.println("Tried to parse invalid test \"" + elem + "\"!");
@@ -170,12 +170,16 @@ public final class JsonPatchTests {
 
 			final boolean disabled = obj.has("disabled") && obj.get("disabled").getAsBoolean();
 
-			tests.add(new Test(comment, doc, patch, expected, error, disabled));
+			tests.add(new Test(comment, doc, patch, expected, error, disabled, index++));
 		}
 
 		return tests;
 	}
 
 	private static record Test(String comment, JsonElement doc, JsonElement patch,
-			JsonElement expected, String error, boolean disabled) {}
+			JsonElement expected, String error, boolean disabled, int index) {}
+
+	private static interface ErrorMapper {
+		public String map(String comment, String error, int index);
+	}
 }
