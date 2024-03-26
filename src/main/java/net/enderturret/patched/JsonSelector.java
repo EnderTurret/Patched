@@ -224,9 +224,31 @@ public interface JsonSelector {
 			} catch (NumberFormatException ignored) {}
 
 		// We may need to normalize the path:
-		path = path.replace("~1", "/").replace("~0", "~");
+		path = unescape(path);
 
 		return new NameSelector(path);
+	}
+
+	private static String unescape(String path) {
+		final StringBuilder sb = new StringBuilder(path);
+
+		for (int i = 0; i < sb.length(); i++)
+			if (sb.codePointAt(i) == '~') {
+				if (sb.length() == i + 1)
+					throw new TraversalException("Invalid escape sequence: '~'!");
+
+				final int nextCp = sb.codePointAt(i + 1);
+
+				final String replacement = switch (nextCp) {
+					case '1' -> "/";
+					case '0' -> "~";
+					default -> throw new TraversalException("Invalid escape sequence: '~" + (char) nextCp + "'!");
+				};
+
+				sb.replace(i, i + 2, replacement);
+			}
+
+		return sb.toString();
 	}
 
 	/**

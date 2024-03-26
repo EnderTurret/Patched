@@ -117,7 +117,9 @@
     "traversal_error/move/to_nonexistent": "/nested/moved: No such child nested!",
     "traversal_error/selectors/negative_array_index": "/array/-3: Attempted to traverse negative index in array (-3)!",
     "traversal_error/selectors/unexpected_array": "/array/test: Expected object to find 'test' in, found [1,2,3]!",
-    "traversal_error/selectors/unexpected_primitive": "/array/1/2: Expected array or object to find '2' in, found 2!"
+    "traversal_error/selectors/unexpected_primitive": "/array/1/2: Expected array or object to find '2' in, found 2!",
+    "traversal_error/selectors/faulty_escape": "Invalid escape sequence: '~b'!",
+    "traversal_error/selectors/eof_escape": "Invalid escape sequence: '~'!"
   },
   "patchingErrorTests": {
     "error/remove/document": "Attempted to remove root element!",
