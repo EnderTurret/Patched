@@ -1,12 +1,12 @@
 package net.enderturret.patched.patch;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -14,7 +14,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.google.gson.reflect.TypeToken;
 
 import net.enderturret.patched.ElementContext;
 import net.enderturret.patched.JsonDocument;
@@ -158,19 +157,6 @@ public abstract class JsonPatch {
 	 */
 	public static class Serializer implements JsonDeserializer<JsonPatch>, JsonSerializer<JsonPatch> {
 
-		private static final Type TESTPATCH_LIST = new TypeToken<List<TestPatch>>() {}.getType();
-
-		// TODO: This will make find assume both extensions are on, even if the test ones aren't.
-		static final Gson ENFORCING_GSON = new GsonBuilder()
-				.registerTypeAdapter(TestPatch.class, new Serializer("test", true, true, true))
-				.registerTypeAdapter(AddPatch.class, new Serializer("add", true, true, true))
-				.registerTypeAdapter(RemovePatch.class, new Serializer("remove", true, true, true))
-				.registerTypeAdapter(CopyPatch.class, new Serializer("copy", true, true, true))
-				.registerTypeAdapter(MovePatch.class, new Serializer("move", true, true, true))
-				.registerTypeAdapter(ReplacePatch.class, new Serializer("replace", true, true, true))
-				.registerTypeAdapter(FindPatch.class, new Serializer("find", true, true, true))
-				.create();
-
 		private final String defaultOp;
 		private final boolean enforceOp;
 
@@ -259,6 +245,15 @@ public abstract class JsonPatch {
 				// This should be safe, as this serializer will be called on each child, and not the array as a whole.
 				return new CompoundPatch(context.deserialize(json, JsonPatch[].class));
 
+			return deserialize(defaultOp, enforceOp, json, typeOfT, context);
+		}
+
+		@SuppressWarnings("cast")
+		protected <T extends JsonPatch> T deserialize(String defaultOp, boolean enforceOp, JsonElement json, Class<T> typeOfT, JsonDeserializationContext context) throws JsonParseException {
+			return (T) deserialize(defaultOp, enforceOp, json, (Type) typeOfT, context);
+		}
+
+		protected JsonPatch deserialize(String defaultOp, boolean enforceOp, JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 			final JsonObject obj = json.getAsJsonObject();
 
 			String op = !obj.has("op") ? null : obj.get("op").getAsString();
@@ -291,11 +286,21 @@ public abstract class JsonPatch {
 					if (!patchedExtensions)
 						throw new PatchingException("Unsupported operation 'find': Patched extensions are not enabled.");
 
+					final List<TestPatch> tests;
+
+					if (obj.get("test") instanceof JsonArray testArray) {
+						final List<TestPatch> list = new ArrayList<>();
+
+						for (JsonElement elem : testArray)
+							list.add(deserialize("test", true, elem, TestPatch.class, context));
+
+						tests = List.copyOf(list);
+					} else
+						tests = List.of(deserialize("test", true, obj.get("test"), TestPatch.class, context));
+
 					yield new FindPatch(
 							getString(obj, "path"),
-							obj.get("test").isJsonArray()
-									? ENFORCING_GSON.fromJson(obj.get("test"), TESTPATCH_LIST)
-									: List.of(ENFORCING_GSON.fromJson(obj.get("test"), TestPatch.class)),
+							tests,
 							context.deserialize(obj.get("then"), JsonPatch.class),
 							obj.has("multi") && obj.get("multi").getAsBoolean());
 				}

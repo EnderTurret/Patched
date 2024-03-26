@@ -48,7 +48,17 @@ public final class FindPatch extends JsonPatch {
 		if (multi)
 			obj.addProperty("multi", multi);
 
-		obj.add("test", JsonPatch.Serializer.ENFORCING_GSON.toJsonTree(tests.size() == 1 ? tests.get(0) : tests));
+		if (tests.size() == 1)
+			obj.add("test", tests.get(0).write(context, "test"));
+		else {
+			final JsonArray list = new JsonArray();
+
+			for (TestPatch test : tests)
+				list.add(test.write(context, "test"));
+
+			obj.add("test", list);
+		}
+
 		obj.add("then", context.serialize(then));
 	}
 
