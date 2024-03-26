@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
@@ -81,6 +80,12 @@ public final class JsonPatchTests {
 		case "invalid JSON Pointer token" -> "net.enderturret.patched.exception.TraversalException: Path must begin with a slash!";
 		case "unrecognized op should fail" -> "net.enderturret.patched.exception.PatchingException: Unknown operation 'spam'";
 
+		case "test with bad array number that has leading zeros" -> switch (index) {
+			case 87 -> "net.enderturret.patched.exception.PatchingException: Test failed: /00: Expected object to find '00' in, found [\"foo\",\"bar\"]!";
+			case 88 -> "net.enderturret.patched.exception.PatchingException: Test failed: /01: Expected object to find '01' in, found [\"foo\",\"bar\"]!";
+			default -> comment;
+		};
+
 		default -> switch (error) {
 			case "Out of bounds (upper)" -> "net.enderturret.patched.exception.TraversalException: /bar/8: No such child 8!";
 			case "Out of bounds (lower)" -> "net.enderturret.patched.exception.TraversalException: /bar/-1: Attempted to traverse negative index in array (-1)!";
@@ -98,14 +103,7 @@ public final class JsonPatchTests {
 
 	@TestFactory
 	Stream<DynamicTest> testPatchTests() {
-		final Set<String> disabled1 = Set.of(
-				// This is actually up to the Json parser -- not the patch applier.
-				// Gson parses these numbers into 0 and 1, respectively.
-				// There is nothing we can do about this.
-				// Side note: there are two tests with this comment.
-				"test with bad array number that has leading zeros");
-		return test("/tests/json-patch-tests/tests.json", "json-patch", JsonPatchTests::mapPatchErrors,
-				(comment, test) -> !disabled1.contains(comment));
+		return test("/tests/json-patch-tests/tests.json", "json-patch", JsonPatchTests::mapPatchErrors, (comment, test) -> true);
 	}
 
 	private static Stream<DynamicTest> test(String path, String name, ErrorMapper errorMapper, BiPredicate<String, Test> filter) {

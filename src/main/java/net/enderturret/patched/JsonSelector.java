@@ -216,14 +216,17 @@ public interface JsonSelector {
 		if (path.isEmpty())
 			return new NameSelector("");
 
-		try {
-			return new NumericSelector(Integer.parseInt(path), path);
-		} catch (NumberFormatException e) {
-			// We may need to normalize the path:
-			path = path.replace("~1", "/").replace("~0", "~");
+		// In case we get something like "07", we shouldn't parse that into 7.
+		// However, a single "0" should be parsed into a 0.
+		if (path.length() == 1 || !path.startsWith("0"))
+			try {
+				return new NumericSelector(Integer.parseInt(path), path);
+			} catch (NumberFormatException ignored) {}
 
-			return new NameSelector(path);
-		}
+		// We may need to normalize the path:
+		path = path.replace("~1", "/").replace("~0", "~");
+
+		return new NameSelector(path);
 	}
 
 	/**
