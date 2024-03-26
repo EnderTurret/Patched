@@ -263,7 +263,7 @@
     { "comment": "Whole document",
       "doc": { "foo": 1 },
       "patch": [{"op": "test", "path": "", "value": {"foo": 1}}],
-      "disabled": true },
+      "expected": { "foo": 1 } },
 
     { "comment": "Empty-string element",
       "doc": { "": 1 },
