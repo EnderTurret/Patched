@@ -3,7 +3,7 @@ plugins {
     id 'eclipse'
     id 'maven-publish'
 	id 'jvm-test-suite'
-	id 'com.github.johnrengelman.shadow' version '8.1.1'
+	id 'com.gradleup.shadow' version '8.3.0'
 }
 
 group = 'net.enderturret'
@@ -63,7 +63,7 @@ task patcherSourcesJar(type: Jar, dependsOn: classes) {
     }
 }
 
-shadowJar {
+tasks.named('shadowJar', com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
     archiveClassifier = 'cli'
     from sourceSets.patcher.output
 }
