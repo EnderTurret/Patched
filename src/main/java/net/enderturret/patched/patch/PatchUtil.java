@@ -149,6 +149,19 @@ public final class PatchUtil {
 	}
 
 	/**
+	 * Creates a {@link PastePatch} from the specified values.
+	 * @param path The location the element will be placed.
+	 * @param type The type to pass to the data source.
+	 * @param from A path to the input element to pass to the data source. May be {@code null}.
+	 * @param value Extra context to pass to the data source. May be {@code null}.
+	 * @return A new {@code PastePatch}.
+	 * @since 1.5.0
+	 */
+	public static PastePatch paste(String path, String type, @Nullable String from, @Nullable JsonElement value) {
+		return new PastePatch(path, type, from, value);
+	}
+
+	/**
 	 * Creates a {@link CompoundPatch} from the specified values.
 	 * @param patches The patches that will be contained within the {@link CompoundPatch}.
 	 * @return A new {@code CompoundPatch}.

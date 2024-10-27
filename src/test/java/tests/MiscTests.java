@@ -44,6 +44,8 @@ final class MiscTests {
 				PatchUtil.test("/test", new JsonPrimitive(false), true),
 				PatchUtil.test("custom", "/test", new JsonPrimitive("is this really a primitive? the answer may surprise you"), false)));
 		patches.add(PatchUtil.find("/find", List.of(), PatchUtil.remove(""), true));
+		patches.add(PatchUtil.include("test"));
+		patches.add(PatchUtil.paste("/test", "test", "/value", new JsonPrimitive("some input value")));
 
 		final JsonPatch result = PatchUtil.compound(patches.toArray(JsonPatch[]::new));
 

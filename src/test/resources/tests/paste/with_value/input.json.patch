@@ -1,0 +1,8 @@
+[
+  {
+    "op": "paste",
+    "type": "args",
+    "path": "/test",
+    "value": "my value"
+  }
+]

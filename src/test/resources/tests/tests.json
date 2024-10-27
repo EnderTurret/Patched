@@ -88,6 +88,10 @@
 
     "include/simple",
 
+    "paste/simple",
+    "paste/with_from",
+    "paste/with_value",
+
     "selectors/double_empty",
     "selectors/empty",
     "selectors/empty2",
@@ -137,6 +141,10 @@
     "error/include/disabled_in_deserialization": "Unsupported operation 'include': Patched extensions are not enabled.",
     "error/include/disabled_in_runtime": "Attempted to include a patch, but Patched extensions are not enabled!",
     "error/include/no_file_access": "Attempted to include a patch, but no file access has been installed!",
-    "error/include/nonexistent_file": "Attempted to include a patch that doesn't exist: some_nonexistent_patch"
+    "error/include/nonexistent_file": "Attempted to include a patch that doesn't exist: some_nonexistent_patch",
+    "error/paste/disabled_in_deserialization": "Unsupported operation 'paste': Patched extensions are not enabled.",
+    "error/paste/disabled_in_runtime": "Cannot paste: Patched extensions are not enabled!",
+    "error/paste/no_data_source": "Cannot paste: no data source available!",
+    "error/paste/unknown_source_type": "Unknown paste data source type: 'foo'"
   }
 }

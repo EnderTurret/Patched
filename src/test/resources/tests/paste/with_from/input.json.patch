@@ -1,0 +1,8 @@
+[
+  {
+    "op": "paste",
+    "type": "contrived-copy-paste",
+    "from": "/value",
+    "path": "/test"
+  }
+]

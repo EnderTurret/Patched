@@ -1,4 +1,4 @@
-# Patch Index
+# Documentation Index
 
 * [Creating patches](patching_guide.md)
 * [Specification differences](differences.md)

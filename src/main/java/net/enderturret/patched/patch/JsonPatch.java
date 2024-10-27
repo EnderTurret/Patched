@@ -310,6 +310,16 @@ public abstract class JsonPatch {
 
 					yield new IncludePatch(getString(obj, "path"));
 				}
+				case "paste" -> {
+					if (!patchedExtensions)
+						throw new PatchingException("Unsupported operation 'paste': Patched extensions are not enabled.");
+
+					yield new PastePatch(
+							getString(obj, "path"),
+							getString(obj, "type"),
+							obj.has("from") ? getString(obj, "from") : null,
+							obj.get("value"));
+				}
 
 				default -> throw new PatchingException("Unknown operation '" + op + "'");
 			};
