@@ -120,7 +120,7 @@ public interface JsonSelector {
 	 * @throws TraversalException If an error occurs traversing the path.
 	 * @since 1.0.0
 	 */
-	@Deprecated(forRemoval = true)
+	@Deprecated(since = "1.3.0", forRemoval = true)
 	public default ElementContext select(JsonElement from, boolean throwOnError) throws TraversalException {
 		return select(new ElementContext.NoParent(from), throwOnError, PatchUtil.Operations.NOOP);
 	}
@@ -134,7 +134,7 @@ public interface JsonSelector {
 	 * @throws TraversalException If an error occurs traversing the path.
 	 * @since 1.0.0
 	 */
-	@Deprecated(forRemoval = true)
+	@Deprecated(since = "1.3.0", forRemoval = true)
 	public default ElementContext remove(JsonElement from, boolean throwOnError) throws TraversalException {
 		return select(new ElementContext.NoParent(from), throwOnError, PatchUtil.Operations.REMOVE);
 	}
@@ -149,7 +149,7 @@ public interface JsonSelector {
 	 * @throws TraversalException If an error occurs traversing the path.
 	 * @since 1.0.0
 	 */
-	@Deprecated(forRemoval = true)
+	@Deprecated(since = "1.3.0", forRemoval = true)
 	public default ElementContext add(JsonElement from, boolean throwOnError, JsonElement elem) throws TraversalException {
 		return select(new ElementContext.NoParent(from), throwOnError, new PatchUtil.AddOperation(elem, false));
 	}
@@ -164,7 +164,7 @@ public interface JsonSelector {
 	 * @throws TraversalException If an error occurs traversing the path.
 	 * @since 1.0.0
 	 */
-	@Deprecated(forRemoval = true)
+	@Deprecated(since = "1.3.0", forRemoval = true)
 	public default ElementContext replace(JsonElement from, boolean throwOnError, JsonElement elem) throws TraversalException {
 		return select(new ElementContext.NoParent(from), throwOnError, new PatchUtil.AddOperation(elem, true));
 	}

@@ -51,7 +51,7 @@ public record PatchContext(
 	 * @return {@code true} if {@code testExtensions} is enabled.
 	 * @since 1.0.0
 	 */
-	@Deprecated(forRemoval = true)
+	@Deprecated(since = "1.3.0", forRemoval = true)
 	public boolean sbExtensions() {
 		return testExtensions;
 	}
@@ -72,7 +72,7 @@ public record PatchContext(
 	 * @return The new {@code PatchContext}.
 	 * @since 1.0.0
 	 */
-	@Deprecated(forRemoval = true)
+	@Deprecated(since = "1.3.0", forRemoval = true)
 	public PatchContext sbExtensions(boolean value) {
 		return new PatchContext(value, patchedExtensions, throwOnFailedTest, throwOnOobAdd, testEvaluator, fileAccess, dataSource, audit);
 	}

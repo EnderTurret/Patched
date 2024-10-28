@@ -87,6 +87,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+            suppressAllPomMetadataWarnings()
             pom {
                 name = 'Patched'
                 description = 'A json patching library that implements RFC 6902 with some optional extensions.'

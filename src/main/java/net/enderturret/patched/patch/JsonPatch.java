@@ -83,7 +83,7 @@ public abstract class JsonPatch {
 	 * @throws TraversalException If a path in the patch could not be traversed.
 	 * @since 1.0.0
 	 */
-	@Deprecated(forRemoval = true)
+	@Deprecated(since = "1.3.0", forRemoval = true)
 	public final void patch(JsonElement root, PatchContext context) throws PatchingException, TraversalException {
 		patch(new ElementContext.NoParent(root), context);
 	}

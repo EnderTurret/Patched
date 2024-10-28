@@ -201,7 +201,7 @@ public final class PatchUtil {
 		 * @return An {@link ElementContext} containing the child element and related information.
 		 * @since 1.0.0
 		 */
-		@Deprecated(forRemoval = true)
+		@Deprecated(since = "1.3.0", forRemoval = true)
 		public default ElementContext apply(JsonObject obj, String name) {
 			return apply(new ElementContext.Object(obj, name, JsonNull.INSTANCE));
 		}
@@ -214,7 +214,7 @@ public final class PatchUtil {
 		 * @return An {@link ElementContext} containing the child element and related information.
 		 * @since 1.0.0
 		 */
-		@Deprecated(forRemoval = true)
+		@Deprecated(since = "1.3.0", forRemoval = true)
 		public default ElementContext apply(JsonArray arr, int idx) {
 			return apply(new ElementContext.Array(arr, idx, JsonNull.INSTANCE));
 		}
@@ -265,7 +265,7 @@ public final class PatchUtil {
 		 * @return {@code true} if out-of-bounds indices are allowed.
 		 * @since 1.0.0
 		 */
-		@Deprecated(forRemoval = true)
+		@Deprecated(since = "1.3.0", forRemoval = true)
 		public default boolean allowsOutOfBounds() {
 			return false;
 		}

@@ -47,7 +47,7 @@ public interface ElementContext {
 	 * @param op The operation to apply.
 	 * @since 1.0.0
 	 */
-	@Deprecated(forRemoval = true)
+	@Deprecated(since = "1.3.0", forRemoval = true)
 	public default void apply(Operation op) {
 		op.apply(this);
 	}
@@ -94,6 +94,7 @@ public interface ElementContext {
 		 * Constructs a new no-parent context.
 		 * @param context The patch configuration.
 		 * @param elem The element in context.
+		 * @since 1.3.0
 		 */
 		public NoParent {}
 
@@ -101,8 +102,9 @@ public interface ElementContext {
 		 * Constructs a new no-parent context.
 		 * @deprecated Use {@link NoParent#NoParent(PatchContext, JsonElement)} instead.
 		 * @param elem The element in context.
+		 * @since 1.0.0
 		 */
-		@Deprecated(forRemoval = true)
+		@Deprecated(since = "1.3.0", forRemoval = true)
 		public NoParent(JsonElement elem) { this(null, elem); }
 
 		@Override
@@ -124,6 +126,7 @@ public interface ElementContext {
 		 * Constructs a new root document context.
 		 * @param context The patch configuration.
 		 * @param doc The document in context.
+		 * @since 1.3.0
 		 */
 		public Document {}
 
@@ -131,8 +134,9 @@ public interface ElementContext {
 		 * Constructs a new root document context.
 		 * @deprecated Use {@link Document#Document(PatchContext, JsonDocument)} instead.
 		 * @param doc The document in context.
+		 * @since 1.0.0
 		 */
-		@Deprecated(forRemoval = true)
+		@Deprecated(since = "1.3.0", forRemoval = true)
 		public Document(JsonDocument doc) { this(null, doc); }
 
 		@Override
@@ -163,6 +167,7 @@ public interface ElementContext {
 		 * @param parent The parent object.
 		 * @param name The name of the current element.
 		 * @param elem The current element.
+		 * @since 1.3.0
 		 */
 		public Object {}
 
@@ -172,8 +177,9 @@ public interface ElementContext {
 		 * @param parent The parent object.
 		 * @param name The name of the current element.
 		 * @param elem The current element.
+		 * @since 1.0.0
 		 */
-		@Deprecated(forRemoval = true)
+		@Deprecated(since = "1.3.0", forRemoval = true)
 		public Object(JsonObject parent, String name, @Nullable JsonElement elem) { this(null, parent, name, elem); }
 
 		@Override
@@ -199,6 +205,7 @@ public interface ElementContext {
 		 * @param parent The parent array.
 		 * @param index The index of the current element.
 		 * @param elem The current element.
+		 * @since 1.3.0
 		 */
 		public Array {}
 
@@ -208,8 +215,9 @@ public interface ElementContext {
 		 * @param parent The parent array.
 		 * @param index The index of the current element.
 		 * @param elem The current element.
+		 * @since 1.0.0
 		 */
-		@Deprecated(forRemoval = true)
+		@Deprecated(since = "1.3.0", forRemoval = true)
 		public Array(JsonArray parent, int index, @Nullable JsonElement elem) { this(null, parent, index, elem); }
 
 		@Override
