@@ -30,6 +30,11 @@ import net.enderturret.patched.patcher.path.PathSourceAdapter;
 // @VisibleForTesting
 public class Patched {
 
+	/**
+	 * The main method.
+	 * @param args The program arguments.
+	 * @throws IOException If an I/O error occurs.
+	 */
 	public static void main(String... args) throws IOException {
 		final Settings settings = readArgs(args);
 		if (settings == null || settings.src == null || settings.output == null || settings.patchSources.isEmpty())

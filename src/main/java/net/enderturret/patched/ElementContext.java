@@ -90,7 +90,18 @@ public interface ElementContext {
 	 */
 	public static record NoParent(@Nullable PatchContext context, JsonElement elem) implements ElementContext {
 
+		/**
+		 * Constructs a new no-parent context.
+		 * @param context The patch configuration.
+		 * @param elem The element in context.
+		 */
 		public NoParent {}
+
+		/**
+		 * Constructs a new no-parent context.
+		 * @deprecated Use {@link NoParent#NoParent(PatchContext, JsonElement)} instead.
+		 * @param elem The element in context.
+		 */
 		@Deprecated(forRemoval = true)
 		public NoParent(JsonElement elem) { this(null, elem); }
 
@@ -109,7 +120,18 @@ public interface ElementContext {
 	 */
 	public static record Document(@Nullable PatchContext context, JsonDocument doc) implements ElementContext {
 
+		/**
+		 * Constructs a new root document context.
+		 * @param context The patch configuration.
+		 * @param doc The document in context.
+		 */
 		public Document {}
+
+		/**
+		 * Constructs a new root document context.
+		 * @deprecated Use {@link Document#Document(PatchContext, JsonDocument)} instead.
+		 * @param doc The document in context.
+		 */
 		@Deprecated(forRemoval = true)
 		public Document(JsonDocument doc) { this(null, doc); }
 
@@ -127,15 +149,30 @@ public interface ElementContext {
 	/**
 	 * An element whose parent is a {@link JsonObject}.
 	 * @param context The patch context. May be {@code null} in circumstances involving old code.
-	 * @param parent The parent.
-	 * @param name The name of the child element.
-	 * @param elem The child element.
+	 * @param parent The parent object.
+	 * @param name The name of the current element.
+	 * @param elem The current element.
 	 * @author EnderTurret
 	 * @since 1.0.0
 	 */
 	public static record Object(@Nullable PatchContext context, JsonObject parent, String name, @Nullable JsonElement elem) implements ElementContext {
 
+		/**
+		 * Constructs a new object-parent context.
+		 * @param context The patch configuration.
+		 * @param parent The parent object.
+		 * @param name The name of the current element.
+		 * @param elem The current element.
+		 */
 		public Object {}
+
+		/**
+		 * Constructs a new object-parent context.
+		 * @deprecated Use {@link Object#Object(PatchContext, JsonObject, String, JsonElement)} instead.
+		 * @param parent The parent object.
+		 * @param name The name of the current element.
+		 * @param elem The current element.
+		 */
 		@Deprecated(forRemoval = true)
 		public Object(JsonObject parent, String name, @Nullable JsonElement elem) { this(null, parent, name, elem); }
 
@@ -148,15 +185,30 @@ public interface ElementContext {
 	/**
 	 * An element whose parent is a {@link JsonArray}.
 	 * @param context The patch context. May be {@code null} in circumstances involving old code.
-	 * @param parent The parent.
-	 * @param index The index of the child element.
-	 * @param elem The child element.
+	 * @param parent The parent array.
+	 * @param index The index of the current element.
+	 * @param elem The current element.
 	 * @author EnderTurret
 	 * @since 1.0.0
 	 */
 	public static record Array(@Nullable PatchContext context, JsonArray parent, int index, @Nullable JsonElement elem) implements ElementContext {
 
+		/**
+		 * Constructs a new array-parent context.
+		 * @param context The patch configuration.
+		 * @param parent The parent array.
+		 * @param index The index of the current element.
+		 * @param elem The current element.
+		 */
 		public Array {}
+
+		/**
+		 * Constructs a new array-parent context.
+		 * @deprecated Use {@link Array#Array(PatchContext, JsonArray, int, JsonElement)} instead.
+		 * @param parent The parent array.
+		 * @param index The index of the current element.
+		 * @param elem The current element.
+		 */
 		@Deprecated(forRemoval = true)
 		public Array(JsonArray parent, int index, @Nullable JsonElement elem) { this(null, parent, index, elem); }
 

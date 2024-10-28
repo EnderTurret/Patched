@@ -52,18 +52,44 @@ public final class PatchAudit {
 		records.put(path, comment);
 	}
 
+	/**
+	 * Records an {@code add} operation into this audit's tracked changes.
+	 * @param parentPath The path up to and excluding the name of the added element.
+	 * @param name The name of the added element.
+	 * @param added The added element.
+	 */
 	public void recordAdd(String parentPath, String name, ElementContext added) {
 		record(parentPath + "/" + fixPath(name, added), "added by " + patchPath);
 	}
 
+	/**
+	 * Records a {@code copy} operation into this audit's tracked changes.
+	 * @param parentPath The path up to and excluding the name of the cloned element.
+	 * @param name The name of the cloned element.
+	 * @param from The path to the original element.
+	 * @param copied The cloned element.
+	 */
 	public void recordCopy(String parentPath, String name, String from, ElementContext copied) {
 		record(parentPath + "/" + fixPath(name, copied), "copied from " + from + " by " + patchPath);
 	}
 
+	/**
+	 * Records a {@code move} operation into this audit's tracked changes.
+	 * @param parentPath The path up to and excluding the name of the destination element.
+	 * @param name The name of the destination element.
+	 * @param from The path to the source element.
+	 * @param moved The moved element.
+	 */
 	public void recordMove(String parentPath, String name, String from, ElementContext moved) {
 		record(parentPath + "/" + fixPath(name, moved), "moved from " + from + " by " + patchPath);
 	}
 
+	/**
+	 * Records a {@code remove} operation into this audit's tracked changes.
+	 * @param parentPath The path up to and excluding the name of the removed element.
+	 * @param name The name of the removed element.
+	 * @param value The removed element.
+	 */
 	public void recordRemove(String parentPath, String name, JsonElement value) {
 		if (pathPrefix != null)
 			parentPath = pathPrefix + parentPath;
@@ -72,6 +98,11 @@ public final class PatchAudit {
 		.add(new RemovalRecord((pathKey != null ? pathKey : "") + name, value, patchPath));
 	}
 
+	/**
+	 * Records a {@code replace} operation into this audit's tracked changes.
+	 * @param parentPath The path up to and excluding the name of the replaced element.
+	 * @param name The name of the replaced element.
+	 */
 	public void recordReplace(String parentPath, String name) {
 		final String path = parentPath.isEmpty() && name.isEmpty() && pathPrefix != null ? "" : parentPath + "/" + name;
 		record(path, "replaced by " + patchPath);
