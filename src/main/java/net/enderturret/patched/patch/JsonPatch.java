@@ -248,7 +248,7 @@ public abstract class JsonPatch {
 			return deserialize(defaultOp, enforceOp, json, typeOfT, context);
 		}
 
-		@SuppressWarnings("cast")
+		@SuppressWarnings({ "cast", "unchecked" })
 		protected <T extends JsonPatch> T deserialize(String defaultOp, boolean enforceOp, JsonElement json, Class<T> typeOfT, JsonDeserializationContext context) throws JsonParseException {
 			return (T) deserialize(defaultOp, enforceOp, json, (Type) typeOfT, context);
 		}
