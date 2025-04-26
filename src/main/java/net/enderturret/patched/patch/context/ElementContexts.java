@@ -14,15 +14,28 @@ public final class ElementContexts {
 
 	private ElementContexts() {}
 
+	private static abstract class AbstractElementContext implements ElementContext {
+
+		protected final PatchContext context;
+
+		AbstractElementContext(PatchContext context) {
+			this.context = Objects.requireNonNull(context, "context");
+		}
+
+		@Override
+		public PatchContext context() {
+			return context;
+		}
+	}
+
 	/**
 	 * <p>An element without a parent.</p>
 	 * <p>Such an element cannot have operations applied to it.</p>
 	 * @author EnderTurret
 	 * @since 1.0.0
 	 */
-	public static final class NoParent implements ElementContext {
+	public static final class NoParent extends AbstractElementContext {
 
-		private final PatchContext context;
 		private final JsonElement elem;
 
 		/**
@@ -32,13 +45,8 @@ public final class ElementContexts {
 		 * @since 1.3.0
 		 */
 		public NoParent(PatchContext context, JsonElement elem) {
-			this.context = Objects.requireNonNull(context, "context");
+			super(context);
 			this.elem = Objects.requireNonNull(elem, "elem");
-		}
-
-		@Override
-		public PatchContext context() {
-			return context;
 		}
 
 		@Override
@@ -57,9 +65,8 @@ public final class ElementContexts {
 	 * @author EnderTurret
 	 * @since 1.3.0
 	 */
-	public static final class Document implements ElementContext {
+	public static final class Document extends AbstractElementContext {
 
-		private final PatchContext context;
 		private final JsonDocument doc;
 
 		/**
@@ -69,7 +76,7 @@ public final class ElementContexts {
 		 * @since 1.3.0
 		 */
 		public Document(PatchContext context, JsonDocument doc) {
-			this.context = Objects.requireNonNull(context, "context");
+			super(context);
 			this.doc = Objects.requireNonNull(doc, "doc");
 		}
 
@@ -80,11 +87,6 @@ public final class ElementContexts {
 		 */
 		public JsonDocument doc() {
 			return doc;
-		}
-
-		@Override
-		public PatchContext context() {
-			return context;
 		}
 
 		@Override
@@ -103,9 +105,8 @@ public final class ElementContexts {
 	 * @author EnderTurret
 	 * @since 1.0.0
 	 */
-	public static final class Object implements ElementContext {
+	public static final class Object extends AbstractElementContext {
 
-		private final PatchContext context;
 		private final JsonObject parent;
 		private final String name;
 		private final @Nullable JsonElement elem;
@@ -119,7 +120,7 @@ public final class ElementContexts {
 		 * @since 1.3.0
 		 */
 		public Object(PatchContext context, JsonObject parent, String name, @Nullable JsonElement elem) {
-			this.context = Objects.requireNonNull(context, "context");
+			super(context);
 			this.parent = Objects.requireNonNull(parent, "parent");
 			this.name = Objects.requireNonNull(name, "name");
 			this.elem = elem;
@@ -132,11 +133,6 @@ public final class ElementContexts {
 		 */
 		public String name() {
 			return name;
-		}
-
-		@Override
-		public PatchContext context() {
-			return context;
 		}
 
 		@Override
@@ -156,9 +152,8 @@ public final class ElementContexts {
 	 * @author EnderTurret
 	 * @since 1.0.0
 	 */
-	public static final class Array implements ElementContext {
+	public static final class Array extends AbstractElementContext {
 
-		private final PatchContext context;
 		private final JsonArray parent;
 		private final int index;
 		private final @Nullable JsonElement elem;
@@ -172,7 +167,7 @@ public final class ElementContexts {
 		 * @since 1.3.0
 		 */
 		public Array(PatchContext context, JsonArray parent, int index, @Nullable JsonElement elem) {
-			this.context = Objects.requireNonNull(context, "context");
+			super(context);
 			this.parent = Objects.requireNonNull(parent, "parent");
 			this.index = index;
 			this.elem = elem;
@@ -185,11 +180,6 @@ public final class ElementContexts {
 		 */
 		public int index() {
 			return index;
-		}
-
-		@Override
-		public PatchContext context() {
-			return context;
 		}
 
 		@Override
