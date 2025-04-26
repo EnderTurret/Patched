@@ -102,7 +102,8 @@ public final class FindPatch extends JsonPatch {
 		}
 		else if (parent.elem() instanceof JsonArray a) {
 			// Use traditional iteration so we don't encounter surprise CMEs.
-			for (int i = 0; i < a.size(); i++) {
+			int baseSize = a.size();
+			for (int i = 0; i < baseSize; i++) {
 				final JsonElement elem = a.get(i);
 
 				if (!testAll(elem, context))
@@ -116,6 +117,12 @@ public final class FindPatch extends JsonPatch {
 
 				if (!multi)
 					return;
+
+				final int newSize = a.size();
+				if (newSize < baseSize) {
+					baseSize = newSize;
+					i--;
+				}
 			}
 		}
 	}
