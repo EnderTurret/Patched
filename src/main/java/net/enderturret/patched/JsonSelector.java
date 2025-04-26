@@ -112,64 +112,6 @@ public interface JsonSelector {
 	}
 
 	/**
-	 * @deprecated Use {@link #select(ElementContext, boolean)} instead.
-	 * {@link JsonElement} version of {@link #select(ElementContext, boolean)}.
-	 * @param from The root or beginning element.
-	 * @param throwOnError Whether a {@link TraversalException} should be thrown if an element doesn't exist. This is {@code false} for the {@code test} operation.
-	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
-	 * @throws TraversalException If an error occurs traversing the path.
-	 * @since 1.0.0
-	 */
-	@Deprecated(since = "1.3.0", forRemoval = true)
-	public default ElementContext select(JsonElement from, boolean throwOnError) throws TraversalException {
-		return select(new ElementContext.NoParent(from), throwOnError, PatchUtil.Operations.NOOP);
-	}
-
-	/**
-	 * @deprecated Use {@link #remove(ElementContext, boolean)} instead.
-	 * {@link JsonElement} version of {@link #remove(ElementContext, boolean)}.
-	 * @param from The root or beginning element.
-	 * @param throwOnError Whether a {@link TraversalException} should be thrown if an element doesn't exist. This is {@code false} for the {@code test} operation.
-	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
-	 * @throws TraversalException If an error occurs traversing the path.
-	 * @since 1.0.0
-	 */
-	@Deprecated(since = "1.3.0", forRemoval = true)
-	public default ElementContext remove(JsonElement from, boolean throwOnError) throws TraversalException {
-		return select(new ElementContext.NoParent(from), throwOnError, PatchUtil.Operations.REMOVE);
-	}
-
-	/**
-	 * @deprecated Use {@link #add(ElementContext, boolean, JsonElement)} instead.
-	 * {@link JsonElement} version of {@link #add(ElementContext, boolean, JsonElement)}.
-	 * @param from The root or beginning element.
-	 * @param throwOnError Whether a {@link TraversalException} should be thrown if an element doesn't exist. This is {@code false} for the {@code test} operation.
-	 * @param elem The element to add.
-	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
-	 * @throws TraversalException If an error occurs traversing the path.
-	 * @since 1.0.0
-	 */
-	@Deprecated(since = "1.3.0", forRemoval = true)
-	public default ElementContext add(JsonElement from, boolean throwOnError, JsonElement elem) throws TraversalException {
-		return select(new ElementContext.NoParent(from), throwOnError, new PatchUtil.AddOperation(elem, false));
-	}
-
-	/**
-	 * @deprecated Use {@link #replace(ElementContext, boolean, JsonElement)} instead.
-	 * {@link JsonElement} version of {@link #replace(ElementContext, boolean, JsonElement)}.
-	 * @param from The root or beginning element.
-	 * @param throwOnError Whether a {@link TraversalException} should be thrown if an element doesn't exist. This is {@code false} for the {@code test} operation.
-	 * @param elem The element to replace with.
-	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
-	 * @throws TraversalException If an error occurs traversing the path.
-	 * @since 1.0.0
-	 */
-	@Deprecated(since = "1.3.0", forRemoval = true)
-	public default ElementContext replace(JsonElement from, boolean throwOnError, JsonElement elem) throws TraversalException {
-		return select(new ElementContext.NoParent(from), throwOnError, new PatchUtil.AddOperation(elem, true));
-	}
-
-	/**
 	 * @return {@code true} if this selector is empty.
 	 * @since 1.0.0
 	 */

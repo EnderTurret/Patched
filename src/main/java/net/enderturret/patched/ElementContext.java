@@ -42,17 +42,6 @@ public interface ElementContext {
 	public JsonElement elem();
 
 	/**
-	 * Applies the given operation to this element.
-	 * @deprecated Use {@link Operation#apply(ElementContext)} instead.
-	 * @param op The operation to apply.
-	 * @since 1.0.0
-	 */
-	@Deprecated(since = "1.3.0", forRemoval = true)
-	public default void apply(Operation op) {
-		op.apply(this);
-	}
-
-	/**
 	 * Creates a new {@link ElementContext} with this set as its parent and the given values as its name and element.
 	 * @param name The name of {@code elem}.
 	 * @param elem The element wrapped by the {@link ElementContext}.
@@ -98,15 +87,6 @@ public interface ElementContext {
 		 */
 		public NoParent {}
 
-		/**
-		 * Constructs a new no-parent context.
-		 * @deprecated Use {@link NoParent#NoParent(PatchContext, JsonElement)} instead.
-		 * @param elem The element in context.
-		 * @since 1.0.0
-		 */
-		@Deprecated(since = "1.3.0", forRemoval = true)
-		public NoParent(JsonElement elem) { this(null, elem); }
-
 		@Override
 		public JsonElement parent() {
 			return null;
@@ -129,15 +109,6 @@ public interface ElementContext {
 		 * @since 1.3.0
 		 */
 		public Document {}
-
-		/**
-		 * Constructs a new root document context.
-		 * @deprecated Use {@link Document#Document(PatchContext, JsonDocument)} instead.
-		 * @param doc The document in context.
-		 * @since 1.0.0
-		 */
-		@Deprecated(since = "1.3.0", forRemoval = true)
-		public Document(JsonDocument doc) { this(null, doc); }
 
 		@Override
 		public JsonElement parent() {
@@ -171,17 +142,6 @@ public interface ElementContext {
 		 */
 		public Object {}
 
-		/**
-		 * Constructs a new object-parent context.
-		 * @deprecated Use {@link Object#Object(PatchContext, JsonObject, String, JsonElement)} instead.
-		 * @param parent The parent object.
-		 * @param name The name of the current element.
-		 * @param elem The current element.
-		 * @since 1.0.0
-		 */
-		@Deprecated(since = "1.3.0", forRemoval = true)
-		public Object(JsonObject parent, String name, @Nullable JsonElement elem) { this(null, parent, name, elem); }
-
 		@Override
 		public JsonObject parent() {
 			return parent;
@@ -208,17 +168,6 @@ public interface ElementContext {
 		 * @since 1.3.0
 		 */
 		public Array {}
-
-		/**
-		 * Constructs a new array-parent context.
-		 * @deprecated Use {@link Array#Array(PatchContext, JsonArray, int, JsonElement)} instead.
-		 * @param parent The parent array.
-		 * @param index The index of the current element.
-		 * @param elem The current element.
-		 * @since 1.0.0
-		 */
-		@Deprecated(since = "1.3.0", forRemoval = true)
-		public Array(JsonArray parent, int index, @Nullable JsonElement elem) { this(null, parent, index, elem); }
 
 		@Override
 		public JsonArray parent() {

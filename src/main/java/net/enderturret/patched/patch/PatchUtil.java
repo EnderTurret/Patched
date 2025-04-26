@@ -184,40 +184,7 @@ public final class PatchUtil {
 		 * @return An {@link ElementContext} containing the child element and related information.
 		 * @since 1.3.0
 		 */
-		public default ElementContext apply(ElementContext context) {
-			if (context instanceof ElementContext.Object obj)
-				return apply(obj.parent(), obj.name());
-			if (context instanceof ElementContext.Array arr)
-				return apply(arr.parent(), arr.index());
-
-			return context;
-		}
-
-		/**
-		 * Applies this operation to the element with the given name inside the given object.
-		 * @deprecated Use {@link #apply(ElementContext)} instead.
-		 * @param obj The object to find the element in.
-		 * @param name The name of the element to apply on.
-		 * @return An {@link ElementContext} containing the child element and related information.
-		 * @since 1.0.0
-		 */
-		@Deprecated(since = "1.3.0", forRemoval = true)
-		public default ElementContext apply(JsonObject obj, String name) {
-			return apply(new ElementContext.Object(obj, name, JsonNull.INSTANCE));
-		}
-
-		/**
-		 * Applies this operation to the element at the given index inside the given array.
-		 * @deprecated Use {@link #apply(ElementContext)} instead.
-		 * @param arr The array to find the element in.
-		 * @param idx The index of the element to apply on.
-		 * @return An {@link ElementContext} containing the child element and related information.
-		 * @since 1.0.0
-		 */
-		@Deprecated(since = "1.3.0", forRemoval = true)
-		public default ElementContext apply(JsonArray arr, int idx) {
-			return apply(new ElementContext.Array(arr, idx, JsonNull.INSTANCE));
-		}
+		public ElementContext apply(ElementContext context);
 
 		/**
 		 * <p>Whether a path may include an out-of-bounds index.</p>
@@ -241,32 +208,6 @@ public final class PatchUtil {
 		 * @since 1.3.0
 		 */
 		public default boolean allowsOutOfBounds(ElementContext context) {
-			return false;
-		}
-
-		/**
-		 * <p>Whether a path may include an out-of-bounds index.</p>
-		 * <p>
-		 * Consider the following:
-		 * <pre>
-		 * // patch
-		 * {
-		 *   "op": "add",
-		 *   "path": "/array/9",
-		 *   "value": "e"
-		 * }
-		 * // document
-		 * {
-		 *   "array": [1]
-		 * }</pre>
-		 * The return value of this method determines whether this patch will succeed.
-		 * </p>
-		 * @deprecated Use {@link #allowsOutOfBounds(ElementContext)} instead.
-		 * @return {@code true} if out-of-bounds indices are allowed.
-		 * @since 1.0.0
-		 */
-		@Deprecated(since = "1.3.0", forRemoval = true)
-		public default boolean allowsOutOfBounds() {
 			return false;
 		}
 
