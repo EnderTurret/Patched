@@ -8,7 +8,6 @@ import com.google.gson.JsonObject;
 
 import net.enderturret.patched.JsonDocument;
 import net.enderturret.patched.exception.TraversalException;
-import net.enderturret.patched.patch.PatchUtil.Operation;
 
 /**
  * <p>Represents a {@link JsonElement} and its parent element.</p>
