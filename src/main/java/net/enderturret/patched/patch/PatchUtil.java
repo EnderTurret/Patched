@@ -10,6 +10,7 @@ import com.google.gson.JsonElement;
 import net.enderturret.patched.ITestEvaluator;
 import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.patch.context.ElementContext;
+import net.enderturret.patched.patch.context.ElementContexts;
 
 /**
  * Various utilities used in the patching backend.
@@ -266,16 +267,16 @@ public final class PatchUtil {
 
 		@Override
 		public ElementContext apply(ElementContext context) {
-			if (context instanceof ElementContext.Object obj)
-				return new ElementContext.Object(obj.context(), obj.parent(), obj.name(),
+			if (context instanceof ElementContexts.Object obj)
+				return new ElementContexts.Object(obj.context(), obj.parent(), obj.name(),
 						this == REMOVE ? obj.parent().remove(obj.name()) : obj.parent().get(obj.name()));
 
-			if (context instanceof ElementContext.Array arr) {
-				return new ElementContext.Array(arr.context(), arr.parent(), arr.index(),
+			if (context instanceof ElementContexts.Array arr) {
+				return new ElementContexts.Array(arr.context(), arr.parent(), arr.index(),
 						this == REMOVE ? arr.parent().remove(arr.index()) : arr.parent().get(arr.index()));
 			}
 
-			if (context instanceof ElementContext.Document && this == REMOVE)
+			if (context instanceof ElementContexts.Document && this == REMOVE)
 				throw new PatchingException("Attempted to remove root element!");
 
 			return context;
@@ -293,22 +294,22 @@ public final class PatchUtil {
 
 		@Override
 		public ElementContext apply(ElementContext context) {
-			if (context instanceof ElementContext.Object obj) {
+			if (context instanceof ElementContexts.Object obj) {
 				if (elem != null) obj.parent().add(obj.name(), elem);
-				return new ElementContext.Object(obj.context(), obj.parent(), obj.name(), elem);
+				return new ElementContexts.Object(obj.context(), obj.parent(), obj.name(), elem);
 			}
 
-			if (context instanceof ElementContext.Array arr) {
+			if (context instanceof ElementContexts.Array arr) {
 				if (elem != null)
 					if (replace())
 						arr.parent().set(arr.index(), elem);
 					else
 						add(arr.parent(), arr.index(), elem);
 
-				return new ElementContext.Array(arr.context(), arr.parent(), arr.index(), elem);
+				return new ElementContexts.Array(arr.context(), arr.parent(), arr.index(), elem);
 			}
 
-			if (context instanceof ElementContext.Document doc)
+			if (context instanceof ElementContexts.Document doc)
 				doc.doc().setRoot(elem);
 
 			return context;
@@ -321,7 +322,7 @@ public final class PatchUtil {
 
 		@Override
 		public boolean allowsOutOfBounds(ElementContext context) {
-			return !replace && (!context.context().throwOnOobAdd() || (context instanceof ElementContext.Array a
+			return !replace && (!context.context().throwOnOobAdd() || (context instanceof ElementContexts.Array a
 					&& a.index() == a.parent().size()));
 		}
 

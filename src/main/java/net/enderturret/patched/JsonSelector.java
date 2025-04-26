@@ -9,6 +9,7 @@ import net.enderturret.patched.patch.PatchUtil;
 import net.enderturret.patched.patch.PatchUtil.Operation;
 import net.enderturret.patched.patch.PatchUtil.Operations;
 import net.enderturret.patched.patch.context.ElementContext;
+import net.enderturret.patched.patch.context.ElementContexts;
 
 /**
  * <p>
@@ -253,7 +254,7 @@ public interface JsonSelector {
 				return error(throwOnError, "Attempted to traverse null context!");
 
 			if ("-".equals(name) && context.elem() instanceof JsonArray arr && op.allowsEndOfArrayRef())
-				return op.apply(new ElementContext.Array(context.context(), arr, arr.size(), null));
+				return op.apply(new ElementContexts.Array(context.context(), arr, arr.size(), null));
 
 			if (!(context.elem() instanceof JsonObject obj))
 				return error(throwOnError, "Expected object to find '" + name + "' in, found " + context.elem() + "!");
@@ -261,7 +262,7 @@ public interface JsonSelector {
 			if (op.strictHas() && !obj.has(name))
 				return error(throwOnError, "No such child " + name + "!");
 
-			return op.apply(new ElementContext.Object(context.context(), obj, name, null));
+			return op.apply(new ElementContexts.Object(context.context(), obj, name, null));
 		}
 
 		@Override
@@ -287,7 +288,7 @@ public interface JsonSelector {
 				if (index < 0)
 					return error(throwOnError, "Attempted to traverse negative index in array (" + index + ")!");
 
-				final ElementContext newContext = new ElementContext.Array(context.context(), arr, index, null);
+				final ElementContext newContext = new ElementContexts.Array(context.context(), arr, index, null);
 
 				if (!op.allowsOutOfBounds(newContext) && arr.size() <= index)
 					return error(throwOnError, "No such child " + strIndex + "!");
@@ -297,7 +298,7 @@ public interface JsonSelector {
 				if (op.strictHas() && !obj.has(strIndex))
 					return error(throwOnError, "No such child " + strIndex + "!");
 
-				return op.apply(new ElementContext.Object(context.context(), obj, strIndex, null));
+				return op.apply(new ElementContexts.Object(context.context(), obj, strIndex, null));
 			}
 
 			return error(throwOnError, "Expected array or object to find '" + strIndex + "' in, found " + context.elem() + "!");

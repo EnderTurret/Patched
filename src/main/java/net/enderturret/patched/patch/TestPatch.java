@@ -11,6 +11,7 @@ import net.enderturret.patched.JsonSelector;
 import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.exception.TraversalException;
 import net.enderturret.patched.patch.context.ElementContext;
+import net.enderturret.patched.patch.context.ElementContexts;
 import net.enderturret.patched.patch.context.PatchContext;
 
 /**
@@ -60,7 +61,7 @@ public class TestPatch extends ManualTraversalPatch {
 
 		if (path != null)
 			try {
-				ctx = path.select(new ElementContext.NoParent(context, root), context.throwOnFailedTest());
+				ctx = path.select(new ElementContexts.NoParent(context, root), context.throwOnFailedTest());
 			} catch (TraversalException e) {
 				throw new PatchingException("Test failed: " + e.getMessage());
 			}

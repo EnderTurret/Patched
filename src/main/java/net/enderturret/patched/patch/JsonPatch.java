@@ -22,6 +22,7 @@ import net.enderturret.patched.Patches;
 import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.exception.TraversalException;
 import net.enderturret.patched.patch.context.ElementContext;
+import net.enderturret.patched.patch.context.ElementContexts;
 import net.enderturret.patched.patch.context.PatchContext;
 
 /**
@@ -84,7 +85,7 @@ public abstract class JsonPatch {
 	 * @since 1.3.0
 	 */
 	public final void patch(JsonDocument root, PatchContext context) throws PatchingException, TraversalException {
-		patch(new ElementContext.Document(context, root), context);
+		patch(new ElementContexts.Document(context, root), context);
 	}
 
 	/**

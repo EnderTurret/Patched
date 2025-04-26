@@ -21,6 +21,7 @@ import net.enderturret.patched.patch.JsonPatch;
 import net.enderturret.patched.patch.PatchUtil;
 import net.enderturret.patched.patch.TestPatch;
 import net.enderturret.patched.patch.context.ElementContext;
+import net.enderturret.patched.patch.context.ElementContexts;
 import net.enderturret.patched.patch.context.ImmutablePatchContext;
 import net.enderturret.patched.patch.context.PatchContext;
 
@@ -125,7 +126,7 @@ final class MiscTests {
 
 	@Test
 	void testElementContexts() {
-		final ElementContext context = new ElementContext.NoParent(ImmutablePatchContext.newContext(), JsonNull.INSTANCE);
+		final ElementContext context = new ElementContexts.NoParent(ImmutablePatchContext.newContext(), JsonNull.INSTANCE);
 		assertNull(context.parent());
 		assertThrows(TraversalException.class, () -> context.child(0, JsonNull.INSTANCE));
 		assertThrows(TraversalException.class, () -> context.child("some path", JsonNull.INSTANCE));
