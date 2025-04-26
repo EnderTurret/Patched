@@ -1,5 +1,7 @@
 package net.enderturret.patched.patch.context;
 
+import java.util.Objects;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonArray;
@@ -21,10 +23,7 @@ public interface ElementContext {
 	 * @return The patch context.
 	 * @since 1.3.0
 	 */
-	@Nullable
-	public default PatchContext context() {
-		return null;
-	}
+	public PatchContext context();
 
 	/**
 	 * @return The parent element.
@@ -71,12 +70,12 @@ public interface ElementContext {
 	/**
 	 * <p>An element without a parent.</p>
 	 * <p>Such an element cannot have operations applied to it.</p>
-	 * @param context The patch context. May be {@code null} in circumstances involving old code.
+	 * @param context The patch context.
 	 * @param elem The element.
 	 * @author EnderTurret
 	 * @since 1.0.0
 	 */
-	public static record NoParent(@Nullable PatchContext context, JsonElement elem) implements ElementContext {
+	public static record NoParent(PatchContext context, JsonElement elem) implements ElementContext {
 
 		/**
 		 * Constructs a new no-parent context.
@@ -84,7 +83,10 @@ public interface ElementContext {
 		 * @param elem The element in context.
 		 * @since 1.3.0
 		 */
-		public NoParent {}
+		public NoParent {
+			Objects.requireNonNull(context, "context");
+			Objects.requireNonNull(elem, "elem");
+		}
 
 		@Override
 		public JsonElement parent() {
@@ -94,12 +96,12 @@ public interface ElementContext {
 
 	/**
 	 * An element whose parent is the json document -- allows swapping out this element without needing to change 300 {@code void}s to {@code JsonElement}s.
-	 * @param context The patch context. May be {@code null} in circumstances involving old code.
+	 * @param context The patch context.
 	 * @param doc The document.
 	 * @author EnderTurret
 	 * @since 1.3.0
 	 */
-	public static record Document(@Nullable PatchContext context, JsonDocument doc) implements ElementContext {
+	public static record Document(PatchContext context, JsonDocument doc) implements ElementContext {
 
 		/**
 		 * Constructs a new root document context.
@@ -107,7 +109,10 @@ public interface ElementContext {
 		 * @param doc The document in context.
 		 * @since 1.3.0
 		 */
-		public Document {}
+		public Document {
+			Objects.requireNonNull(context, "context");
+			Objects.requireNonNull(doc, "doc");
+		}
 
 		@Override
 		public JsonElement parent() {
@@ -122,14 +127,14 @@ public interface ElementContext {
 
 	/**
 	 * An element whose parent is a {@link JsonObject}.
-	 * @param context The patch context. May be {@code null} in circumstances involving old code.
+	 * @param context The patch context.
 	 * @param parent The parent object.
 	 * @param name The name of the current element.
 	 * @param elem The current element.
 	 * @author EnderTurret
 	 * @since 1.0.0
 	 */
-	public static record Object(@Nullable PatchContext context, JsonObject parent, String name, @Nullable JsonElement elem) implements ElementContext {
+	public static record Object(PatchContext context, JsonObject parent, String name, @Nullable JsonElement elem) implements ElementContext {
 
 		/**
 		 * Constructs a new object-parent context.
@@ -139,7 +144,11 @@ public interface ElementContext {
 		 * @param elem The current element.
 		 * @since 1.3.0
 		 */
-		public Object {}
+		public Object {
+			Objects.requireNonNull(context, "context");
+			Objects.requireNonNull(parent, "parent");
+			Objects.requireNonNull(name, "name");
+		}
 
 		@Override
 		public JsonObject parent() {
@@ -149,14 +158,14 @@ public interface ElementContext {
 
 	/**
 	 * An element whose parent is a {@link JsonArray}.
-	 * @param context The patch context. May be {@code null} in circumstances involving old code.
+	 * @param context The patch context.
 	 * @param parent The parent array.
 	 * @param index The index of the current element.
 	 * @param elem The current element.
 	 * @author EnderTurret
 	 * @since 1.0.0
 	 */
-	public static record Array(@Nullable PatchContext context, JsonArray parent, int index, @Nullable JsonElement elem) implements ElementContext {
+	public static record Array(PatchContext context, JsonArray parent, int index, @Nullable JsonElement elem) implements ElementContext {
 
 		/**
 		 * Constructs a new array-parent context.
@@ -166,7 +175,10 @@ public interface ElementContext {
 		 * @param elem The current element.
 		 * @since 1.3.0
 		 */
-		public Array {}
+		public Array {
+			Objects.requireNonNull(context, "context");
+			Objects.requireNonNull(parent, "parent");
+		}
 
 		@Override
 		public JsonArray parent() {
