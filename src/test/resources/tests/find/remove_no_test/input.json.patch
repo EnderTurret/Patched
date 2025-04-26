@@ -1,0 +1,12 @@
+[
+  {
+    "op": "find",
+    "path": "/list",
+    "multi": true,
+    "test": [],
+    "then": {
+      "op": "remove",
+      "path": ""
+    }
+  }
+]

@@ -73,6 +73,7 @@
     "move/into_array_oob_lenient",
     "move/into_object",
     "move/into_object_dash",
+    "move/into_object_replace",
     "move/into_nonexistent",
 
     "find/basic_in_array",
@@ -81,6 +82,7 @@
     "find/multi_in_array",
     "find/multi_in_object",
     "find/remove_value",
+    "find/remove_no_test",
     "find/replace_value",
     { "path": "find/remove_unspecific", "doOutputTest": false },
     { "path": "find/redundant_multi", "doOutputTest": false },
