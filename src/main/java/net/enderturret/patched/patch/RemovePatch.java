@@ -1,7 +1,8 @@
 package net.enderturret.patched.patch;
 
-import net.enderturret.patched.ElementContext;
 import net.enderturret.patched.exception.TraversalException;
+import net.enderturret.patched.patch.context.ElementContext;
+import net.enderturret.patched.patch.context.PatchContext;
 
 /**
  * A patch that removes an element.

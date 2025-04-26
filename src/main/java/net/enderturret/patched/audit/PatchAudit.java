@@ -14,10 +14,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import net.enderturret.patched.ElementContext;
 import net.enderturret.patched.JsonSelector;
 import net.enderturret.patched.patch.FindPatch;
-import net.enderturret.patched.patch.PatchContext;
+import net.enderturret.patched.patch.context.ElementContext;
+import net.enderturret.patched.patch.context.PatchContext;
 
 /**
  * Tracks changes that patches make to a file, which can be later used for debugging or other uses.

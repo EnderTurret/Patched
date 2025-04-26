@@ -5,7 +5,8 @@ import org.jetbrains.annotations.Nullable;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonSerializationContext;
 
-import net.enderturret.patched.ElementContext;
+import net.enderturret.patched.patch.context.ElementContext;
+import net.enderturret.patched.patch.context.PatchContext;
 
 /**
  * Represents a patch made of multiple patches.

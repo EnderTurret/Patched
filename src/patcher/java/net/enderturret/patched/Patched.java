@@ -17,7 +17,7 @@ import com.google.gson.JsonParser;
 
 import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.patch.JsonPatch;
-import net.enderturret.patched.patch.PatchContext;
+import net.enderturret.patched.patch.context.PatchContext;
 import net.enderturret.patched.patcher.Patcher;
 import net.enderturret.patched.patcher.path.PathDumper;
 import net.enderturret.patched.patcher.path.PathPathHandler;

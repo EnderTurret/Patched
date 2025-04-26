@@ -2,9 +2,10 @@ package net.enderturret.patched.patch;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.enderturret.patched.ElementContext;
 import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.exception.TraversalException;
+import net.enderturret.patched.patch.context.ElementContext;
+import net.enderturret.patched.patch.context.PatchContext;
 
 /**
  * An intermediate subclass of {@link JsonPatch} that makes {@link #patch(ElementContext, PatchContext)} abstract instead of {@link #patchJson(ElementContext, PatchContext)}.

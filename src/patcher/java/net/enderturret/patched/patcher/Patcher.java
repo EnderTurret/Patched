@@ -17,7 +17,7 @@ import com.google.gson.JsonParser;
 import net.enderturret.patched.JsonDocument;
 import net.enderturret.patched.Patches;
 import net.enderturret.patched.patch.JsonPatch;
-import net.enderturret.patched.patch.PatchContext;
+import net.enderturret.patched.patch.context.PatchContext;
 
 public class Patcher<P> {
 

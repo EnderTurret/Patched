@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import com.google.gson.JsonElement;
 
 import net.enderturret.patched.ITestEvaluator;
-import net.enderturret.patched.patch.PatchContext;
+import net.enderturret.patched.patch.context.PatchContext;
 
 import tests.PatchingTests;
 

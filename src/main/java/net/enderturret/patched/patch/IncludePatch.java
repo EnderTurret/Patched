@@ -3,9 +3,10 @@ package net.enderturret.patched.patch;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
-import net.enderturret.patched.ElementContext;
 import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.exception.TraversalException;
+import net.enderturret.patched.patch.context.ElementContext;
+import net.enderturret.patched.patch.context.PatchContext;
 
 /**
  * <p>

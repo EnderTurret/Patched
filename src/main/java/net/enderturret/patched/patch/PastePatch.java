@@ -6,11 +6,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
-import net.enderturret.patched.ElementContext;
 import net.enderturret.patched.IDataSource;
 import net.enderturret.patched.JsonSelector;
 import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.exception.TraversalException;
+import net.enderturret.patched.patch.context.ElementContext;
+import net.enderturret.patched.patch.context.PatchContext;
 
 /**
  * A patch that inserts or "pastes" something from a {@linkplain IDataSource data source}.

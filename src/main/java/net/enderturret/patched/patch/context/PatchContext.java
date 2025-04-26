@@ -1,4 +1,4 @@
-package net.enderturret.patched.patch;
+package net.enderturret.patched.patch.context;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -6,6 +6,8 @@ import net.enderturret.patched.IDataSource;
 import net.enderturret.patched.IFileAccess;
 import net.enderturret.patched.ITestEvaluator;
 import net.enderturret.patched.audit.PatchAudit;
+import net.enderturret.patched.patch.IncludePatch;
+import net.enderturret.patched.patch.PastePatch;
 
 /**
  * {@code PatchContext} contains various settings to control how patches are deserialized and applied.

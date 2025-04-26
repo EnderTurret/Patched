@@ -9,9 +9,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
-import net.enderturret.patched.ElementContext;
 import net.enderturret.patched.ITestEvaluator;
 import net.enderturret.patched.exception.PatchingException;
+import net.enderturret.patched.patch.context.ElementContext;
 
 /**
  * Various utilities used in the patching backend.

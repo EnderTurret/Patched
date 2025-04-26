@@ -1,4 +1,4 @@
-package net.enderturret.patched;
+package net.enderturret.patched.patch.context;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -6,8 +6,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import net.enderturret.patched.JsonDocument;
 import net.enderturret.patched.exception.TraversalException;
-import net.enderturret.patched.patch.PatchContext;
 import net.enderturret.patched.patch.PatchUtil.Operation;
 
 /**

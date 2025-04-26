@@ -8,7 +8,7 @@ import com.google.gson.JsonElement;
 
 import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.patch.JsonPatch;
-import net.enderturret.patched.patch.PatchContext;
+import net.enderturret.patched.patch.context.PatchContext;
 
 /**
  * Various utilities for reading and writing patches.

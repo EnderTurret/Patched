@@ -8,6 +8,7 @@ import net.enderturret.patched.exception.TraversalException;
 import net.enderturret.patched.patch.PatchUtil;
 import net.enderturret.patched.patch.PatchUtil.Operation;
 import net.enderturret.patched.patch.PatchUtil.Operations;
+import net.enderturret.patched.patch.context.ElementContext;
 
 /**
  * <p>

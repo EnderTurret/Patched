@@ -11,7 +11,6 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-import net.enderturret.patched.ElementContext;
 import net.enderturret.patched.JsonDocument;
 import net.enderturret.patched.JsonSelector;
 import net.enderturret.patched.JsonSelector.CompoundSelector;
@@ -19,9 +18,10 @@ import net.enderturret.patched.audit.PatchAudit;
 import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.exception.TraversalException;
 import net.enderturret.patched.patch.JsonPatch;
-import net.enderturret.patched.patch.PatchContext;
 import net.enderturret.patched.patch.PatchUtil;
 import net.enderturret.patched.patch.TestPatch;
+import net.enderturret.patched.patch.context.ElementContext;
+import net.enderturret.patched.patch.context.PatchContext;
 
 import tests.util.TestUtil;
 

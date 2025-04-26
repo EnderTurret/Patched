@@ -15,13 +15,14 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-import net.enderturret.patched.ElementContext;
 import net.enderturret.patched.JsonDocument;
 import net.enderturret.patched.JsonSelector;
 import net.enderturret.patched.JsonSelector.CompoundSelector;
 import net.enderturret.patched.Patches;
 import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.exception.TraversalException;
+import net.enderturret.patched.patch.context.ElementContext;
+import net.enderturret.patched.patch.context.PatchContext;
 
 /**
  * <p>A patch that can be used to modify Json data.</p>
