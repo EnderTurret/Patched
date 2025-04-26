@@ -16,27 +16,7 @@ repositories {
     mavenCentral()
 }
 
-sourceSets {
-    patcher {
-        compileClasspath += sourceSets.main.output
-        runtimeClasspath += sourceSets.main.output
-    }
-    patcherTest {
-        compileClasspath += sourceSets.patcher.output
-        runtimeClasspath += sourceSets.patcher.output
-    }
-}
-
-java {
-    registerFeature('patcher') {
-        usingSourceSet(sourceSets.patcher)
-        withSourcesJar()
-    }
-}
-
 configurations {
-    patcherImplementation.extendsFrom implementation
-    patcherCompileOnly.extendsFrom compileOnly
     testCompileOnly.extendsFrom compileOnly
 }
 
@@ -53,25 +33,6 @@ dependencies {
     compileOnly 'org.jetbrains:annotations:26.0.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
-}
-
-tasks.named('patcherJar', Jar).configure {
-    exclude 'net/enderturret/patched/Patched.class'
-    exclude 'net/enderturret/patched/Patched$1Patch.class'
-    exclude 'net/enderturret/patched/Patched$Settings.class'
-}
-
-tasks.named('patcherSourcesJar', Jar).configure {
-    exclude 'net/enderturret/patched/Patched.java'
-}
-
-tasks.named('shadowJar', com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
-    archiveClassifier = 'cli'
-    from sourceSets.patcher.output
-}
-
-artifacts {
-    archives patcherJar, patcherSourcesJar, shadowJar
 }
 
 tasks.withType(JavaCompile).configureEach {
