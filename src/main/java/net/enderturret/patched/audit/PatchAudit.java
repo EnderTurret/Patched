@@ -16,13 +16,13 @@ import com.google.gson.JsonObject;
 
 import net.enderturret.patched.JsonSelector;
 import net.enderturret.patched.patch.FindPatch;
+import net.enderturret.patched.patch.context.ConfigurablePatchContext;
 import net.enderturret.patched.patch.context.ElementContext;
-import net.enderturret.patched.patch.context.PatchContext;
 
 /**
  * Tracks changes that patches make to a file, which can be later used for debugging or other uses.
  * @author EnderTurret
- * @see PatchContext#audit(PatchAudit)
+ * @see ConfigurablePatchContext#audit(PatchAudit)
  * @since 1.2.0
  */
 public final class PatchAudit {

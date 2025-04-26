@@ -21,6 +21,7 @@ import net.enderturret.patched.patch.JsonPatch;
 import net.enderturret.patched.patch.PatchUtil;
 import net.enderturret.patched.patch.TestPatch;
 import net.enderturret.patched.patch.context.ElementContext;
+import net.enderturret.patched.patch.context.ImmutablePatchContext;
 import net.enderturret.patched.patch.context.PatchContext;
 
 import tests.util.TestUtil;
@@ -87,7 +88,7 @@ final class MiscTests {
 
 		{
 			final JsonDocument doc = new JsonDocument(new JsonObject());
-			assertThrows(UnsupportedOperationException.class, () -> bad.patch(doc, PatchContext.newContext()), "Should throw for null path");
+			assertThrows(UnsupportedOperationException.class, () -> bad.patch(doc, ImmutablePatchContext.newContext()), "Should throw for null path");
 		}
 
 		assertThrows(IllegalArgumentException.class, () -> new TestPatch(null, null, null, false) {}, "Should throw for ambiguous type, path, and test");
@@ -124,7 +125,7 @@ final class MiscTests {
 
 	@Test
 	void testElementContexts() {
-		final ElementContext context = new ElementContext.NoParent(PatchContext.newContext(), JsonNull.INSTANCE);
+		final ElementContext context = new ElementContext.NoParent(ImmutablePatchContext.newContext(), JsonNull.INSTANCE);
 		assertNull(context.parent());
 		assertThrows(TraversalException.class, () -> context.child(0, JsonNull.INSTANCE));
 		assertThrows(TraversalException.class, () -> context.child("some path", JsonNull.INSTANCE));

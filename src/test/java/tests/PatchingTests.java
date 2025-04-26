@@ -26,6 +26,7 @@ import net.enderturret.patched.audit.PatchAudit;
 import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.exception.TraversalException;
 import net.enderturret.patched.patch.JsonPatch;
+import net.enderturret.patched.patch.context.ImmutablePatchContext;
 import net.enderturret.patched.patch.context.PatchContext;
 
 import tests.util.SimpleDataSource;
@@ -45,43 +46,43 @@ public final class PatchingTests {
 	static final Gson GSON = Patches.patchGson(true, true).disableHtmlEscaping().setPrettyPrinting().create();
 
 	static {
-		GSONS.put(PatchContext.newContext().testExtensions(true).patchedExtensions(true).throwOnOobAdd(true), GSON);
+		GSONS.put(ImmutablePatchContext.newContext().testExtensions(true).patchedExtensions(true).throwOnOobAdd(true), GSON);
 	}
 
-	private static PatchContext[] readConfig(String root) {
+	private static ImmutablePatchContext[] readConfig(String root) {
 		final String path = root + "/config.json";
 
 		if (PatchingTests.class.getResource(path) != null) {
 			final String config = TestUtil.read(path);
 			final JsonObject obj = JsonParser.parseString(config).getAsJsonObject();
 
-			final PatchContext input;
+			final ImmutablePatchContext input;
 			if (obj.has("input")) {
 				final JsonObject o = obj.get("input").getAsJsonObject();
-				input = PatchContext.newContext()
+				input = ImmutablePatchContext.newContext()
 						.testExtensions(!o.has("testExtensions") || o.get("testExtensions").getAsBoolean())
 						.patchedExtensions(!o.has("patchedExtensions") || o.get("patchedExtensions").getAsBoolean())
 						.throwOnOobAdd(!o.has("throwOnOobAdd") || o.get("throwOnOobAdd").getAsBoolean());
-			} else input = PatchContext.newContext().testExtensions(true).patchedExtensions(true).throwOnOobAdd(true);
+			} else input = ImmutablePatchContext.newContext().testExtensions(true).patchedExtensions(true).throwOnOobAdd(true);
 
-			final PatchContext runtime;
+			final ImmutablePatchContext runtime;
 			if (obj.has("runtime")) {
 				final JsonObject o = obj.get("runtime").getAsJsonObject();
-				runtime = PatchContext.newContext()
+				runtime = ImmutablePatchContext.newContext()
 						.testExtensions(!o.has("testExtensions") || o.get("testExtensions").getAsBoolean())
 						.patchedExtensions(!o.has("patchedExtensions") || o.get("patchedExtensions").getAsBoolean())
 						.throwOnOobAdd(!o.has("throwOnOobAdd") || o.get("throwOnOobAdd").getAsBoolean())
 						.testEvaluator(o.has("customTests") ? new SimpleTestEvaluator(o.get("customTests")) : null)
 						.fileAccess(o.has("include") ? new SimpleFileAccess() : null)
 						.dataSource(o.has("paste") ? new SimpleDataSource() : null);
-			} else runtime = PatchContext.newContext().testExtensions(true).patchedExtensions(true).throwOnOobAdd(true);
+			} else runtime = ImmutablePatchContext.newContext().testExtensions(true).patchedExtensions(true).throwOnOobAdd(true);
 
-			return new PatchContext[] { input, runtime };
+			return new ImmutablePatchContext[] { input, runtime };
 		}
 
-		return new PatchContext[] {
-				PatchContext.newContext().testExtensions(true).patchedExtensions(true).throwOnOobAdd(true),
-				PatchContext.newContext().testExtensions(true).patchedExtensions(true).throwOnOobAdd(true)
+		return new ImmutablePatchContext[] {
+				ImmutablePatchContext.newContext().testExtensions(true).patchedExtensions(true).throwOnOobAdd(true),
+				ImmutablePatchContext.newContext().testExtensions(true).patchedExtensions(true).throwOnOobAdd(true)
 		};
 	}
 
@@ -90,7 +91,7 @@ public final class PatchingTests {
 		final String input = TestUtil.read(root + "/input.json");
 		final String patchSrc = TestUtil.read(root + "/input.json.patch");
 
-		final PatchContext[] contexts = readConfig(root);
+		final ImmutablePatchContext[] contexts = readConfig(root);
 
 		return new Test(root,
 				assertDoesNotThrow(() -> JsonParser.parseString(input), "Invalid input Json"),
@@ -202,5 +203,5 @@ public final class PatchingTests {
 
 	private static record ThrowingTestDefinition(String path, Class<? extends PatchingException> type, String message) {}
 
-	private static record Test(String path, JsonElement input, String patchSrc, PatchContext[] contexts) {}
+	private static record Test(String path, JsonElement input, String patchSrc, ImmutablePatchContext[] contexts) {}
 }

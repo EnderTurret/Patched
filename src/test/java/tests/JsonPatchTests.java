@@ -23,6 +23,7 @@ import net.enderturret.patched.JsonDocument;
 import net.enderturret.patched.Patches;
 import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.patch.JsonPatch;
+import net.enderturret.patched.patch.context.ImmutablePatchContext;
 import net.enderturret.patched.patch.context.PatchContext;
 
 import tests.util.TestUtil;
@@ -34,7 +35,7 @@ import tests.util.TestUtil;
 public final class JsonPatchTests {
 
 	private static final Gson GSON = Patches.patchGson(false, false).setPrettyPrinting().create();
-	private static final PatchContext CONTEXT = PatchContext.newContext().throwOnFailedTest(true).throwOnOobAdd(true);
+	private static final PatchContext CONTEXT = ImmutablePatchContext.newContext().throwOnFailedTest(true).throwOnOobAdd(true);
 
 	private static String mapSpecErrors(String comment, String error, int index) {
 		return switch (comment) {
