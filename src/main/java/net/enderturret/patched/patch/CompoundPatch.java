@@ -1,6 +1,7 @@
 package net.enderturret.patched.patch;
 
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ApiStatus.Internal;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonSerializationContext;
@@ -23,6 +24,7 @@ public class CompoundPatch extends ManualTraversalPatch {
 	 * @param patches The patches that will be contained within this {@link CompoundPatch}.
 	 * @since 1.0.0
 	 */
+	@Internal
 	protected CompoundPatch(JsonPatch[] patches) {
 		super(null);
 		this.patches = patches;
@@ -31,7 +33,7 @@ public class CompoundPatch extends ManualTraversalPatch {
 	@Override
 	public void patch(ElementContext root, PatchContext context) {
 		for (JsonPatch patch : patches) {
-			if (patch instanceof TestPatch tp && !tp.test(root.elem(), context))
+			if (patch instanceof TestPatch tp && !tp.test(root))
 				return;
 			patch.patch(root, context);
 		}

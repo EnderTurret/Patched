@@ -1,5 +1,6 @@
 package net.enderturret.patched.patch;
 
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonElement;
@@ -38,6 +39,7 @@ public class TestPatch extends ManualTraversalPatch {
 	 * @param inverse Whether the check is inverted, i.e checking to see if something doesn't exist.
 	 * @since 1.1.0
 	 */
+	@Internal
 	protected TestPatch(@Nullable String type, @Nullable String path, @Nullable JsonElement test, boolean inverse) {
 		super(null);
 		if (type == null && path == null) throw new IllegalArgumentException("path may only be null when type is not null");
@@ -50,27 +52,26 @@ public class TestPatch extends ManualTraversalPatch {
 	/**
 	 * <p>Attempts to test if this patch matches the given root element.</p>
 	 * <p>The element passed in is unlikely to be the element that is tested.</p>
-	 * @param root The root element.
-	 * @param context The {@link PatchContext}. This customizes what features are available, among other things.
+	 * @param root The root {@link ElementContext}.
 	 * @return {@code true} if the test passes.
 	 * @throws PatchingException If {@link PatchContext#throwOnFailedTest()} is enabled.
 	 * @since 1.0.0
 	 */
-	public boolean test(JsonElement root, PatchContext context) {
+	public boolean test(ElementContext root) {
 		ElementContext ctx = null;
 
 		if (path != null)
 			try {
-				ctx = path.select(new ElementContexts.NoParent(context, root), context.throwOnFailedTest());
+				ctx = path.select(root, root.context().throwOnFailedTest());
 			} catch (TraversalException e) {
 				throw new PatchingException("Test failed: " + e.getMessage());
 			}
 
-		final boolean inverse = context.testExtensions() && this.inverse;
+		final boolean inverse = root.context().testExtensions() && this.inverse;
 
-		final boolean result = _test(root, ctx, inverse, context);
+		final boolean result = _test(root.elem(), ctx, inverse, root.context());
 
-		if (!result && context.throwOnFailedTest())
+		if (!result && root.context().throwOnFailedTest())
 			throw new PatchingException("Test " + (ctx == null ? "null" : ctx.elem()) + " " + (inverse ? "!=" : "==") + " " + test + " failed.");
 
 		return result;
