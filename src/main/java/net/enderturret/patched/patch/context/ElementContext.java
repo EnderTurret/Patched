@@ -6,6 +6,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import net.enderturret.patched.JsonDocument;
+import net.enderturret.patched.JsonSelector;
 import net.enderturret.patched.exception.TraversalException;
 
 /**
@@ -22,7 +24,19 @@ public interface ElementContext {
 	 */
 	public PatchContext context();
 
+	@Nullable
+	public JsonSelector getPlaceholder(String name);
+	public void setPlaceholder(String name, @Nullable JsonSelector value);
+
 	/**
+	 * Returns the root document, for use with absolute paths.
+	 * @return The root document.
+	 * @since 2.0.0
+	 */
+	public JsonDocument doc();
+
+	/**
+	 * Returns the parent element.
 	 * @return The parent element.
 	 * @since 1.0.0
 	 */
@@ -30,6 +44,7 @@ public interface ElementContext {
 	public JsonElement parent();
 
 	/**
+	 * Returns the current element.
 	 * @return The element.
 	 * @since 1.0.0
 	 */
@@ -47,7 +62,7 @@ public interface ElementContext {
 	public default ElementContext child(String name, JsonElement elem) {
 		if (!(elem() instanceof JsonObject o))
 			throw new TraversalException("Not an object!");
-		return new ElementContexts.Object(context(), o, name, elem);
+		return new ElementContexts.Object(this, o, name, elem);
 	}
 
 	/**
@@ -61,6 +76,6 @@ public interface ElementContext {
 	public default ElementContext child(int index, JsonElement elem) {
 		if (!(elem() instanceof JsonArray a))
 			throw new TraversalException("Not an array!");
-		return new ElementContexts.Array(context(), a, index, elem);
+		return new ElementContexts.Array(this, a, index, elem);
 	}
 }

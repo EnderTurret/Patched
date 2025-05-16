@@ -46,8 +46,11 @@ public final class PatchAudit {
 	}
 
 	private void record(String path, String comment) {
-		if (pathPrefix != null)
+		if (pathPrefix != null && !path.startsWith("^"))
 			path = pathPrefix + "/" + pathKey + path;
+
+		if (path.startsWith("^"))
+			path = path.substring(1);
 
 		records.put(path, comment);
 	}
@@ -70,7 +73,8 @@ public final class PatchAudit {
 	 * @param copied The cloned element.
 	 */
 	public void recordCopy(String parentPath, String name, String from, ElementContext copied) {
-		record(parentPath + "/" + fixPath(name, copied), "copied from " + from + " by " + patchPath);
+		record(parentPath + "/" + fixPath(name, copied),
+				"copied from " + (from.isEmpty() && pathPrefix != null ? pathPrefix + "/" + pathKey : from) + " by " + patchPath);
 	}
 
 	/**
@@ -81,7 +85,8 @@ public final class PatchAudit {
 	 * @param moved The moved element.
 	 */
 	public void recordMove(String parentPath, String name, String from, ElementContext moved) {
-		record(parentPath + "/" + fixPath(name, moved), "moved from " + from + " by " + patchPath);
+		record(parentPath + "/" + fixPath(name, moved),
+				"moved from " + (from.isEmpty() && pathPrefix != null ? pathPrefix + "/" + pathKey : from) + " by " + patchPath);
 	}
 
 	/**

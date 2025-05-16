@@ -129,12 +129,26 @@ public final class PatchUtil {
 	 * @param path The path to the element to find things in.
 	 * @param tests A list of tests that an element must pass to have {@code then} applied to it.
 	 * @param then A patch to apply to elements passing the tests.
+	 * @param placeholder The placeholder associated with this patch. May be {@code null}.
+	 * @param multi Whether to continue searching for matching elements after the first one is found.
+	 * @return A new {@code FindPatch}.
+	 * @since 2.0.0
+	 */
+	public static FindPatch find(String path, List<TestPatch> tests, JsonPatch then, @Nullable String placeholder, boolean multi) {
+		return new FindPatch(path, tests, then, placeholder, multi);
+	}
+
+	/**
+	 * Creates a {@link FindPatch} from the specified values.
+	 * @param path The path to the element to find things in.
+	 * @param tests A list of tests that an element must pass to have {@code then} applied to it.
+	 * @param then A patch to apply to elements passing the tests.
 	 * @param multi Whether to continue searching for matching elements after the first one is found.
 	 * @return A new {@code FindPatch}.
 	 * @since 1.0.0
 	 */
 	public static FindPatch find(String path, List<TestPatch> tests, JsonPatch then, boolean multi) {
-		return new FindPatch(path, tests, then, multi);
+		return new FindPatch(path, tests, then, null, multi);
 	}
 
 	/**
@@ -268,11 +282,11 @@ public final class PatchUtil {
 		@Override
 		public ElementContext apply(ElementContext context) {
 			if (context instanceof ElementContexts.Object obj)
-				return new ElementContexts.Object(obj.context(), obj.parent(), obj.name(),
+				return new ElementContexts.Object(obj, obj.parent(), obj.name(),
 						this == REMOVE ? obj.parent().remove(obj.name()) : obj.parent().get(obj.name()));
 
 			if (context instanceof ElementContexts.Array arr) {
-				return new ElementContexts.Array(arr.context(), arr.parent(), arr.index(),
+				return new ElementContexts.Array(arr, arr.parent(), arr.index(),
 						this == REMOVE ? arr.parent().remove(arr.index()) : arr.parent().get(arr.index()));
 			}
 
@@ -296,7 +310,7 @@ public final class PatchUtil {
 		public ElementContext apply(ElementContext context) {
 			if (context instanceof ElementContexts.Object obj) {
 				if (elem != null) obj.parent().add(obj.name(), elem);
-				return new ElementContexts.Object(obj.context(), obj.parent(), obj.name(), elem);
+				return new ElementContexts.Object(obj, obj.parent(), obj.name(), elem);
 			}
 
 			if (context instanceof ElementContexts.Array arr) {
@@ -306,7 +320,7 @@ public final class PatchUtil {
 					else
 						add(arr.parent(), arr.index(), elem);
 
-				return new ElementContexts.Array(arr.context(), arr.parent(), arr.index(), elem);
+				return new ElementContexts.Array(arr, arr.parent(), arr.index(), elem);
 			}
 
 			if (context instanceof ElementContexts.Document doc)

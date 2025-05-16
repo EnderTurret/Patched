@@ -1,0 +1,35 @@
+[
+  {
+    "op": "add",
+    "path": "/temp_structures",
+    "value": [
+      {
+        "structure": "structure_mod:structure_one",
+        "weight": 1
+      },
+      {
+        "structure": "structure_mod:structure_two",
+        "weight": 1
+      },
+      {
+        "structure": "structure_mod:structure_three",
+        "weight": 1
+      }
+    ]
+  },
+  {
+    "op": "find",
+    "path": "/temp_structures",
+    "multi": true,
+    "test": [],
+    "then": {
+      "op": "copy",
+      "path": "^/structures/-",
+      "from": ""
+    }
+  },
+  {
+    "op": "remove",
+    "path": "/temp_structures"
+  }
+]

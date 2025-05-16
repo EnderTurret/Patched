@@ -50,7 +50,7 @@ public abstract class JsonPatch {
 			if (selector.isEmpty()) {
 				this.path = last = new JsonSelector.EmptySelector();
 			} else {
-				final CompoundSelector tempPath = new CompoundSelector(selector.path(0, selector.size() - 1));
+				final CompoundSelector tempPath = new CompoundSelector(selector.path(0, selector.size() - 1), selector.absolute());
 
 				this.path = tempPath.size() == 0 ? new JsonSelector.EmptySelector() : tempPath;
 
@@ -85,7 +85,7 @@ public abstract class JsonPatch {
 	 * @since 1.3.0
 	 */
 	public final void patch(JsonDocument root, PatchContext context) throws PatchingException, TraversalException {
-		patch(new ElementContexts.Document(context, root), context);
+		patch(new ElementContexts.Document(context, null, root), context);
 	}
 
 	/**
@@ -290,6 +290,7 @@ public abstract class JsonPatch {
 							getString(obj, "path"),
 							tests,
 							context.deserialize(obj.get("then"), JsonPatch.class),
+							obj.has("placeholder") ? getString(obj, "placeholder") : null,
 							obj.has("multi") && obj.get("multi").getAsBoolean());
 				}
 				case "include" -> {

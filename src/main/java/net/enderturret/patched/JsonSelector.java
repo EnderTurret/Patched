@@ -129,8 +129,15 @@ public interface JsonSelector {
 	 * @since 1.0.0
 	 */
 	public static CompoundSelector of(String path) {
-		if (path.isEmpty())
-			return new CompoundSelector(new JsonSelector[0]);
+		boolean absolute = false;
+
+		if (path.startsWith("^")) {
+			absolute = true;
+			path = path.substring(1);
+		}
+
+		if (path.isEmpty()) // "" or "^"
+			return new CompoundSelector(new JsonSelector[0], absolute);
 
 		if (!path.startsWith("/"))
 			throw new TraversalException("Path must begin with a slash!");
@@ -143,7 +150,7 @@ public interface JsonSelector {
 		for (int i = 0; i < paths.length; i++)
 			selectors[i] = ofSingle(paths[i]);
 
-		return new CompoundSelector(selectors);
+		return new CompoundSelector(selectors, absolute);
 	}
 
 	/**
@@ -158,6 +165,9 @@ public interface JsonSelector {
 	public static JsonSelector ofSingle(String path) {
 		if (path.isEmpty())
 			return new NameSelector("");
+
+		if (path.startsWith("{") && path.endsWith("}"))
+			return new PlaceholderSelector(path.substring(1, path.length() - 1), path);
 
 		// In case we get something like "07", we shouldn't parse that into 7.
 		// However, a single "0" should be parsed into a 0.
@@ -254,7 +264,7 @@ public interface JsonSelector {
 				return error(throwOnError, "Attempted to traverse null context!");
 
 			if ("-".equals(name) && context.elem() instanceof JsonArray arr && op.allowsEndOfArrayRef())
-				return op.apply(new ElementContexts.Array(context.context(), arr, arr.size(), null));
+				return op.apply(new ElementContexts.Array(context, arr, arr.size(), null));
 
 			if (!(context.elem() instanceof JsonObject obj))
 				return error(throwOnError, "Expected object to find '" + name + "' in, found " + context.elem() + "!");
@@ -262,12 +272,46 @@ public interface JsonSelector {
 			if (op.strictHas() && !obj.has(name))
 				return error(throwOnError, "No such child " + name + "!");
 
-			return op.apply(new ElementContexts.Object(context.context(), obj, name, null));
+			return op.apply(new ElementContexts.Object(context, obj, name, null));
 		}
 
 		@Override
 		public String toString() {
 			return name.replace("~", "~0").replace("/", "~1");
+		}
+	}
+
+	/**
+	 * A selector that finds the element corresponding to the specified placeholder.
+	 * @param placeholder The name of the placeholder.
+	 * @author EnderTurret
+	 * @param raw The 'raw' version of the placeholder.
+	 * @since 2.0.0
+	 */
+	public static record PlaceholderSelector(String placeholder, String raw) implements JsonSelector {
+		@Override
+		public ElementContext select(ElementContext context, boolean throwOnError, PatchUtil.Operation op) throws TraversalException {
+			if (context == null)
+				return error(throwOnError, "Attempted to traverse null context!");
+
+			final JsonSelector selector = context.getPlaceholder(placeholder);
+			if (selector == null) {
+				if (context.elem() instanceof JsonObject obj) {
+					if (op.strictHas() && !obj.has(raw))
+						return error(throwOnError, "No such child " + raw + "!");
+
+					return op.apply(new ElementContexts.Object(context, obj, raw, null));
+				}
+
+				return error(throwOnError, "Expected object to find '" + raw + "' in, found " + context.elem() + "!");
+			}
+
+			return selector.select(context, throwOnError, op);
+		}
+
+		@Override
+		public String toString() {
+			return raw;
 		}
 	}
 
@@ -288,7 +332,7 @@ public interface JsonSelector {
 				if (index < 0)
 					return error(throwOnError, "Attempted to traverse negative index in array (" + index + ")!");
 
-				final ElementContext newContext = new ElementContexts.Array(context.context(), arr, index, null);
+				final ElementContext newContext = new ElementContexts.Array(context, arr, index, null);
 
 				if (!op.allowsOutOfBounds(newContext) && arr.size() <= index)
 					return error(throwOnError, "No such child " + strIndex + "!");
@@ -298,7 +342,7 @@ public interface JsonSelector {
 				if (op.strictHas() && !obj.has(strIndex))
 					return error(throwOnError, "No such child " + strIndex + "!");
 
-				return op.apply(new ElementContexts.Object(context.context(), obj, strIndex, null));
+				return op.apply(new ElementContexts.Object(context, obj, strIndex, null));
 			}
 
 			return error(throwOnError, "Expected array or object to find '" + strIndex + "' in, found " + context.elem() + "!");
@@ -313,13 +357,18 @@ public interface JsonSelector {
 	/**
 	 * A selector that is made up of multiple other selectors.
 	 * @param path The path of selectors.
+	 * @param absolute Whether or not the {@code CompoundSelector} is in 'absolute' mode.
 	 * @author EnderTurret
 	 * @since 1.0.0
 	 */
-	public static record CompoundSelector(JsonSelector[] path) implements JsonSelector {
+	public static record CompoundSelector(JsonSelector[] path, boolean absolute) implements JsonSelector {
 		@Override
 		public ElementContext select(ElementContext context, boolean throwOnError, PatchUtil.Operation op) throws TraversalException {
+			if (absolute && !context.context().patchedExtensions())
+				throw new TraversalException("Cannot traverse absolute path with Patched extensions off!");
+
 			ElementContext ctx = context;
+			if (absolute) ctx = new ElementContexts.Document(ctx, ctx.doc());
 
 			for (int i = 0; i < path.length; i++)
 				try {
@@ -374,13 +423,15 @@ public interface JsonSelector {
 			// We don't need to check from >= path.length because we've already verified to can't be larger and that from must be less than to.
 
 			if (from == to - 1)
-				return (from == 0 ? "/" : "") + path[from].toString();
+				return (from == 0 ? (absolute ? "^/" : "/") : "") + path[from].toString();
 
 			final StringBuilder sb = new StringBuilder();
 
 			for (int i = from; i < to; i++) {
-				if (i > from || i == 0)
-					sb.append("/");
+				if (i == 0)
+					sb.append(absolute ? "^/" : "/");
+				else if (i > from)
+					sb.append('/');
 
 				sb.append(path[i].toString());
 			}

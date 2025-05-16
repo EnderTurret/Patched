@@ -3,13 +3,18 @@ package net.enderturret.patched.patch;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import org.jetbrains.annotations.ApiStatus.Internal;
+import org.jetbrains.annotations.Nullable;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
+import net.enderturret.patched.JsonSelector;
 import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.patch.context.ElementContext;
+import net.enderturret.patched.patch.context.ElementContexts;
 import net.enderturret.patched.patch.context.PatchContext;
 
 /**
@@ -22,6 +27,7 @@ public final class FindPatch extends JsonPatch {
 
 	private final List<TestPatch> tests;
 	private final JsonPatch then;
+	private final @Nullable String placeholder;
 	private final boolean multi;
 
 	/**
@@ -29,13 +35,16 @@ public final class FindPatch extends JsonPatch {
 	 * @param path The path to the element to find things in.
 	 * @param tests A list of tests that an element must pass to have {@code then} applied to it.
 	 * @param then A patch to apply to elements passing the tests.
+	 * @param placeholder The placeholder associated with this patch. May be {@code null}.
 	 * @param multi Whether to continue searching for matching elements after the first one is found.
 	 * @since 1.0.0
 	 */
-	protected FindPatch(String path, List<TestPatch> tests, JsonPatch then, boolean multi) {
+	@Internal
+	protected FindPatch(String path, List<TestPatch> tests, JsonPatch then, @Nullable String placeholder, boolean multi) {
 		super(path);
 		this.tests = tests;
 		this.then = then;
+		this.placeholder = placeholder;
 		this.multi = multi;
 	}
 
@@ -46,6 +55,9 @@ public final class FindPatch extends JsonPatch {
 
 	@Override
 	protected void writeAdditional(JsonObject obj, JsonSerializationContext context) {
+		if (placeholder != null)
+			obj.addProperty("placeholder", placeholder);
+
 		if (multi)
 			obj.addProperty("multi", multi);
 
@@ -63,9 +75,9 @@ public final class FindPatch extends JsonPatch {
 		obj.add("then", context.serialize(then));
 	}
 
-	private boolean testAll(JsonElement elem, PatchContext context) {
+	private boolean testAll(ElementContext root) {
 		for (TestPatch tp : tests)
-			if (!tp.test(elem, context))
+			if (!tp.test(root))
 				return false;
 
 		return true;
@@ -87,15 +99,19 @@ public final class FindPatch extends JsonPatch {
 			// See PatchingTests "find/remove_unspecific" for more information.
 			for (String key : new LinkedHashSet<>(o.keySet())) {
 				final JsonElement elem = o.get(key);
+				final ElementContext childContext = parent.child(key, elem);
+				if (placeholder != null) childContext.setPlaceholder(placeholder, new JsonSelector.NameSelector(key));
 
-				if (!testAll(elem, context))
+				if (!testAll(childContext))
 					continue;
 
 				// Tests succeeded, apply patch.
 
 				if (context.audit() != null) context.audit().beginPrefix((strPath == null ? strPath = path.toString() + "/" + last.toString() : strPath), key);
-				then.patch(parent.child(key, elem), context);
+				then.patch(childContext, context);
 				if (context.audit() != null) context.audit().endPrefix();
+
+				if (placeholder != null) childContext.setPlaceholder(placeholder, null);
 
 				if (!multi)
 					return;
@@ -106,15 +122,19 @@ public final class FindPatch extends JsonPatch {
 			int baseSize = a.size();
 			for (int i = 0; i < baseSize; i++) {
 				final JsonElement elem = a.get(i);
+				final ElementContext childContext = parent.child(i, elem);
+				if (placeholder != null) childContext.setPlaceholder(placeholder, new JsonSelector.NumericSelector(i, Integer.toString(i)));
 
-				if (!testAll(elem, context))
+				if (!testAll(childContext))
 					continue;
 
 				// Tests succeeded, apply patch.
 
 				if (context.audit() != null) context.audit().beginPrefix((strPath == null ? strPath = path.toString() + "/" + last.toString() : strPath), Integer.toString(i));
-				then.patch(parent.child(i, elem), context);
+				then.patch(childContext, context);
 				if (context.audit() != null) context.audit().endPrefix();
+
+				if (placeholder != null) childContext.setPlaceholder(placeholder, null);
 
 				if (!multi)
 					return;

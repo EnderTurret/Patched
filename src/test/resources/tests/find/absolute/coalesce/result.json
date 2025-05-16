@@ -1,0 +1,20 @@
+{
+  "structures": [
+    {
+      "structure": "base_entry",
+      "weight": 1
+    },
+    {
+      "structure": "structure_mod:structure_one",
+      "weight": 1
+    },
+    {
+      "structure": "structure_mod:structure_two",
+      "weight": 1
+    },
+    {
+      "structure": "structure_mod:structure_three",
+      "weight": 1
+    }
+  ]
+}

@@ -87,6 +87,7 @@
     { "path": "find/remove_unspecific", "doOutputTest": false },
     { "path": "find/redundant_multi", "doOutputTest": false },
     "find/misleading_paths",
+    "find/absolute/coalesce",
 
     "include/simple",
 

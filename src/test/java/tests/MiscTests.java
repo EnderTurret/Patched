@@ -126,7 +126,7 @@ final class MiscTests {
 
 	@Test
 	void testElementContexts() {
-		final ElementContext context = new ElementContexts.NoParent(ImmutablePatchContext.newContext(), JsonNull.INSTANCE);
+		final ElementContext context = new ElementContexts.NoParent(ImmutablePatchContext.newContext(), new JsonDocument(JsonNull.INSTANCE), null, JsonNull.INSTANCE);
 		assertNull(context.parent());
 		assertThrows(TraversalException.class, () -> context.child(0, JsonNull.INSTANCE));
 		assertThrows(TraversalException.class, () -> context.child("some path", JsonNull.INSTANCE));
