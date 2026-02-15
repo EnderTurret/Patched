@@ -1,0 +1,10 @@
+{
+  "from": {
+    "number": 123,
+    "string": "this shouldn't be overwritten"
+  },
+  "to": {
+    "number": 123,
+    "string": "overwritten"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "from": {
+    "number": 123,
+    "string": "this shouldn't be overwritten"
+  },
+  "to": {
+    "number": 123,
+    "string": "overwritten" // replaced by copy/copy_then_modify
+  } // copied from /from by copy/copy_then_modify
+}

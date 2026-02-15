@@ -65,6 +65,7 @@
     "copy/into_object",
     "copy/into_object_dash",
     "copy/into_nonexistent",
+	"copy/copy_then_modify",
 
     "move/in_array",
     "move/in_object",

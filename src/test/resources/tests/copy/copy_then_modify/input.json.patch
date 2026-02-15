@@ -1,0 +1,12 @@
+[
+  {
+    "op": "copy",
+    "path": "/to",
+    "from": "/from"
+  },
+  {
+    "op": "replace",
+    "path": "/to/string",
+    "value": "overwritten"
+  }
+]
