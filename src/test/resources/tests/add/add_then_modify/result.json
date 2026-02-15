@@ -1,0 +1,16 @@
+{
+  "array": [
+    {
+      "a": 1,
+      "added": {
+        "ref": "another string"
+      }
+    },
+    {
+      "a": 2,
+      "added": {
+        "ref": "a string"
+      }
+    }
+  ]
+}

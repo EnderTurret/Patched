@@ -1,5 +1,6 @@
 {
   "tests": [
+    "add/add_then_modify",
     "add/to_array",
     "add/to_array_absolute",
     "add/to_array_oob_lenient",

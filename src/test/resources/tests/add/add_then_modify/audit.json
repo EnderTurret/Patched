@@ -1,0 +1,16 @@
+{
+  "array": [
+    {
+      "a": 1,
+      "added": { // added by add/add_then_modify
+        "ref": "another string" // replaced by add/add_then_modify
+      }
+    },
+    {
+      "a": 2,
+      "added": { // added by add/add_then_modify
+        "ref": "a string"
+      }
+    }
+  ]
+}

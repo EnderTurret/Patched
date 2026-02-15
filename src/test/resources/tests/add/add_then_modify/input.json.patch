@@ -1,0 +1,29 @@
+[
+  {
+    "op": "find",
+    "path": "/array",
+    "multi": true,
+    "test": [],
+    "then": [
+      {
+        "op": "add",
+        "path": "/added",
+        "value": {
+          "ref": "a string"
+        }
+      },
+      [
+        {
+          "op": "test",
+          "path": "/a",
+          "value": 1
+        },
+        {
+          "op": "replace",
+          "path": "/added/ref",
+          "value": "another string"
+        }
+      ]
+    ]
+  }
+]
