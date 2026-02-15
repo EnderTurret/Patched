@@ -42,10 +42,7 @@ public final class CopyPatch extends ManualTraversalPatch {
 
 	@Override
 	public void patch(ElementContext root, PatchContext context) {
-		JsonElement copied = from.select(root, true).elem();
-
-		// Make sure we actually copy the element. Not important for primitives (numbers, strings) but required for objects and arrays.
-		copied = copied.deepCopy();
+		final JsonElement copied = from.select(root, true).elem();
 
 		try {
 			final ElementContext e = last.add(path.select(root, true), true, copied);

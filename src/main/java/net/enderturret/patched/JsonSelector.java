@@ -96,6 +96,10 @@ public interface JsonSelector {
 	 * @since 1.0.0
 	 */
 	public default ElementContext add(ElementContext context, boolean throwOnError, JsonElement elem) throws TraversalException {
+		// Make sure we actually copy the element. Not important for primitives (numbers, strings) but required for objects and arrays.
+		// Avoids leaking a patch's element reference into the document.
+		if (elem != null) elem = elem.deepCopy();
+
 		return select(context, throwOnError, new PatchUtil.AddOperation(elem, false));
 	}
 
@@ -110,6 +114,10 @@ public interface JsonSelector {
 	 * @since 1.0.0
 	 */
 	public default ElementContext replace(ElementContext context, boolean throwOnError, JsonElement elem) throws TraversalException {
+		// Make sure we actually copy the element. Not important for primitives (numbers, strings) but required for objects and arrays.
+		// Avoids leaking a patch's element reference into the document.
+		if (elem != null) elem = elem.deepCopy();
+
 		return select(context, throwOnError, new PatchUtil.AddOperation(elem, true));
 	}
 
