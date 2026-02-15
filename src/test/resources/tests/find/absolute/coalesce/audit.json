@@ -1,19 +1,19 @@
 {
-//"temp_structures": [ ... ] // removed by find/coalesce
+//"temp_structures": [ ... ] // removed by find/absolute/coalesce
   "structures": [
     {
       "structure": "base_entry",
       "weight": 1
     },
-    { // copied from /temp_structures/0 by find/coalesce
+    { // copied from /temp_structures/0 by find/absolute/coalesce
       "structure": "structure_mod:structure_one",
       "weight": 1
     },
-    { // copied from /temp_structures/1 by find/coalesce
+    { // copied from /temp_structures/1 by find/absolute/coalesce
       "structure": "structure_mod:structure_two",
       "weight": 1
     },
-    { // copied from /temp_structures/2 by find/coalesce
+    { // copied from /temp_structures/2 by find/absolute/coalesce
       "structure": "structure_mod:structure_three",
       "weight": 1
     }
