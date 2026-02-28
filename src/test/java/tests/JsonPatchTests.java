@@ -39,8 +39,8 @@ public final class JsonPatchTests {
 
 	private static String mapSpecErrors(String comment, String error, int index) {
 		return switch (comment) {
-		case "4.1. add with missing object" -> "net.enderturret.patched.exception.TraversalException: /a: No such child a!";
-		case "A.12.  Adding to a Non-existent Target" -> "net.enderturret.patched.exception.TraversalException: /baz: No such child baz!";
+		case "4.1. add with missing object" -> "net.enderturret.patched.exception.TraversalException: /a/b: No such child a!";
+		case "A.12.  Adding to a Non-existent Target" -> "net.enderturret.patched.exception.TraversalException: /baz/bat: No such child baz!";
 		case "A.9.  Testing a Value: Error" -> "net.enderturret.patched.exception.PatchingException: Test \"qux\" == \"bar\" failed.";
 		case "A.15. Comparing Strings and Numbers" -> "net.enderturret.patched.exception.PatchingException: Test 10 == \"10\" failed.";
 		default -> comment;
@@ -50,9 +50,9 @@ public final class JsonPatchTests {
 	private static String mapPatchErrors(String comment, String error, int index) {
 		return switch (comment) {
 		case "Removing nonexistent field" -> "net.enderturret.patched.exception.TraversalException: /baz: No such child baz!";
-		case "Removing deep nonexistent path" -> "net.enderturret.patched.exception.TraversalException: /missing1: No such child missing1!";
+		case "Removing deep nonexistent path" -> "net.enderturret.patched.exception.TraversalException: /missing1/missing2: No such child missing1!";
 		case "Removing nonexistent index" -> "net.enderturret.patched.exception.TraversalException: /2: No such child 2!";
-		case "test replace with missing parent key should fail" -> "net.enderturret.patched.exception.TraversalException: /foo: No such child foo!";
+		case "test replace with missing parent key should fail" -> "net.enderturret.patched.exception.TraversalException: /foo/bar: No such child foo!";
 		case "add item to array at index > length should fail" -> "net.enderturret.patched.exception.TraversalException: /3: No such child 3!";
 
 		case "missing from location to copy" -> "net.enderturret.patched.exception.TraversalException: /bar: No such child bar!";
@@ -66,7 +66,7 @@ public final class JsonPatchTests {
 		case "'path' parameter with null value" -> "net.enderturret.patched.exception.PatchingException: 'path' must be a string (was: null)!";
 
 		// These all error, but for a different reason -- "1e0" is not interpreted as a number, as it isn't an integer, so it's treated like a string.
-		case "test remove with bad number should fail" -> "net.enderturret.patched.exception.TraversalException: /baz/1e0: Expected object to find '1e0' in, found [{\"qux\":\"hello\"}]!";
+		case "test remove with bad number should fail" -> "net.enderturret.patched.exception.TraversalException: /baz/1e0/qux: Expected object to find '1e0' in, found [{\"qux\":\"hello\"}]!";
 		case "test remove with bad index should fail" -> "net.enderturret.patched.exception.TraversalException: /1e0: Expected object to find '1e0' in, found [1,2,3,4]!";
 		case "test replace with bad number should fail" -> "net.enderturret.patched.exception.TraversalException: /1e0: Expected object to find '1e0' in, found [\"\"]!";
 		case "test copy with bad number should fail" -> "net.enderturret.patched.exception.TraversalException: /baz/1e0: Expected object to find '1e0' in, found [1,2,3]!";

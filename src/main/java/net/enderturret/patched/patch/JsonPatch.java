@@ -73,7 +73,15 @@ public abstract class JsonPatch {
 	 */
 	public void patch(ElementContext root, PatchContext context) throws PatchingException, TraversalException {
 		if (path == null) throw new UnsupportedOperationException("Patch was not implemented correctly! (op = " + operation() + ")");
-		patchJson(path.select(root, true), context);
+		final ElementContext child;
+
+		try {
+			child = path.select(root, true);
+		} catch (TraversalException e) {
+			throw e.withPath(path + "/" + last);
+		}
+
+		patchJson(child, context);
 	}
 
 	/**
