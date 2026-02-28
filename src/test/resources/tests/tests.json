@@ -44,6 +44,8 @@
     "test/edges/no_numeric_child_in_object",
     "test/edges/no_numeric_subchild",
     "test/edges/no_subchild",
+    "test/edges/placeholder_in_array",
+    "test/edges/placeholder_in_object",
     "test/edges/traverse_number",
     "test/edges/traverse_number_numeric",
 
@@ -97,11 +99,13 @@
     "paste/with_from",
     "paste/with_value",
 
+    "selectors/almost_placeholder",
     "selectors/double_empty",
     "selectors/empty",
     "selectors/empty2",
-    "selectors/numeric_in_object",
     "selectors/escapes",
+    "selectors/nonexistent_placeholder",
+    "selectors/numeric_in_object",
 
     "audit/add_array",
     "audit/add_object",
@@ -131,7 +135,9 @@
     "traversal_error/selectors/faulty_escape": "Invalid escape sequence: '~b'!",
     "traversal_error/selectors/eof_escape": "Invalid escape sequence: '~'!",
     "traversal_error/selectors/long_absolute": "^/array/long/absolute/selector: Expected object to find 'long' in, found [1,2,3]!",
-    "traversal_error/selectors/absolute_no_extension": "^/doc/a: Cannot traverse absolute path with Patched extensions off!"
+    "traversal_error/selectors/absolute_no_extension": "^/doc/a: Cannot traverse absolute path with Patched extensions off!",
+    "traversal_error/selectors/placeholder_in_array": "/array/{number}: Expected object to find '{number}' in, found [1,2,3]!",
+    "traversal_error/selectors/placeholder_in_object": "/object/{key}: No such child {key}!"
   },
   "patchingErrorTests": {
     "error/remove/document": "Attempted to remove root element!",

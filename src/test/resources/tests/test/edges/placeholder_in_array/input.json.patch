@@ -1,0 +1,11 @@
+[
+  {
+    "op": "test",
+    "path": "/array/{number}"
+  },
+  {
+    "op": "add",
+    "path": "/found",
+    "value": true
+  }
+]

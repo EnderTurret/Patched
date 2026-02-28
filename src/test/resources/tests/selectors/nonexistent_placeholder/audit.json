@@ -1,0 +1,4 @@
+{
+  "{other}": "this also works", // replaced by selectors/nonexistent_placeholder
+  "{none}": "this works" // added by selectors/nonexistent_placeholder
+}

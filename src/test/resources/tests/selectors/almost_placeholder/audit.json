@@ -1,0 +1,4 @@
+{
+  "{leading": "this works", // added by selectors/almost_placeholder
+  "trailing}": "this works" // added by selectors/almost_placeholder
+}

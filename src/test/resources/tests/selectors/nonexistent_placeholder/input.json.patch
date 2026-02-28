@@ -1,0 +1,12 @@
+[
+  {
+    "op": "add",
+    "path": "/{none}",
+    "value": "this works"
+  },
+  {
+    "op": "replace",
+    "path": "/{other}",
+    "value": "this also works"
+  }
+]
