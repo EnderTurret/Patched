@@ -159,4 +159,16 @@ final class MiscTests {
 		assertEquals(expected, new MutablePatchContext(expected).asImmutableContext());
 		assertSame(expected, expected.asImmutableContext());
 	}
+
+	@Test
+	void testNullContexts() {
+		// These can appear when cascading errors happen via e.g. the test patch.
+		assertThrows(TraversalException.class, () -> new JsonSelector.NameSelector("name").select(null, true));
+		assertThrows(TraversalException.class, () -> new JsonSelector.NumericSelector(0, "0").select(null, true));
+		assertThrows(TraversalException.class, () -> new JsonSelector.PlaceholderSelector("holder", "{holder}").select(null, true));
+
+		assertNull(new JsonSelector.NameSelector("name").select(null, false));
+		assertNull(new JsonSelector.NumericSelector(0, "0").select(null, false));
+		assertNull(new JsonSelector.PlaceholderSelector("holder", "{holder}").select(null, false));
+	}
 }

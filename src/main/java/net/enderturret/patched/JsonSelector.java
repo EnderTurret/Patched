@@ -381,6 +381,7 @@ public interface JsonSelector {
 			for (int i = 0; i < path.length; i++)
 				try {
 					ctx = path[i].select(ctx, throwOnError, i < path.length - 1 ? PatchUtil.Operations.NOOP : op);
+					if (ctx == null) return null; // Avoid invoking more selectors if we've encountered a soft error.
 				} catch (TraversalException e) {
 					throw e.withPath(toString(/*0, i + 1*/));
 				}
