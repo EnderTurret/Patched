@@ -48,13 +48,14 @@ final class MiscTests {
 		patches.add(PatchUtil.find("/find", List.of(), PatchUtil.remove(""), true));
 		patches.add(PatchUtil.include("test"));
 		patches.add(PatchUtil.paste("/test", "test", "/value", new JsonPrimitive("some input value")));
+		patches.add(PatchUtil.find("/find", List.of(), PatchUtil.remove(""), "location", true));
 
 		final JsonPatch result = PatchUtil.compound(patches.toArray(JsonPatch[]::new));
 
 		final String target = TestUtil.read("/tests/built_patch.json");
 		final String output = PatchingTests.GSON.toJson(result);
 
-		assertEquals(target, output);
+		assertEquals(target, output, "Built patch and target file should be identical");
 	}
 
 	@Test

@@ -57,5 +57,16 @@
     "from": "/value",
     "path": "/test",
     "value": "some input value"
+  },
+  {
+    "op": "find",
+    "path": "/find",
+    "placeholder": "location",
+    "multi": true,
+    "test": [],
+    "then": {
+      "op": "remove",
+      "path": ""
+    }
   }
 ]
