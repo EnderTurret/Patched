@@ -138,6 +138,7 @@
     "error/find/disabled_in_deserialization": "Unsupported operation 'find': Patched extensions are not enabled.",
     "error/find/disabled_in_runtime": "find: Patched extensions are not enabled.",
     "error/find/other_op_in_test": "Unexpected operation \"add\": only test is allowed here.",
+    "error/find/non_traversal_element": "Expected an array or object to 'find' in, but was: 3!",
     "error/parsing/invalid_op": "Unknown operation 'discombobulate'",
     "error/parsing/missing_op": "Missing operation!",
     "error/parsing/missing_path": "'path' is missing!",

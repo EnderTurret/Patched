@@ -1,0 +1,11 @@
+[
+  {
+    "op": "find",
+    "path": "/number",
+    "test": [],
+    "then": {
+      "op": "remove",
+      "path": ""
+    }
+  }
+]

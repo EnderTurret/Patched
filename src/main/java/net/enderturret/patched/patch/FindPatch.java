@@ -146,5 +146,7 @@ public final class FindPatch extends JsonPatch {
 				}
 			}
 		}
+
+		else throw new PatchingException("Expected an array or object to 'find' in, but was: " + parent.elem() + "!");
 	}
 }
