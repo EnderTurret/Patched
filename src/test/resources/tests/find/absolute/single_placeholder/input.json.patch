@@ -1,0 +1,22 @@
+[
+  {
+    "op": "add",
+    "path": "/numbers",
+    "value": {}
+  },
+  {
+    "op": "find",
+    "path": "/input",
+    "placeholder": "key",
+    "multi": true,
+    "test": {
+      "path": "/type",
+      "value": "number"
+    },
+    "then": {
+      "op": "copy",
+      "path": "^/numbers/{key}",
+      "from": "/value"
+    }
+  }
+]

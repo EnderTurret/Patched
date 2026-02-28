@@ -1,0 +1,45 @@
+[
+  {
+    "op": "add",
+    "path": "/temp_pools",
+    "value": []
+  },
+  {
+    "op": "find",
+    "path": "/loot_pools",
+    "multi": true,
+    "test": {
+      "path": "/item",
+      "value": "rotten_flesh"
+    },
+    "then": [
+      {
+        "op": "copy",
+        "path": "^/temp_pools/-",
+        "from": ""
+      }
+    ]
+  },
+  {
+    "op": "find",
+    "path": "/temp_pools",
+    "multi": true,
+    "test": [],
+    "then": [
+      {
+        "op": "replace",
+        "path": "/item",
+        "value": "cloth"
+      },
+      {
+        "op": "move",
+        "path": "^/loot_pools/-",
+        "from": ""
+      }
+    ]
+  },
+  {
+    "op": "remove",
+    "path": "/temp_pools"
+  }
+]

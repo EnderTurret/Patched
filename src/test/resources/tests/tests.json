@@ -92,6 +92,9 @@
     { "path": "find/redundant_multi", "doOutputTest": false },
     "find/misleading_paths",
     "find/absolute/coalesce",
+    "find/absolute/coalesce_2",
+    "find/absolute/single_placeholder",
+    "find/absolute/single_placeholder_array",
 
     "include/simple",
 

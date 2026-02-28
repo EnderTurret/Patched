@@ -1,0 +1,18 @@
+[
+  {
+    "op": "find",
+    "path": "/items",
+    "placeholder": "index",
+    "test": {
+      "path": "",
+      "value": "rotten_flesh"
+    },
+    "then": [
+      {
+        "op": "replace",
+        "path": "^/amounts/{index}",
+        "value": 1
+      }
+    ]
+  }
+]

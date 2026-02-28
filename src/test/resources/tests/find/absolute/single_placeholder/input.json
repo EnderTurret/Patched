@@ -1,0 +1,20 @@
+{
+  "input": {
+    "foo": {
+      "type": "number",
+      "value": 3
+    },
+    "bar": {
+      "type": "number",
+      "value": -9
+    },
+    "baz": {
+      "type": "string",
+      "value": "this is not a number"
+    },
+    "qux": {
+      "type": "number",
+      "value": 7.1
+    }
+  }
+}

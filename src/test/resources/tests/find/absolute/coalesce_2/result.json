@@ -1,0 +1,33 @@
+{
+  "loot_pools": [
+    {
+      "type": "empty",
+      "weight": 60
+    },
+    {
+      "type": "item",
+      "item": "rotten_flesh",
+      "weight": 30
+    },
+    {
+      "type": "item",
+      "item": "stick",
+      "weight": 10
+    },
+    {
+      "type": "item",
+      "item": "rotten_flesh",
+      "weight": 5
+    },
+    {
+      "type": "item",
+      "item": "cloth",
+      "weight": 30
+    },
+    {
+      "type": "item",
+      "item": "cloth",
+      "weight": 5
+    }
+  ]
+}
