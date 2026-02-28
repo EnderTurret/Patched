@@ -1,0 +1,7 @@
+[
+  {
+    "op": "add",
+    "path": "^/array/long/absolute/selector",
+    "value": 0
+  }
+]
