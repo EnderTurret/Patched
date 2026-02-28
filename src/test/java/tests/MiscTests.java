@@ -23,6 +23,7 @@ import net.enderturret.patched.patch.TestPatch;
 import net.enderturret.patched.patch.context.ElementContext;
 import net.enderturret.patched.patch.context.ElementContexts;
 import net.enderturret.patched.patch.context.ImmutablePatchContext;
+import net.enderturret.patched.patch.context.MutablePatchContext;
 import net.enderturret.patched.patch.context.PatchContext;
 
 import tests.util.TestUtil;
@@ -143,5 +144,19 @@ final class MiscTests {
 		assertEquals(new JsonDocument(new JsonPrimitive("this")), doc);
 		assertNotEquals(doc, null);
 		assertNotEquals("this", doc);
+	}
+
+	@Test
+	void testMutableContext() {
+		final ImmutablePatchContext expected = ImmutablePatchContext.newContext()
+				.testExtensions(true).patchedExtensions(true).throwOnOobAdd(true).throwOnFailedTest(true)
+				.testEvaluator(null).fileAccess(null).dataSource(null).audit(null);
+		final MutablePatchContext mutable = new MutablePatchContext()
+				.testExtensions(true).patchedExtensions(true).throwOnOobAdd(true).throwOnFailedTest(true)
+				.testEvaluator(null).fileAccess(null).dataSource(null).audit(null);
+
+		assertEquals(expected, mutable.asImmutableContext());
+		assertEquals(expected, new MutablePatchContext(expected).asImmutableContext());
+		assertSame(expected, expected.asImmutableContext());
 	}
 }
