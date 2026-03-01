@@ -43,9 +43,10 @@ public final class MovePatch extends JsonPatch {
 	public void patch(ElementContext root, PatchContext context) {
 		final ElementContext removed = from.select(root, true);
 
+		PatchUtil.applyRemove(removed);
+
 		ElementContext added = path.select(root, true, TraversalMode.ADD);
 
-		PatchUtil.applyRemove(removed);
 		PatchUtil.applyAdd(added, removed.elem(), false);
 
 		if (context.audit() != null) context.audit().recordMove(root, path, from, added);
