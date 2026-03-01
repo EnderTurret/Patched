@@ -8,7 +8,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 import net.enderturret.patched.JsonDocument;
@@ -24,7 +23,6 @@ import net.enderturret.patched.patch.context.ElementContext;
 import net.enderturret.patched.patch.context.ElementContexts;
 import net.enderturret.patched.patch.context.ImmutablePatchContext;
 import net.enderturret.patched.patch.context.MutablePatchContext;
-import net.enderturret.patched.patch.context.PatchContext;
 
 import tests.util.TestUtil;
 
@@ -80,20 +78,6 @@ final class MiscTests {
 
 	@Test
 	void testBadPatch() {
-		final JsonPatch bad = new JsonPatch(null) {
-			@Override
-			protected String operation() {
-				return "bad";
-			}
-			@Override
-			protected void patchJson(ElementContext elem, PatchContext context) throws PatchingException, TraversalException {}
-		};
-
-		{
-			final JsonDocument doc = new JsonDocument(new JsonObject());
-			assertThrows(UnsupportedOperationException.class, () -> bad.patch(doc, ImmutablePatchContext.newContext()), "Should throw for null path");
-		}
-
 		assertThrows(IllegalArgumentException.class, () -> new TestPatch(null, null, null, false) {}, "Should throw for ambiguous type, path, and test");
 	}
 
@@ -104,13 +88,13 @@ final class MiscTests {
 
 		assertFalse(audit.hasRecords());
 
-		audit.recordReplace("/fake", "2");
+		audit.recordReplace("/fake/2");
 
 		assertTrue(audit.hasRecords());
 
 		audit = new PatchAudit("what");
 
-		audit.recordRemove("/fake", "2", new JsonPrimitive(true));
+		audit.recordRemove("/fake/2", new JsonPrimitive(true));
 
 		assertTrue(audit.hasRecords());
 	}

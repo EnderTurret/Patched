@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
 import net.enderturret.patched.JsonSelector;
-import net.enderturret.patched.exception.TraversalException;
 import net.enderturret.patched.patch.context.ElementContext;
 import net.enderturret.patched.patch.context.PatchContext;
 
@@ -14,7 +13,7 @@ import net.enderturret.patched.patch.context.PatchContext;
  * @author EnderTurret
  * @since 1.0.0
  */
-public final class MovePatch extends ManualTraversalPatch {
+public final class MovePatch extends JsonPatch {
 
 	protected final JsonSelector from;
 
@@ -43,16 +42,11 @@ public final class MovePatch extends ManualTraversalPatch {
 	public void patch(ElementContext root, PatchContext context) {
 		final ElementContext removed = from.select(root, true);
 
-		try {
-			ElementContext added = path.select(root, true);
-			added = last.add(added, true, null);
+		ElementContext added = path.add(root, true, null);
 
-			PatchUtil.Operations.REMOVE.apply(removed);
-			new PatchUtil.AddOperation(removed.elem(), false).apply(added);
+		PatchUtil.Operations.REMOVE.apply(removed);
+		new PatchUtil.AddOperation(removed.elem(), false).apply(added);
 
-			if (context.audit() != null) context.audit().recordMove(path.toString(), last.toString(), from.toString(), added);
-		} catch (TraversalException e) {
-			throw e.withPath(path + "/" + last);
-		}
+		if (context.audit() != null) context.audit().recordMove(path.toString(), from.toString(), added);
 	}
 }

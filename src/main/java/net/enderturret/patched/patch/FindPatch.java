@@ -14,7 +14,6 @@ import com.google.gson.JsonSerializationContext;
 import net.enderturret.patched.JsonSelector;
 import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.patch.context.ElementContext;
-import net.enderturret.patched.patch.context.ElementContexts;
 import net.enderturret.patched.patch.context.PatchContext;
 
 /**
@@ -84,11 +83,11 @@ public final class FindPatch extends JsonPatch {
 	}
 
 	@Override
-	protected void patchJson(ElementContext parent, PatchContext context) throws PatchingException {
+	public void patch(ElementContext root, PatchContext context) throws PatchingException {
 		if (!context.patchedExtensions())
 			throw new PatchingException("find: Patched extensions are not enabled.");
 
-		parent = last.select(parent, true);
+		final ElementContext parent = path.select(root, true);
 
 		String strPath = null;
 
@@ -107,7 +106,7 @@ public final class FindPatch extends JsonPatch {
 
 				// Tests succeeded, apply patch.
 
-				if (context.audit() != null) context.audit().beginPrefix((strPath == null ? strPath = path.toString() + "/" + last.toString() : strPath), key);
+				if (context.audit() != null) context.audit().beginPrefix((strPath == null ? strPath = path.toString() : strPath), key);
 				then.patch(childContext, context);
 				if (context.audit() != null) context.audit().endPrefix();
 
@@ -130,7 +129,7 @@ public final class FindPatch extends JsonPatch {
 
 				// Tests succeeded, apply patch.
 
-				if (context.audit() != null) context.audit().beginPrefix((strPath == null ? strPath = path.toString() + "/" + last.toString() : strPath), Integer.toString(i));
+				if (context.audit() != null) context.audit().beginPrefix((strPath == null ? strPath = path.toString() : strPath), Integer.toString(i));
 				then.patch(childContext, context);
 				if (context.audit() != null) context.audit().endPrefix();
 

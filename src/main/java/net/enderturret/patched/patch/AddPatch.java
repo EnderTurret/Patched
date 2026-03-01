@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
-import net.enderturret.patched.exception.TraversalException;
 import net.enderturret.patched.patch.context.ElementContext;
 import net.enderturret.patched.patch.context.PatchContext;
 
@@ -40,12 +39,8 @@ public final class AddPatch extends JsonPatch {
 	}
 
 	@Override
-	protected void patchJson(ElementContext elem, PatchContext context) {
-		try {
-			final ElementContext e = last.add(elem, true, value);
-			if (context.audit() != null) context.audit().recordAdd(path.toString(), last.toString(), e);
-		} catch (TraversalException e) {
-			throw e.withPath(path + "/" + last);
-		}
+	public void patch(ElementContext root, PatchContext context) {
+		final ElementContext e = path.add(root, true, value);
+		if (context.audit() != null) context.audit().recordAdd(path.toString(), e);
 	}
 }

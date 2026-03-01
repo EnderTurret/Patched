@@ -1,7 +1,7 @@
 package net.enderturret.patched.patch;
 
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ApiStatus.Internal;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonSerializationContext;
@@ -15,7 +15,7 @@ import net.enderturret.patched.patch.context.PatchContext;
  * @author EnderTurret
  * @since 1.0.0
  */
-public class CompoundPatch extends ManualTraversalPatch {
+public final class CompoundPatch extends JsonPatch {
 
 	private final JsonPatch[] patches;
 

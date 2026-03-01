@@ -1,6 +1,5 @@
 package net.enderturret.patched.patch;
 
-import net.enderturret.patched.exception.TraversalException;
 import net.enderturret.patched.patch.context.ElementContext;
 import net.enderturret.patched.patch.context.PatchContext;
 
@@ -27,12 +26,8 @@ public final class RemovePatch extends JsonPatch {
 	}
 
 	@Override
-	protected void patchJson(ElementContext elem, PatchContext context) {
-		try {
-			final ElementContext after = last.remove(elem, true);
-			if (context.audit() != null) context.audit().recordRemove(path.toString(), last.toString(), after.elem());
-		} catch (TraversalException e) {
-			throw e.withPath(path + "/" + last);
-		}
+	public void patch(ElementContext root, PatchContext context) {
+		final ElementContext after = path.remove(root, true);
+		if (context.audit() != null) context.audit().recordRemove(path.toString(), after.elem());
 	}
 }

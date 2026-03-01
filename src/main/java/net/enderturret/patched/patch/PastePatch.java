@@ -19,7 +19,7 @@ import net.enderturret.patched.patch.context.PatchContext;
  * @author EnderTurret
  * @since 1.5.0
  */
-public final class PastePatch extends ManualTraversalPatch {
+public final class PastePatch extends JsonPatch {
 
 	private final String type;
 	@Nullable
@@ -59,7 +59,7 @@ public final class PastePatch extends ManualTraversalPatch {
 		if (from != null)
 			obj.addProperty("from", from.toString());
 
-		obj.addProperty("path", path + (last.isEmpty() ? "" : "/" + last));
+		obj.addProperty("path", path.toString());
 
 		if (value != null)
 			obj.add("value", value);
@@ -75,18 +75,13 @@ public final class PastePatch extends ManualTraversalPatch {
 		if (context.dataSource() == null)
 			throw new PatchingException("Cannot paste: no data source available!");
 
-		final ElementContext parent = path.select(root, true);
 		final JsonElement from = this.from != null ? this.from.select(root, true).elem() : null;
 
 		final JsonElement pasted = context.dataSource().getData(type, from, value);
 		if (pasted == null)
 			throw new PatchingException("Unknown paste data source type: '" + type + "'");
 
-		try {
-			final ElementContext pastedContext = last.add(parent, true, pasted);
-			if (context.audit() != null) context.audit().recordAdd(path.toString(), last.toString(), pastedContext);
-		} catch (TraversalException e) {
-			throw e.withPath(path + "/" + last);
-		}
+		final ElementContext pastedContext = path.add(root, true, pasted);
+		if (context.audit() != null) context.audit().recordAdd(path.toString(), pastedContext);
 	}
 }

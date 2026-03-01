@@ -372,21 +372,22 @@ public interface JsonSelector {
 	public static record CompoundSelector(JsonSelector[] path, boolean absolute) implements JsonSelector {
 		@Override
 		public ElementContext select(ElementContext context, boolean throwOnError, PatchUtil.Operation op) throws TraversalException {
-			if (absolute && !context.context().patchedExtensions())
-				throw new TraversalException("Cannot traverse absolute path with Patched extensions off!");
+			try {
+				if (absolute && !context.context().patchedExtensions())
+					throw new TraversalException("Cannot traverse absolute path with Patched extensions off!");
 
-			ElementContext ctx = context;
-			if (absolute) ctx = new ElementContexts.Document(ctx, ctx.doc());
+				ElementContext ctx = context;
+				if (absolute) ctx = new ElementContexts.Document(ctx, ctx.doc());
 
-			for (int i = 0; i < path.length; i++)
-				try {
+				for (int i = 0; i < path.length; i++) {
 					ctx = path[i].select(ctx, throwOnError, i < path.length - 1 ? PatchUtil.Operations.NOOP : op);
 					if (ctx == null) return null; // Avoid invoking more selectors if we've encountered a soft error.
-				} catch (TraversalException e) {
-					throw e.withPath(toString(/*0, i + 1*/));
 				}
 
-			return ctx;
+				return ctx;
+			} catch (TraversalException e) {
+				throw e.withPath(toString(/*0, i + 1*/));
+			}
 		}
 
 		/**

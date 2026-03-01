@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
 import net.enderturret.patched.JsonSelector;
-import net.enderturret.patched.exception.TraversalException;
 import net.enderturret.patched.patch.context.ElementContext;
 import net.enderturret.patched.patch.context.PatchContext;
 
@@ -15,7 +14,7 @@ import net.enderturret.patched.patch.context.PatchContext;
  * @author EnderTurret
  * @since 1.0.0
  */
-public final class CopyPatch extends ManualTraversalPatch {
+public final class CopyPatch extends JsonPatch {
 
 	protected final JsonSelector from;
 
@@ -44,11 +43,7 @@ public final class CopyPatch extends ManualTraversalPatch {
 	public void patch(ElementContext root, PatchContext context) {
 		final JsonElement copied = from.select(root, true).elem();
 
-		try {
-			final ElementContext e = last.add(path.select(root, true), true, copied);
-			if (context.audit() != null) context.audit().recordCopy(path.toString(), last.toString(), from.toString(), e);
-		} catch (TraversalException e) {
-			throw e.withPath(path + "/" + last);
-		}
+		final ElementContext e = path.add(root, true, copied);
+		if (context.audit() != null) context.audit().recordCopy(path.toString(), from.toString(), e);
 	}
 }

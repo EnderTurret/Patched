@@ -36,30 +36,21 @@ public abstract class JsonPatch {
 
 	@Nullable
 	protected final JsonSelector path;
-	@Nullable
-	protected JsonSelector last;
 
 	/**
 	 * Constructs a new {@code JsonPatch}.
-	 * @param path The path that will be followed to find the element passed to {@link #patchJson(ElementContext, PatchContext)}, or {@code null} to handle this yourself.
+	 * @param path The path that will be followed to find an element in {@link #patch(ElementContext, PatchContext)}, or {@code null} to handle this yourself.
 	 * @since 1.0.0
 	 */
 	protected JsonPatch(@Nullable String path) {
 		if (path != null) {
 			final CompoundSelector selector = JsonSelector.of(path);
-			if (selector.isEmpty()) {
-				this.path = last = new JsonSelector.EmptySelector();
-			} else {
-				final CompoundSelector tempPath = new CompoundSelector(selector.path(0, selector.size() - 1), selector.absolute());
-
-				this.path = tempPath.size() == 0 ? new JsonSelector.EmptySelector() : tempPath;
-
-				last = selector.path(selector.size() - 1);
-			}
-		} else {
+			if (selector.isEmpty())
+				this.path = new JsonSelector.EmptySelector();
+			else
+				this.path = selector;
+		} else
 			this.path = null;
-			last = null;
-		}
 	}
 
 	/**
@@ -71,18 +62,7 @@ public abstract class JsonPatch {
 	 * @throws UnsupportedOperationException If someone passes {@code null} into {@link #JsonPatch(String)} and does not override this method.
 	 * @since 1.0.0
 	 */
-	public void patch(ElementContext root, PatchContext context) throws PatchingException, TraversalException {
-		if (path == null) throw new UnsupportedOperationException("Patch was not implemented correctly! (op = " + operation() + ")");
-		final ElementContext child;
-
-		try {
-			child = path.select(root, true);
-		} catch (TraversalException e) {
-			throw e.withPath(path + "/" + last);
-		}
-
-		patchJson(child, context);
-	}
+	public abstract void patch(ElementContext root, PatchContext context) throws PatchingException, TraversalException;
 
 	/**
 	 * {@link JsonDocument} version of {@link #patch(ElementContext, PatchContext)}.
@@ -95,17 +75,6 @@ public abstract class JsonPatch {
 	public final void patch(JsonDocument root, PatchContext context) throws PatchingException, TraversalException {
 		patch(new ElementContexts.Document(context, null, root), context);
 	}
-
-	/**
-	 * Applies this patch to the given element. The path will have already been followed, so this is the element being patched.
-	 * @param elem The context representing the element to patch.
-	 * @param context The {@link PatchContext}. This customizes what features are available, among other things.
-	 * @throws PatchingException If the patch could not be applied for some reason.
-	 * @throws TraversalException If a path in the patch could not be traversed.
-	 * @see #patch(ElementContext, PatchContext)
-	 * @since 1.0.0
-	 */
-	protected abstract void patchJson(ElementContext elem, PatchContext context) throws PatchingException, TraversalException;
 
 	/**
 	 * @return The operation this patch applies.
@@ -129,7 +98,7 @@ public abstract class JsonPatch {
 			obj.addProperty("op", operation());
 
 		if (path != null)
-			obj.addProperty("path", path + (last.isEmpty() ? "" : "/" + last));
+			obj.addProperty("path", path.toString());
 
 		writeAdditional(obj, context);
 

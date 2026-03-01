@@ -12,7 +12,6 @@ import net.enderturret.patched.JsonSelector;
 import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.exception.TraversalException;
 import net.enderturret.patched.patch.context.ElementContext;
-import net.enderturret.patched.patch.context.ElementContexts;
 import net.enderturret.patched.patch.context.PatchContext;
 
 /**
@@ -21,7 +20,7 @@ import net.enderturret.patched.patch.context.PatchContext;
  * @author EnderTurret
  * @since 1.0.0
  */
-public class TestPatch extends ManualTraversalPatch {
+public class TestPatch extends JsonPatch {
 
 	@Nullable
 	protected final String type;

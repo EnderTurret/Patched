@@ -20,7 +20,7 @@ import net.enderturret.patched.patch.context.PatchContext;
  * @author EnderTurret
  * @since 1.4.0
  */
-public final class IncludePatch extends ManualTraversalPatch {
+public final class IncludePatch extends JsonPatch {
 
 	private final String path;
 

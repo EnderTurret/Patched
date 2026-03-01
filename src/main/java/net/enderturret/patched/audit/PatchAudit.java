@@ -57,59 +57,57 @@ public final class PatchAudit {
 
 	/**
 	 * Records an {@code add} operation into this audit's tracked changes.
-	 * @param parentPath The path up to and excluding the name of the added element.
-	 * @param name The name of the added element.
+	 * @param path The path up to and including the name of the added element.
 	 * @param added The added element.
 	 */
-	public void recordAdd(String parentPath, String name, ElementContext added) {
-		record(parentPath + "/" + fixPath(name, added), "added by " + patchPath);
+	public void recordAdd(String path, ElementContext added) {
+		record(fixPath(path, added), "added by " + patchPath);
 	}
 
 	/**
 	 * Records a {@code copy} operation into this audit's tracked changes.
-	 * @param parentPath The path up to and excluding the name of the cloned element.
-	 * @param name The name of the cloned element.
+	 * @param path The path up to and including the name of the cloned element.
 	 * @param from The path to the original element.
 	 * @param copied The cloned element.
 	 */
-	public void recordCopy(String parentPath, String name, String from, ElementContext copied) {
-		record(parentPath + "/" + fixPath(name, copied),
+	public void recordCopy(String path, String from, ElementContext copied) {
+		record(fixPath(path, copied),
 				"copied from " + (from.isEmpty() && pathPrefix != null ? pathPrefix + "/" + pathKey : from) + " by " + patchPath);
 	}
 
 	/**
 	 * Records a {@code move} operation into this audit's tracked changes.
-	 * @param parentPath The path up to and excluding the name of the destination element.
-	 * @param name The name of the destination element.
+	 * @param path The path up to and including the name of the destination element.
 	 * @param from The path to the source element.
 	 * @param moved The moved element.
 	 */
-	public void recordMove(String parentPath, String name, String from, ElementContext moved) {
-		record(parentPath + "/" + fixPath(name, moved),
+	public void recordMove(String path, String from, ElementContext moved) {
+		record(fixPath(path, moved),
 				"moved from " + (from.isEmpty() && pathPrefix != null ? pathPrefix + "/" + pathKey : from) + " by " + patchPath);
 	}
 
 	/**
 	 * Records a {@code remove} operation into this audit's tracked changes.
-	 * @param parentPath The path up to and excluding the name of the removed element.
-	 * @param name The name of the removed element.
+	 * @param path The path up to and including the name of the removed element.
 	 * @param value The removed element.
 	 */
-	public void recordRemove(String parentPath, String name, JsonElement value) {
-		if (pathPrefix != null)
-			parentPath = pathPrefix + parentPath;
+	public void recordRemove(String path, JsonElement value) {
+		final int slash = path.lastIndexOf('/');
+		String leading = slash == -1 ? "" : path.substring(0, slash);
+		String last = slash == -1 ? "" : path.substring(slash + 1);
 
-		removals.computeIfAbsent(parentPath, k -> new ArrayList<>(1))
-		.add(new RemovalRecord((pathKey != null ? pathKey : "") + name, value, patchPath));
+		if (pathPrefix != null)
+			leading = pathPrefix + leading;
+
+		removals.computeIfAbsent(leading, k -> new ArrayList<>(1))
+		.add(new RemovalRecord((pathKey != null ? pathKey : "") + last, value, patchPath));
 	}
 
 	/**
 	 * Records a {@code replace} operation into this audit's tracked changes.
-	 * @param parentPath The path up to and excluding the name of the replaced element.
-	 * @param name The name of the replaced element.
+	 * @param path The path up to and including the name of the replaced element.
 	 */
-	public void recordReplace(String parentPath, String name) {
-		final String path = parentPath.isEmpty() && name.isEmpty() && pathPrefix != null ? "" : parentPath + "/" + name;
+	public void recordReplace(String path) {
 		record(path, "replaced by " + patchPath);
 	}
 
@@ -117,7 +115,7 @@ public final class PatchAudit {
 	 * Begins a path prefix -- something to prefix every following record with.
 	 * This is useful in situations where you're delegating patches, such as in the {@linkplain FindPatch find patch}.
 	 * @param pathPrefix The path prefix. This is prepended to each following path.
-	 * @param pathKey The key prefix. This is prepended to each following key (the last path element). This mainly matters in {@link #recordRemove(String, String, JsonElement)}.
+	 * @param pathKey The key prefix. This is prepended to each following key (the last path element). This mainly matters in {@link #recordRemove(String, JsonElement)}.
 	 * @since 1.2.0
 	 */
 	public void beginPrefix(String pathPrefix, String pathKey) {
@@ -143,13 +141,19 @@ public final class PatchAudit {
 	 * @since 1.2.0
 	 */
 	private static String fixPath(String name, ElementContext context) {
+		if (!name.contains("/")) return name;
+		final int slash = name.lastIndexOf('/');
+		final String leading = name.substring(0, slash + 1);
+		final String last = name.substring(slash + 1);
+
 		if (context.parent() instanceof JsonArray a) {
-			if ("-".equals(name))
-				return Integer.toString(a.size() - 1);
+			if ("-".equals(last))
+				return leading + Integer.toString(a.size() - 1);
+
 			try {
-				final int idx = Integer.parseInt(name);
+				final int idx = Integer.parseInt(last);
 				if (idx > a.size())
-					return Integer.toString(a.size() - 1);
+					return leading + Integer.toString(a.size() - 1);
 			} catch (NumberFormatException ignored) {}
 		}
 
@@ -185,7 +189,7 @@ public final class PatchAudit {
 
 	/**
 	 * <p>Converts the given root document element to a "pretty-printed" string and decorates it with comments indicating the changes patches have made to it.</p>
-	 * 
+	 *
 	 * <p>For example:
 	 * <pre><code>{
 	 *   "object": {
