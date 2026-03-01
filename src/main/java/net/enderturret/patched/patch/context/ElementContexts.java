@@ -13,6 +13,11 @@ import com.google.gson.JsonObject;
 import net.enderturret.patched.JsonDocument;
 import net.enderturret.patched.JsonSelector;
 
+/**
+ * {@code ElementContexts} holds all of the {@link ElementContext} implementations.
+ * @author EnderTurret
+ * @since 2.0.0
+ */
 public final class ElementContexts {
 
 	private ElementContexts() {}

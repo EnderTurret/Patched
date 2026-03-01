@@ -185,6 +185,11 @@ public final class PatchUtil {
 		return new CompoundPatch(patches);
 	}
 
+	/**
+	 * Removes the element represented by the specified {@code ElementContext} from its parent.
+	 * @param context The context.
+	 * @since 2.0.0
+	 */
 	public static void applyRemove(ElementContext context) {
 		if (context instanceof ElementContexts.Object obj)
 			obj.parent().remove(obj.name());
@@ -196,6 +201,13 @@ public final class PatchUtil {
 			throw new PatchingException("Attempted to remove root element!");
 	}
 
+	/**
+	 * Adds or replaces the element represented by the specified context with the specified element.
+	 * @param context The context to modify.
+	 * @param elem The element to add or replace with.
+	 * @param replace Whether or not to replace the original element versus add to it.
+	 * @since 2.0.0
+	 */
 	public static void applyAdd(ElementContext context, JsonElement elem, boolean replace) {
 		// Make sure we actually copy the element. Not important for primitives (numbers, strings) but required for objects and arrays.
 		// Avoids leaking a patch's element reference into the document.

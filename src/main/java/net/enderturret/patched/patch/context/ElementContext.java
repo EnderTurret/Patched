@@ -24,8 +24,18 @@ public interface ElementContext {
 	 */
 	public PatchContext context();
 
-	@Nullable
-	public JsonSelector getPlaceholder(String name);
+	/**
+	 * Returns the {@link JsonSelector} associated with the specified placeholder, or {@code null} if one does not exist.
+	 * @param name The name of the placeholder.
+	 * @return The {@code JsonSelector}, or {@code null}.
+	 */
+	public @Nullable JsonSelector getPlaceholder(String name);
+
+	/**
+	 * Associates the given {@code JsonSelector} with the specified placeholder.
+	 * @param name The name of the placeholder.
+	 * @param value The {@code JsonSelector} to associate with the placeholder.
+	 */
 	public void setPlaceholder(String name, @Nullable JsonSelector value);
 
 	/**

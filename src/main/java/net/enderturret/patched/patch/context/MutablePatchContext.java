@@ -24,8 +24,17 @@ public final class MutablePatchContext implements ConfigurablePatchContext {
 	private @Nullable IDataSource dataSource;
 	private @Nullable PatchAudit audit;
 
+	/**
+	 * Constructs a new, empty {@code MutablePatchContext}.
+	 * @since 2.0.0
+	 */
 	public MutablePatchContext() {}
 
+	/**
+	 * Constructs a new {@code MutablePatchContext} with values copied from the specified {@code PatchContext}.
+	 * @param from The {@code PatchContext} to copy values from.
+	 * @since 2.0.0
+	 */
 	public MutablePatchContext(PatchContext from) {
 		testExtensions = from.testExtensions();
 		patchedExtensions = from.patchedExtensions();

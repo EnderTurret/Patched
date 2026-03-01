@@ -8,6 +8,7 @@ import net.enderturret.patched.IFileAccess;
 import net.enderturret.patched.patch.JsonPatch;
 import net.enderturret.patched.patch.PatchUtil;
 
+@SuppressWarnings("javadoc")
 public final class SimpleFileAccess implements IFileAccess {
 
 	@Override

@@ -17,6 +17,7 @@ import tests.PatchingTests;
  * A custom {@link ITestEvaluator} for {@linkplain PatchingTests tests}.
  * @author EnderTurret
  */
+@SuppressWarnings("javadoc")
 public class SimpleTestEvaluator implements ITestEvaluator {
 
 	private final Set<String> values;

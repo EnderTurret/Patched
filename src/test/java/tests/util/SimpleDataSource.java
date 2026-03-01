@@ -8,6 +8,7 @@ import com.google.gson.JsonPrimitive;
 import net.enderturret.patched.IDataSource;
 import net.enderturret.patched.exception.PatchingException;
 
+@SuppressWarnings("javadoc")
 public final class SimpleDataSource implements IDataSource {
 
 	@Override
