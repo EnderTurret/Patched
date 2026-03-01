@@ -60,6 +60,8 @@ final class MiscTests {
 		final String output = PatchingTests.GSON.toJson(result);
 
 		assertEquals(target, output, "Built patch and target file should be identical");
+
+		assertThrows(NullPointerException.class, () -> PatchUtil.test(null, null, null, false));
 	}
 
 	@Test
@@ -79,11 +81,6 @@ final class MiscTests {
 		new JsonPatch.Serializer();
 
 		assertThrows(IllegalArgumentException.class, () -> new JsonPatch.Serializer(null, true, false, false), "Should throw for enforced null operation");
-	}
-
-	@Test
-	void testBadPatch() {
-		assertThrows(IllegalArgumentException.class, () -> new TestPatch(null, null, null, false) {}, "Should throw for ambiguous type, path, and test");
 	}
 
 	@Test

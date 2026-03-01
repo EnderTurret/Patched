@@ -20,7 +20,7 @@ import net.enderturret.patched.patch.context.PatchContext;
  * @author EnderTurret
  * @since 1.0.0
  */
-public class TestPatch extends JsonPatch {
+public final class TestPatch extends JsonPatch {
 
 	@Nullable
 	protected final String type;
@@ -39,7 +39,6 @@ public class TestPatch extends JsonPatch {
 	@Internal
 	protected TestPatch(@Nullable String type, @Nullable String path, @Nullable JsonElement test, boolean inverse) {
 		super(path);
-		if (type == null && path == null) throw new IllegalArgumentException("path may only be null when type is not null");
 		this.type = type;
 		this.test = test;
 		this.inverse = inverse;

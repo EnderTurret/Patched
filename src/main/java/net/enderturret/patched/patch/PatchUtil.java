@@ -1,6 +1,7 @@
 package net.enderturret.patched.patch;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -108,8 +109,8 @@ public final class PatchUtil {
 	 * @return A new {@code TestPatch}.
 	 * @since 1.1.0
 	 */
-	public static TestPatch test(String type, String path, JsonElement test, boolean inverse) {
-		return new TestPatch(type, path, test, inverse);
+	public static TestPatch test(String type, @Nullable String path, @Nullable JsonElement test, boolean inverse) {
+		return new TestPatch(Objects.requireNonNull(type, "type"), path, test, inverse);
 	}
 
 	/**
@@ -120,7 +121,7 @@ public final class PatchUtil {
 	 * @return A new {@code TestPatch}.
 	 * @since 1.0.0
 	 */
-	public static TestPatch test(String path, JsonElement test, boolean inverse) {
+	public static TestPatch test(String path, @Nullable JsonElement test, boolean inverse) {
 		return new TestPatch(null, path, test, inverse);
 	}
 
