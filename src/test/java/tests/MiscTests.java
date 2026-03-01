@@ -67,18 +67,18 @@ final class MiscTests {
 		// Instantiate some exceptions. They don't really need testing.
 		// This might be coverage hacking, but it's fine I swear.
 		final PatchingException e = new PatchingException();
-		new PatchingException(e);
-		new PatchingException("this is a message", e);
+		assertSame(e, new PatchingException(e).getCause());
+		assertEquals("this is a message", new PatchingException("this is a message", e).getMessage());
 		new TraversalException();
-		new TraversalException(e);
-		new TraversalException("this is also a message", e);
+		assertSame(e, new TraversalException(e).getCause());
+		assertEquals("this is also a message", new TraversalException("this is also a message", e).getMessage());
 	}
 
 	@Test
 	void testPatchSerializer() {
 		new JsonPatch.Serializer();
 
-		assertThrows(IllegalArgumentException.class, () -> new JsonPatch.Serializer(null, true, false, false));
+		assertThrows(IllegalArgumentException.class, () -> new JsonPatch.Serializer(null, true, false, false), "Should throw for enforced null operation");
 	}
 
 	@Test
