@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import com.google.gson.JsonNull;
+import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
 import net.enderturret.patched.JsonDocument;
@@ -83,18 +84,21 @@ final class MiscTests {
 
 	@Test
 	void testAuditMethods() {
+		final ImmutablePatchContext context = ImmutablePatchContext.newContext();
+		final ElementContext elem = new ElementContexts.Document(context, null, new JsonDocument(JsonParser.parseString("{\"fake\":[1,2,3,4,5]}")));
+
 		PatchAudit audit = new PatchAudit("what");
 		audit.setPatchPath("something else");
 
 		assertFalse(audit.hasRecords());
 
-		audit.recordReplace("/fake/2");
+		audit.recordReplace(elem, JsonSelector.of("/fake/2"));
 
 		assertTrue(audit.hasRecords());
 
 		audit = new PatchAudit("what");
 
-		audit.recordRemove("/fake/2", new JsonPrimitive(true));
+		audit.recordRemove(elem, JsonSelector.of("/fake/2"), new JsonPrimitive(true));
 
 		assertTrue(audit.hasRecords());
 	}

@@ -47,6 +47,6 @@ public final class MovePatch extends JsonPatch {
 		PatchUtil.Operations.REMOVE.apply(removed);
 		new PatchUtil.AddOperation(removed.elem(), false).apply(added);
 
-		if (context.audit() != null) context.audit().recordMove(path.toString(), from.toString(), added);
+		if (context.audit() != null) context.audit().recordMove(root, path, from, added);
 	}
 }

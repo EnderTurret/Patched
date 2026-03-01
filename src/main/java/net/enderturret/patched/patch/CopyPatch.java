@@ -44,6 +44,6 @@ public final class CopyPatch extends JsonPatch {
 		final JsonElement copied = from.select(root, true).elem();
 
 		final ElementContext e = path.add(root, true, copied);
-		if (context.audit() != null) context.audit().recordCopy(path.toString(), from.toString(), e);
+		if (context.audit() != null) context.audit().recordCopy(root, path, from, e);
 	}
 }

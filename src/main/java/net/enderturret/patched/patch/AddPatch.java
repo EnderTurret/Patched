@@ -41,6 +41,6 @@ public final class AddPatch extends JsonPatch {
 	@Override
 	public void patch(ElementContext root, PatchContext context) {
 		final ElementContext e = path.add(root, true, value);
-		if (context.audit() != null) context.audit().recordAdd(path.toString(), e);
+		if (context.audit() != null) context.audit().recordAdd(root, path, e);
 	}
 }

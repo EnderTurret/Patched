@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import net.enderturret.patched.audit.PatchAudit;
 import net.enderturret.patched.exception.TraversalException;
 import net.enderturret.patched.patch.PatchUtil;
 import net.enderturret.patched.patch.PatchUtil.Operation;
@@ -122,11 +123,23 @@ public interface JsonSelector {
 	}
 
 	/**
+	 * Returns whether or not this selector is empty.
 	 * @return {@code true} if this selector is empty.
 	 * @since 1.0.0
 	 */
 	public default boolean isEmpty() {
 		return false;
+	}
+
+	/**
+	 * Returns the string representation of this path, for {@linkplain PatchAudit patch audits}.
+	 * In many cases this is the same as {@link #toString()}.
+	 * @param context The element context.
+	 * @return The string representation.
+	 * @since 2.0.0
+	 */
+	public default String toAuditString(ElementContext context) {
+		return toString();
 	}
 
 	/**
@@ -287,6 +300,14 @@ public interface JsonSelector {
 		public String toString() {
 			return name.replace("~", "~0").replace("/", "~1");
 		}
+
+		@Override
+		public String toAuditString(ElementContext context) {
+			if ("-".equals(name) && context.elem() instanceof JsonArray arr)
+				return Integer.toString(arr.size() - 1);
+
+			return toString();
+		}
 	}
 
 	/**
@@ -320,6 +341,12 @@ public interface JsonSelector {
 		@Override
 		public String toString() {
 			return raw;
+		}
+
+		@Override
+		public String toAuditString(ElementContext context) {
+			final JsonSelector selector = context.getPlaceholder(placeholder);
+			return selector == null ? toString() : selector.toAuditString(context);
 		}
 	}
 
@@ -359,6 +386,14 @@ public interface JsonSelector {
 		@Override
 		public String toString() {
 			return Integer.toString(index);
+		}
+
+		@Override
+		public String toAuditString(ElementContext context) {
+			if (context.elem() instanceof JsonArray arr && arr.size() < index)
+				return Integer.toString(arr.size() - 1);
+
+			return toString();
 		}
 	}
 
@@ -458,6 +493,30 @@ public interface JsonSelector {
 		public String toString() {
 			if (path.length == 0) return "";
 			return toString(0, path.length);
+		}
+
+		@Override
+		public String toAuditString(ElementContext context) {
+			final StringBuilder sb = new StringBuilder();
+
+			ElementContext ctx = context;
+			if (absolute) ctx = new ElementContexts.Document(ctx, ctx.doc());
+
+			final PatchUtil.AddOperation lenientOp = new PatchUtil.AddOperation(null, false);
+
+			for (int i = 0; i < path.length; i++) {
+				if (i == 0)
+					sb.append(absolute ? "^/" : "/");
+				else
+					sb.append('/');
+
+				sb.append(path[i].toAuditString(ctx));
+
+				// It shouldn't be possible for this to throw a TraversalException unless the input is malformed.
+				ctx = path[i].select(ctx, true, i < path.length - 1 ? PatchUtil.Operations.NOOP : lenientOp);
+			}
+
+			return sb.toString();
 		}
 	}
 }

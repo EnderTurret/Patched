@@ -82,6 +82,6 @@ public final class PastePatch extends JsonPatch {
 			throw new PatchingException("Unknown paste data source type: '" + type + "'");
 
 		final ElementContext pastedContext = path.add(root, true, pasted);
-		if (context.audit() != null) context.audit().recordAdd(path.toString(), pastedContext);
+		if (context.audit() != null) context.audit().recordAdd(root, path, pastedContext);
 	}
 }

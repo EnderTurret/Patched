@@ -6,6 +6,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.Nullable;
@@ -57,44 +58,51 @@ public final class PatchAudit {
 
 	/**
 	 * Records an {@code add} operation into this audit's tracked changes.
+	 * @param root The root element.
 	 * @param path The path up to and including the name of the added element.
 	 * @param added The added element.
 	 */
-	public void recordAdd(String path, ElementContext added) {
-		record(fixPath(path, added), "added by " + patchPath);
+	public void recordAdd(ElementContext root, JsonSelector path, ElementContext added) {
+		record(fixPath(path, root), "added by " + patchPath);
 	}
 
 	/**
 	 * Records a {@code copy} operation into this audit's tracked changes.
+	 * @param root The root element.
 	 * @param path The path up to and including the name of the cloned element.
 	 * @param from The path to the original element.
 	 * @param copied The cloned element.
 	 */
-	public void recordCopy(String path, String from, ElementContext copied) {
-		record(fixPath(path, copied),
-				"copied from " + (from.isEmpty() && pathPrefix != null ? pathPrefix + "/" + pathKey : from) + " by " + patchPath);
+	public void recordCopy(ElementContext root, JsonSelector path, JsonSelector from, ElementContext copied) {
+		final String fromStr = (pathPrefix != null ? pathPrefix + "/" + pathKey : "") + from;
+		record(fixPath(path, root),
+				"copied from " + fromStr + " by " + patchPath);
 	}
 
 	/**
 	 * Records a {@code move} operation into this audit's tracked changes.
+	 * @param root The root element.
 	 * @param path The path up to and including the name of the destination element.
 	 * @param from The path to the source element.
 	 * @param moved The moved element.
 	 */
-	public void recordMove(String path, String from, ElementContext moved) {
-		record(fixPath(path, moved),
-				"moved from " + (from.isEmpty() && pathPrefix != null ? pathPrefix + "/" + pathKey : from) + " by " + patchPath);
+	public void recordMove(ElementContext root, JsonSelector path, JsonSelector from, ElementContext moved) {
+		final String fromStr = (pathPrefix != null ? pathPrefix + "/" + pathKey : "") + from;
+		record(fixPath(path, root),
+				"moved from " + fromStr + " by " + patchPath);
 	}
 
 	/**
 	 * Records a {@code remove} operation into this audit's tracked changes.
+	 * @param root The root element.
 	 * @param path The path up to and including the name of the removed element.
 	 * @param value The removed element.
 	 */
-	public void recordRemove(String path, JsonElement value) {
-		final int slash = path.lastIndexOf('/');
-		String leading = slash == -1 ? "" : path.substring(0, slash);
-		String last = slash == -1 ? "" : path.substring(slash + 1);
+	public void recordRemove(ElementContext root, JsonSelector path, JsonElement value) {
+		final String auditPath = path.toAuditString(root);
+		final int slash = auditPath.lastIndexOf('/');
+		String leading = slash == -1 ? "" : auditPath.substring(0, slash);
+		String last = slash == -1 ? "" : auditPath.substring(slash + 1);
 
 		if (pathPrefix != null)
 			leading = pathPrefix + leading;
@@ -105,17 +113,18 @@ public final class PatchAudit {
 
 	/**
 	 * Records a {@code replace} operation into this audit's tracked changes.
+	 * @param root The root element.
 	 * @param path The path up to and including the name of the replaced element.
 	 */
-	public void recordReplace(String path) {
-		record(path, "replaced by " + patchPath);
+	public void recordReplace(ElementContext root, JsonSelector path) {
+		record(path.toAuditString(root), "replaced by " + patchPath);
 	}
 
 	/**
 	 * Begins a path prefix -- something to prefix every following record with.
 	 * This is useful in situations where you're delegating patches, such as in the {@linkplain FindPatch find patch}.
 	 * @param pathPrefix The path prefix. This is prepended to each following path.
-	 * @param pathKey The key prefix. This is prepended to each following key (the last path element). This mainly matters in {@link #recordRemove(String, JsonElement)}.
+	 * @param pathKey The key prefix. This is prepended to each following key (the last path element). This mainly matters in {@link #recordRemove(ElementContext, JsonSelector, JsonElement)}.
 	 * @since 1.2.0
 	 */
 	public void beginPrefix(String pathPrefix, String pathKey) {
@@ -140,24 +149,8 @@ public final class PatchAudit {
 	 * @return The fixed path.
 	 * @since 1.2.0
 	 */
-	private static String fixPath(String name, ElementContext context) {
-		if (!name.contains("/")) return name;
-		final int slash = name.lastIndexOf('/');
-		final String leading = name.substring(0, slash + 1);
-		final String last = name.substring(slash + 1);
-
-		if (context.parent() instanceof JsonArray a) {
-			if ("-".equals(last))
-				return leading + Integer.toString(a.size() - 1);
-
-			try {
-				final int idx = Integer.parseInt(last);
-				if (idx > a.size())
-					return leading + Integer.toString(a.size() - 1);
-			} catch (NumberFormatException ignored) {}
-		}
-
-		return name;
+	private static String fixPath(JsonSelector name, ElementContext context) {
+		return Objects.requireNonNull(name.toAuditString(context));
 	}
 
 	/**

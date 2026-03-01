@@ -6,7 +6,7 @@
   ],
   "amounts": [
     4,
-    1,
+    1, // replaced by find/absolute/single_placeholder_array
     3
   ]
 }

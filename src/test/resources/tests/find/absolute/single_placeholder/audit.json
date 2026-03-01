@@ -18,8 +18,8 @@
     }
   },
   "numbers": { // added by find/absolute/single_placeholder
-    "foo": 3,
-    "bar": -9,
-    "qux": 7.1
+    "foo": 3, // copied from /input/foo/value by find/absolute/single_placeholder
+    "bar": -9, // copied from /input/bar/value by find/absolute/single_placeholder
+    "qux": 7.1 // copied from /input/qux/value by find/absolute/single_placeholder
   }
 }
