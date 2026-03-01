@@ -62,7 +62,7 @@ public final class FindPatch extends JsonPatch {
 
 		if (tests.size() == 1)
 			obj.add("test", tests.get(0).write(context, "test"));
-		else {
+		else if (!tests.isEmpty()) {
 			final JsonArray list = new JsonArray();
 
 			for (TestPatch test : tests)

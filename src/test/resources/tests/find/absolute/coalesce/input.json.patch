@@ -21,7 +21,6 @@
     "op": "find",
     "path": "/temp_structures",
     "multi": true,
-    "test": [],
     "then": {
       "op": "copy",
       "path": "^/structures/-",

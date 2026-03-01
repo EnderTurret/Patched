@@ -41,7 +41,6 @@
     "op": "find",
     "path": "/find",
     "multi": true,
-    "test": [],
     "then": {
       "op": "remove",
       "path": ""
@@ -63,7 +62,6 @@
     "path": "/find",
     "placeholder": "location",
     "multi": true,
-    "test": [],
     "then": {
       "op": "remove",
       "path": ""

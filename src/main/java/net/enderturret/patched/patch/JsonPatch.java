@@ -254,9 +254,8 @@ public abstract class JsonPatch {
 					final List<TestPatch> tests;
 
 					if (!obj.has("test"))
-						throw new PatchingException("Missing condition in find patch!");
-
-					if (obj.get("test") instanceof JsonArray testArray) {
+						tests = List.of();
+					else if (obj.get("test") instanceof JsonArray testArray) {
 						final List<TestPatch> list = new ArrayList<>();
 
 						for (JsonElement elem : testArray)

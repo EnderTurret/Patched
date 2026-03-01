@@ -24,7 +24,6 @@
     "op": "find",
     "path": "/temp_pools",
     "multi": true,
-    "test": [],
     "then": [
       {
         "op": "replace",
