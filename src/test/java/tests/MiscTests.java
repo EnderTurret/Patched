@@ -2,11 +2,14 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
@@ -14,6 +17,7 @@ import com.google.gson.JsonPrimitive;
 import net.enderturret.patched.JsonDocument;
 import net.enderturret.patched.JsonSelector;
 import net.enderturret.patched.JsonSelector.CompoundSelector;
+import net.enderturret.patched.Patches;
 import net.enderturret.patched.audit.PatchAudit;
 import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.exception.TraversalException;
@@ -126,6 +130,16 @@ final class MiscTests {
 
 		final ElementContext document = new ElementContexts.Document(context, context.doc());
 		assertNull(document.parent());
+
+		final ElementContext otherNonParent = new ElementContexts.NoParent(context, context.elem());
+		assertEquals(context.context(), otherNonParent.context());
+		assertEquals(context.doc(), otherNonParent.doc());
+		assertEquals(context.elem(), otherNonParent.elem());
+
+		final ElementContext array = new ElementContexts.Array(context.context(), context.doc(), new JsonArray(), 0, context.elem());
+		assertEquals(context.context(), array.context());
+		assertEquals(context.doc(), array.doc());
+		assertEquals(context.elem(), array.elem());
 	}
 
 	@Test
@@ -164,5 +178,30 @@ final class MiscTests {
 		assertNull(new JsonSelector.NameSelector("name").select(null, false));
 		assertNull(new JsonSelector.NumericSelector(0, "0").select(null, false));
 		assertNull(new JsonSelector.PlaceholderSelector("holder", "{holder}").select(null, false));
+	}
+
+	@Test
+	void testPatchReading() {
+		final String input = "{\"op\":\"add\",\"path\":\"/added\",\"value\":true}";
+		final Gson gson = Patches.patchGson(true, true).create();
+
+		final JsonPatch fromString = Patches.readPatch(gson, input);
+		final JsonPatch fromReader = Patches.readPatch(gson, new StringReader(input));
+		final JsonPatch fromElement = Patches.readPatch(gson, JsonParser.parseString(input));
+
+		assertEquals(input, gson.toJson(fromString));
+		assertEquals(input, gson.toJson(fromReader));
+		assertEquals(input, gson.toJson(fromElement));
+	}
+
+	@Test
+	void testSelectorEmptiness() {
+		assertFalse(new JsonSelector.NameSelector("name").isEmpty());
+		assertFalse(new JsonSelector.NumericSelector(0, "0").isEmpty());
+		assertFalse(new JsonSelector.PlaceholderSelector("p", "{p}").isEmpty());
+		assertTrue(new JsonSelector.EmptySelector().isEmpty());
+
+		assertFalse(JsonSelector.of("/a/b/c").isEmpty());
+		assertTrue(new JsonSelector.CompoundSelector(new JsonSelector[0], false).isEmpty());
 	}
 }
