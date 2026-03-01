@@ -112,6 +112,9 @@ final class MiscTests {
 
 		assertEquals("b", selector.toString(1, 2));
 		assertEquals("b/c", selector.toString(1, 3));
+
+		assertEquals(JsonSelector.ofSingle("a"), selector.path(0));
+		assertArrayEquals(JsonSelector.of("/b/c").path(), selector.path(1, 3));
 	}
 
 	@Test
@@ -120,6 +123,9 @@ final class MiscTests {
 		assertNull(context.parent());
 		assertThrows(TraversalException.class, () -> context.child(0, JsonNull.INSTANCE));
 		assertThrows(TraversalException.class, () -> context.child("some path", JsonNull.INSTANCE));
+
+		final ElementContext document = new ElementContexts.Document(context, context.doc());
+		assertNull(document.parent());
 	}
 
 	@Test
