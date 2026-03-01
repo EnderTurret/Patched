@@ -40,7 +40,8 @@ public final class ReplacePatch extends JsonPatch {
 
 	@Override
 	public void patch(ElementContext root, PatchContext context) {
-		path.replace(root, true, value);
+		final ElementContext e = path.select(root, true);
+		PatchUtil.applyAdd(e, value, true);
 		if (context.audit() != null) context.audit().recordReplace(root, path);
 	}
 }

@@ -1,14 +1,11 @@
 package net.enderturret.patched;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.enderturret.patched.audit.PatchAudit;
 import net.enderturret.patched.exception.TraversalException;
-import net.enderturret.patched.patch.PatchUtil;
-import net.enderturret.patched.patch.PatchUtil.Operation;
-import net.enderturret.patched.patch.PatchUtil.Operations;
+import net.enderturret.patched.patch.PatchUtil.TraversalMode;
 import net.enderturret.patched.patch.context.ElementContext;
 import net.enderturret.patched.patch.context.ElementContexts;
 
@@ -49,77 +46,27 @@ import net.enderturret.patched.patch.context.ElementContexts;
 public interface JsonSelector {
 
 	/**
-	 * Handles selecting an element from the given {@link ElementContext} and applying the given {@link Operation} on it.
+	 * Handles selecting an element from the given {@link ElementContext}.
 	 * @param context The {@link ElementContext} containing the current element.
 	 * @param throwOnError Whether a {@link TraversalException} should be thrown if an element doesn't exist. This is {@code false} for the {@code test} operation.
-	 * @param op The operation to apply on the found element.
+	 * @param mode The mode for traversing elements.
 	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
 	 * @throws TraversalException If an error occurs traversing the path.
-	 * @see Operation#apply(ElementContext)
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 */
-	public ElementContext select(ElementContext context, boolean throwOnError, PatchUtil.Operation op) throws TraversalException;
+	public ElementContext select(ElementContext context, boolean throwOnError, TraversalMode mode) throws TraversalException;
 
 	/**
-	 * Equivalent to {@link #select(ElementContext, boolean, Operation)} with {@link Operations#NOOP}.
+	 * Equivalent to {@link #select(ElementContext, boolean, TraversalMode)} with {@link TraversalMode#NORMAL}.
 	 * @param context The {@link ElementContext} containing the current element.
 	 * @param throwOnError Whether a {@link TraversalException} should be thrown if an element doesn't exist. This is {@code false} for the {@code test} operation.
 	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
 	 * @throws TraversalException If an error occurs traversing the path.
-	 * @see #select(ElementContext, boolean, Operation)
+	 * @see #select(ElementContext, boolean, TraversalMode)
 	 * @since 1.0.0
 	 */
 	public default ElementContext select(ElementContext context, boolean throwOnError) throws TraversalException {
-		return select(context, throwOnError, PatchUtil.Operations.NOOP);
-	}
-
-	/**
-	 * Equivalent to {@link #select(ElementContext, boolean, Operation)} with {@link Operations#REMOVE}.
-	 * @param context The {@link ElementContext} containing the current element.
-	 * @param throwOnError Whether a {@link TraversalException} should be thrown if an element doesn't exist. This is {@code false} for the {@code test} operation.
-	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
-	 * @throws TraversalException If an error occurs traversing the path.
-	 * @see #select(ElementContext, boolean, Operation)
-	 * @since 1.0.0
-	 */
-	public default ElementContext remove(ElementContext context, boolean throwOnError) throws TraversalException {
-		return select(context, throwOnError, PatchUtil.Operations.REMOVE);
-	}
-
-	/**
-	 * Equivalent to {@link #select(ElementContext, boolean, Operation)} with an {@link net.enderturret.patched.patch.PatchUtil.AddOperation AddOperation}.
-	 * @param context The {@link ElementContext} containing the current element.
-	 * @param throwOnError Whether a {@link TraversalException} should be thrown if an element doesn't exist. This is {@code false} for the {@code test} operation.
-	 * @param elem The element to add.
-	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
-	 * @throws TraversalException If an error occurs traversing the path.
-	 * @see #select(ElementContext, boolean, Operation)
-	 * @since 1.0.0
-	 */
-	public default ElementContext add(ElementContext context, boolean throwOnError, JsonElement elem) throws TraversalException {
-		// Make sure we actually copy the element. Not important for primitives (numbers, strings) but required for objects and arrays.
-		// Avoids leaking a patch's element reference into the document.
-		if (elem != null) elem = elem.deepCopy();
-
-		return select(context, throwOnError, new PatchUtil.AddOperation(elem, false));
-	}
-
-	/**
-	 * Equivalent to {@link #select(ElementContext, boolean, Operation)} with an {@link net.enderturret.patched.patch.PatchUtil.AddOperation AddOperation} configured to replace an existing element.
-	 * @param context The {@link ElementContext} containing the current element.
-	 * @param throwOnError Whether a {@link TraversalException} should be thrown if an element doesn't exist. This is {@code false} for the {@code test} operation.
-	 * @param elem The element to replace with.
-	 * @return A new {@link ElementContext} or {@code null} if an error occurred.
-	 * @throws TraversalException If an error occurs traversing the path.
-	 * @see #select(ElementContext, boolean, Operation)
-	 * @since 1.0.0
-	 */
-	public default ElementContext replace(ElementContext context, boolean throwOnError, JsonElement elem) throws TraversalException {
-		// Make sure we actually copy the element. Not important for primitives (numbers, strings) but required for objects and arrays.
-		// Avoids leaking a patch's element reference into the document.
-		if (elem != null) elem = elem.deepCopy();
-
-		return select(context, throwOnError, new PatchUtil.AddOperation(elem, true));
+		return select(context, throwOnError, TraversalMode.NORMAL);
 	}
 
 	/**
@@ -254,9 +201,7 @@ public interface JsonSelector {
 	 */
 	public static record EmptySelector() implements JsonSelector {
 		@Override
-		public ElementContext select(ElementContext context, boolean throwOnError, Operation op) throws TraversalException {
-			op.apply(context);
-
+		public ElementContext select(ElementContext context, boolean throwOnError, TraversalMode mode) throws TraversalException {
 			return context;
 		}
 
@@ -280,20 +225,20 @@ public interface JsonSelector {
 	 */
 	public static record NameSelector(String name) implements JsonSelector {
 		@Override
-		public ElementContext select(ElementContext context, boolean throwOnError, PatchUtil.Operation op) throws TraversalException {
+		public ElementContext select(ElementContext context, boolean throwOnError, TraversalMode mode) throws TraversalException {
 			if (context == null)
 				return error(throwOnError, "Attempted to traverse null context!");
 
-			if ("-".equals(name) && context.elem() instanceof JsonArray arr && op.allowsEndOfArrayRef())
-				return op.apply(new ElementContexts.Array(context, arr, arr.size(), null));
+			if ("-".equals(name) && context.elem() instanceof JsonArray arr && mode.allowsEndOfArrayRef())
+				return new ElementContexts.Array(context, arr, arr.size(), null);
 
 			if (!(context.elem() instanceof JsonObject obj))
 				return error(throwOnError, "Expected object to find '" + name + "' in, found " + context.elem() + "!");
 
-			if (op.strictHas() && !obj.has(name))
+			if (mode.strictHas() && !obj.has(name))
 				return error(throwOnError, "No such child " + name + "!");
 
-			return op.apply(new ElementContexts.Object(context, obj, name, null));
+			return context.child(name, obj.get(name));
 		}
 
 		@Override
@@ -319,23 +264,23 @@ public interface JsonSelector {
 	 */
 	public static record PlaceholderSelector(String placeholder, String raw) implements JsonSelector {
 		@Override
-		public ElementContext select(ElementContext context, boolean throwOnError, PatchUtil.Operation op) throws TraversalException {
+		public ElementContext select(ElementContext context, boolean throwOnError, TraversalMode mode) throws TraversalException {
 			if (context == null)
 				return error(throwOnError, "Attempted to traverse null context!");
 
 			final JsonSelector selector = context.getPlaceholder(placeholder);
 			if (selector == null) {
 				if (context.elem() instanceof JsonObject obj) {
-					if (op.strictHas() && !obj.has(raw))
+					if (mode.strictHas() && !obj.has(raw))
 						return error(throwOnError, "No such child " + raw + "!");
 
-					return op.apply(new ElementContexts.Object(context, obj, raw, null));
+					return context.child(raw, obj.get(raw));
 				}
 
 				return error(throwOnError, "Expected object to find '" + raw + "' in, found " + context.elem() + "!");
 			}
 
-			return selector.select(context, throwOnError, op);
+			return selector.select(context, throwOnError, mode);
 		}
 
 		@Override
@@ -359,7 +304,7 @@ public interface JsonSelector {
 	 */
 	public static record NumericSelector(int index, String strIndex) implements JsonSelector {
 		@Override
-		public ElementContext select(ElementContext context, boolean throwOnError, PatchUtil.Operation op) throws TraversalException {
+		public ElementContext select(ElementContext context, boolean throwOnError, TraversalMode mode) throws TraversalException {
 			if (context == null)
 				return error(throwOnError, "Attempted to traverse null context!");
 
@@ -367,17 +312,15 @@ public interface JsonSelector {
 				if (index < 0)
 					return error(throwOnError, "Attempted to traverse negative index in array (" + index + ")!");
 
-				final ElementContext newContext = new ElementContexts.Array(context, arr, index, null);
-
-				if (!op.allowsOutOfBounds(newContext) && arr.size() <= index)
+				if (arr.size() <= index && !mode.allowsOutOfBounds(context, index))
 					return error(throwOnError, "No such child " + strIndex + "!");
 
-				return op.apply(newContext);
+				return context.child(index, arr.size() <= index ? null : arr.get(index));
 			} else if (context.elem() instanceof JsonObject obj) {
-				if (op.strictHas() && !obj.has(strIndex))
+				if (mode.strictHas() && !obj.has(strIndex))
 					return error(throwOnError, "No such child " + strIndex + "!");
 
-				return op.apply(new ElementContexts.Object(context, obj, strIndex, null));
+				return context.child(strIndex, obj.get(strIndex));
 			}
 
 			return error(throwOnError, "Expected array or object to find '" + strIndex + "' in, found " + context.elem() + "!");
@@ -406,7 +349,7 @@ public interface JsonSelector {
 	 */
 	public static record CompoundSelector(JsonSelector[] path, boolean absolute) implements JsonSelector {
 		@Override
-		public ElementContext select(ElementContext context, boolean throwOnError, PatchUtil.Operation op) throws TraversalException {
+		public ElementContext select(ElementContext context, boolean throwOnError, TraversalMode mode) throws TraversalException {
 			try {
 				if (absolute && !context.context().patchedExtensions())
 					throw new TraversalException("Cannot traverse absolute path with Patched extensions off!");
@@ -415,7 +358,7 @@ public interface JsonSelector {
 				if (absolute) ctx = new ElementContexts.Document(ctx, ctx.doc());
 
 				for (int i = 0; i < path.length; i++) {
-					ctx = path[i].select(ctx, throwOnError, i < path.length - 1 ? PatchUtil.Operations.NOOP : op);
+					ctx = path[i].select(ctx, throwOnError, i < path.length - 1 ? TraversalMode.NORMAL : mode);
 					if (ctx == null) return null; // Avoid invoking more selectors if we've encountered a soft error.
 				}
 
@@ -502,8 +445,6 @@ public interface JsonSelector {
 			ElementContext ctx = context;
 			if (absolute) ctx = new ElementContexts.Document(ctx, ctx.doc());
 
-			final PatchUtil.AddOperation lenientOp = new PatchUtil.AddOperation(null, false);
-
 			for (int i = 0; i < path.length; i++) {
 				if (i == 0)
 					sb.append(absolute ? "^/" : "/");
@@ -513,7 +454,7 @@ public interface JsonSelector {
 				sb.append(path[i].toAuditString(ctx));
 
 				// It shouldn't be possible for this to throw a TraversalException unless the input is malformed.
-				ctx = path[i].select(ctx, true, i < path.length - 1 ? PatchUtil.Operations.NOOP : lenientOp);
+				ctx = path[i].select(ctx, true, i < path.length - 1 ? TraversalMode.NORMAL : TraversalMode.ADD);
 			}
 
 			return sb.toString();

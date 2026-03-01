@@ -27,7 +27,8 @@ public final class RemovePatch extends JsonPatch {
 
 	@Override
 	public void patch(ElementContext root, PatchContext context) {
-		final ElementContext after = path.remove(root, true);
+		final ElementContext after = path.select(root, true);
+		PatchUtil.applyRemove(after);
 		if (context.audit() != null) context.audit().recordRemove(root, path, after.elem());
 	}
 }

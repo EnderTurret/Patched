@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
 import net.enderturret.patched.JsonSelector;
+import net.enderturret.patched.patch.PatchUtil.TraversalMode;
 import net.enderturret.patched.patch.context.ElementContext;
 import net.enderturret.patched.patch.context.PatchContext;
 
@@ -42,10 +43,10 @@ public final class MovePatch extends JsonPatch {
 	public void patch(ElementContext root, PatchContext context) {
 		final ElementContext removed = from.select(root, true);
 
-		ElementContext added = path.add(root, true, null);
+		ElementContext added = path.select(root, true, TraversalMode.ADD);
 
-		PatchUtil.Operations.REMOVE.apply(removed);
-		new PatchUtil.AddOperation(removed.elem(), false).apply(added);
+		PatchUtil.applyRemove(removed);
+		PatchUtil.applyAdd(added, removed.elem(), false);
 
 		if (context.audit() != null) context.audit().recordMove(root, path, from, added);
 	}

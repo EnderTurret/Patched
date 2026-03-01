@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
 import net.enderturret.patched.JsonSelector;
+import net.enderturret.patched.patch.PatchUtil.TraversalMode;
 import net.enderturret.patched.patch.context.ElementContext;
 import net.enderturret.patched.patch.context.PatchContext;
 
@@ -43,7 +44,8 @@ public final class CopyPatch extends JsonPatch {
 	public void patch(ElementContext root, PatchContext context) {
 		final JsonElement copied = from.select(root, true).elem();
 
-		final ElementContext e = path.add(root, true, copied);
+		final ElementContext e = path.select(root, true, TraversalMode.ADD);
+		PatchUtil.applyAdd(e, copied, false);
 		if (context.audit() != null) context.audit().recordCopy(root, path, from, e);
 	}
 }

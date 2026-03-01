@@ -10,6 +10,7 @@ import net.enderturret.patched.IDataSource;
 import net.enderturret.patched.JsonSelector;
 import net.enderturret.patched.exception.PatchingException;
 import net.enderturret.patched.exception.TraversalException;
+import net.enderturret.patched.patch.PatchUtil.TraversalMode;
 import net.enderturret.patched.patch.context.ElementContext;
 import net.enderturret.patched.patch.context.PatchContext;
 
@@ -81,7 +82,8 @@ public final class PastePatch extends JsonPatch {
 		if (pasted == null)
 			throw new PatchingException("Unknown paste data source type: '" + type + "'");
 
-		final ElementContext pastedContext = path.add(root, true, pasted);
+		final ElementContext pastedContext = path.select(root, true, TraversalMode.ADD);
+		PatchUtil.applyAdd(pastedContext, pasted, false);
 		if (context.audit() != null) context.audit().recordAdd(root, path, pastedContext);
 	}
 }

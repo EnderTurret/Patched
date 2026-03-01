@@ -184,45 +184,10 @@ public final class PatchUtil {
 		return new CompoundPatch(patches);
 	}
 
-	/**
-	 * Represents an operation that can be applied to a specific {@link JsonElement}.
-	 * @author EnderTurret
-	 * @since 1.0.0
-	 */
-	public static interface Operation {
+	public static enum TraversalMode {
 
-		/**
-		 * Applies this operation to the element represented by the given context.
-		 * @param context The element.
-		 * @return An {@link ElementContext} containing the child element and related information.
-		 * @since 1.3.0
-		 */
-		public ElementContext apply(ElementContext context);
-
-		/**
-		 * <p>Whether a path may include an out-of-bounds index.</p>
-		 * <p>
-		 * Consider the following:
-		 * <pre>
-		 * // patch
-		 * {
-		 *   "op": "add",
-		 *   "path": "/array/9",
-		 *   "value": "e"
-		 * }
-		 * // document
-		 * {
-		 *   "array": [1]
-		 * }</pre>
-		 * The return value of this method determines whether this patch will succeed.
-		 * </p>
-		 * @param context The element.
-		 * @return {@code true} if out-of-bounds indices are allowed.
-		 * @since 1.3.0
-		 */
-		public default boolean allowsOutOfBounds(ElementContext context) {
-			return false;
-		}
+		NORMAL,
+		ADD;
 
 		/**
 		 * <p>Whether a path may use the special end-of-array token '-'.</p>
@@ -242,10 +207,43 @@ public final class PatchUtil {
 		 * The return value of this method determines whether this patch will succeed.
 		 * </p>
 		 * @return {@code true} if end-of-array references are allowed.
-		 * @since 1.0.0
+		 * @since 2.0.0
 		 */
-		public default boolean allowsEndOfArrayRef() {
-			return false;
+		public boolean allowsEndOfArrayRef() {
+			return this == ADD;
+		}
+
+		/**
+		 * <p>Whether a path may include an out-of-bounds index.</p>
+		 * <p>
+		 * Consider the following:
+		 * <pre>
+		 * // patch
+		 * {
+		 *   "op": "add",
+		 *   "path": "/array/9",
+		 *   "value": "e"
+		 * }
+		 * // document
+		 * {
+		 *   "array": [1]
+		 * }</pre>
+		 * The return value of this method determines whether this patch will succeed.
+		 * </p>
+		 * @param context The parent element.
+		 * @param index The index.
+		 * @return {@code true} if out-of-bounds indices are allowed.
+		 * @since 2.0.0
+		 */
+		public boolean allowsOutOfBounds(ElementContext context, int index) {
+			// Non-add patches cannot access out-of-bounds.
+			if (this != ADD) return false;
+
+			// Patches operating in a context that allows access out-of-bounds can access out-of-bounds.
+			if (!context.context().throwOnOobAdd()) return true;
+
+			// Add patches need to be able to reference a non-existing element as a place to add to.
+			return context.elem() instanceof JsonArray a && index == a.size();
 		}
 
 		/**
@@ -253,96 +251,40 @@ public final class PatchUtil {
 		 * <p>This is by default {@code true} for the {@code replace} operation,
 		 * as it is expected that you will be replacing something.</p>
 		 * @return {@code true} if an element is required exist at a path.
-		 * @since 1.0.0
+		 * @since 2.0.0
 		 */
-		public default boolean strictHas() {
-			return true;
-		}
-	}
-
-	/**
-	 * Implements a few of the operations.
-	 * @author EnderTurret
-	 * @since 1.0.0
-	 */
-	public static enum Operations implements Operation {
-
-		/**
-		 * Does absolutely nothing. You'd be surprised.
-		 * @since 1.0.0
-		 */
-		NOOP,
-
-		/**
-		 * Implements the {@code remove} operation.
-		 * @since 1.0.0
-		 */
-		REMOVE;
-
-		@Override
-		public ElementContext apply(ElementContext context) {
-			if (context instanceof ElementContexts.Object obj)
-				return new ElementContexts.Object(obj, obj.parent(), obj.name(),
-						this == REMOVE ? obj.parent().remove(obj.name()) : obj.parent().get(obj.name()));
-
-			if (context instanceof ElementContexts.Array arr) {
-				return new ElementContexts.Array(arr, arr.parent(), arr.index(),
-						this == REMOVE ? arr.parent().remove(arr.index()) : arr.parent().get(arr.index()));
-			}
-
-			if (context instanceof ElementContexts.Document && this == REMOVE)
-				throw new PatchingException("Attempted to remove root element!");
-
-			return context;
-		}
-	}
-
-	/**
-	 * Implements the {@code add} and {@code replace} operations.
-	 * @param elem The element to add or replace with. A {@code null} element "simulates" addition/replacement; it doesn't actually add or replace anything.
-	 * @param replace {@code true} if the element is intended to replace an existing element. This enables checks to verify the replaced element actually exists first.
-	 * @author EnderTurret
-	 * @since 1.0.0
-	 */
-	public static record AddOperation(@Nullable JsonElement elem, boolean replace) implements Operation {
-
-		@Override
-		public ElementContext apply(ElementContext context) {
-			if (context instanceof ElementContexts.Object obj) {
-				if (elem != null) obj.parent().add(obj.name(), elem);
-				return new ElementContexts.Object(obj, obj.parent(), obj.name(), elem);
-			}
-
-			if (context instanceof ElementContexts.Array arr) {
-				if (elem != null)
-					if (replace())
-						arr.parent().set(arr.index(), elem);
-					else
-						add(arr.parent(), arr.index(), elem);
-
-				return new ElementContexts.Array(arr, arr.parent(), arr.index(), elem);
-			}
-
-			if (context instanceof ElementContexts.Document doc)
-				doc.doc().setRoot(elem);
-
-			return context;
-		}
-
-		@Override
-		public boolean allowsEndOfArrayRef() {
-			return !replace;
-		}
-
-		@Override
-		public boolean allowsOutOfBounds(ElementContext context) {
-			return !replace && (!context.context().throwOnOobAdd() || (context instanceof ElementContexts.Array a
-					&& a.index() == a.parent().size()));
-		}
-
-		@Override
 		public boolean strictHas() {
-			return replace;
+			return this != ADD;
 		}
+	}
+
+	public static void applyRemove(ElementContext context) {
+		if (context instanceof ElementContexts.Object obj)
+			obj.parent().remove(obj.name());
+
+		else if (context instanceof ElementContexts.Array arr)
+			arr.parent().remove(arr.index());
+
+		else if (context instanceof ElementContexts.Document)
+			throw new PatchingException("Attempted to remove root element!");
+	}
+
+	public static void applyAdd(ElementContext context, JsonElement elem, boolean replace) {
+		// Make sure we actually copy the element. Not important for primitives (numbers, strings) but required for objects and arrays.
+		// Avoids leaking a patch's element reference into the document.
+		if (elem != null) elem = elem.deepCopy();
+
+		if (context instanceof ElementContexts.Object obj)
+			obj.parent().add(obj.name(), elem);
+
+		else if (context instanceof ElementContexts.Array arr) {
+			if (replace)
+				arr.parent().set(arr.index(), elem);
+			else
+				add(arr.parent(), arr.index(), elem);
+		}
+
+		else if (context instanceof ElementContexts.Document doc)
+			doc.doc().setRoot(elem);
 	}
 }
