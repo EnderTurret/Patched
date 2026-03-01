@@ -25,8 +25,6 @@ public class TestPatch extends JsonPatch {
 	@Nullable
 	protected final String type;
 	@Nullable
-	protected final JsonSelector path;
-	@Nullable
 	protected final JsonElement test;
 	protected final boolean inverse;
 
@@ -40,10 +38,9 @@ public class TestPatch extends JsonPatch {
 	 */
 	@Internal
 	protected TestPatch(@Nullable String type, @Nullable String path, @Nullable JsonElement test, boolean inverse) {
-		super(null);
+		super(path);
 		if (type == null && path == null) throw new IllegalArgumentException("path may only be null when type is not null");
 		this.type = type;
-		this.path = path == null ? null : JsonSelector.of(path);
 		this.test = test;
 		this.inverse = inverse;
 	}
