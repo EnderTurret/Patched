@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 
 import net.enderturret.patched.audit.PatchAudit;
 import net.enderturret.patched.exception.TraversalException;
-import net.enderturret.patched.patch.PatchUtil.TraversalMode;
 import net.enderturret.patched.patch.context.ElementContext;
 import net.enderturret.patched.patch.context.ElementContexts;
 
