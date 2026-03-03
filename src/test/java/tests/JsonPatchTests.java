@@ -35,7 +35,7 @@ import tests.util.TestUtil;
 public final class JsonPatchTests {
 
 	private static final Gson GSON = Patches.patchGson(false, false).setPrettyPrinting().create();
-	private static final PatchContext CONTEXT = ImmutablePatchContext.newContext().throwOnFailedTest(true).throwOnOobAdd(true);
+	private static final PatchContext CONTEXT = ImmutablePatchContext.newContext().throwOnFailedTest(true);
 
 	private static String mapSpecErrors(String comment, String error, int index) {
 		return switch (comment) {

@@ -64,7 +64,7 @@ public record ImmutablePatchContext(
 	 * @since 2.0.0
 	 */
 	public static ImmutablePatchContext newContext() {
-		return new ImmutablePatchContext(false, false, false, false, null, null, null, null);
+		return new ImmutablePatchContext(false, false, false, true, null, null, null, null);
 	}
 
 	/**

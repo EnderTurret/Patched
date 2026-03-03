@@ -18,7 +18,7 @@ public final class MutablePatchContext implements ConfigurablePatchContext {
 	private boolean testExtensions;
 	private boolean patchedExtensions;
 	private boolean throwOnFailedTest;
-	private boolean throwOnOobAdd;
+	private boolean throwOnOobAdd = true;
 	private @Nullable ITestEvaluator testEvaluator;
 	private @Nullable IFileAccess fileAccess;
 	private @Nullable IDataSource dataSource;
